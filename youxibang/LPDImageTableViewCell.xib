@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="101" id="KGk-i7-Jjw" customClass="LPDImageTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="101"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="100.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="形象照" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dl3-T6-Vzk">
+                        <rect key="frame" x="15" y="10" width="100" height="15"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="15" id="fgi-0k-FAO"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AOf-pn-LL1" customClass="LPDQuoteImagesView">
+                        <rect key="frame" x="10" y="25" width="300" height="65"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="dl3-T6-Vzk" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="2uu-n3-BCe"/>
+                    <constraint firstAttribute="trailing" secondItem="dl3-T6-Vzk" secondAttribute="trailing" constant="205" id="6LZ-uT-b3K"/>
+                    <constraint firstAttribute="bottom" secondItem="AOf-pn-LL1" secondAttribute="bottom" constant="10.5" id="VGg-qR-eyx"/>
+                    <constraint firstItem="AOf-pn-LL1" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="rR9-4r-qV7"/>
+                    <constraint firstItem="dl3-T6-Vzk" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="sje-5Y-lBc"/>
+                    <constraint firstItem="AOf-pn-LL1" firstAttribute="top" secondItem="dl3-T6-Vzk" secondAttribute="bottom" id="xnm-9U-APo"/>
+                    <constraint firstAttribute="trailing" secondItem="AOf-pn-LL1" secondAttribute="trailing" constant="10" id="yvR-me-nao"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
+            <connections>
+                <outlet property="quoteImagesView" destination="AOf-pn-LL1" id="t3o-NF-6Gz"/>
+            </connections>
+            <point key="canvasLocation" x="-119" y="36.5"/>
+        </tableViewCell>
+    </objects>
+</document>

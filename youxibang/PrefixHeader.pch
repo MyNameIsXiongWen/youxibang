@@ -1,0 +1,82 @@
+//
+//  PrefixHeader.h
+//  ChuXing
+//
+//  Created by yuhengyuan on 2017/9/28.
+//  Copyright © 2017年 Dingyi. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+#ifdef __OBJC__
+
+#import <WebKit/WebKit.h>
+#import "EBUtility.h"
+#import "lame.h"
+#import "UIView+EXtension.h"
+#import "NSObject+Model.h"
+#import "UIButton+Name.h"
+#import "UIImageView+Extension.h"
+#import "SDCycleScrollView.h"
+#import "View+MASAdditions.h"
+#import "SDWebImage/UIImageView+WebCache.h"
+#import "TBCityIconFont.h"
+#import "BaseViewController.h"
+#import "NetWorkEngine.h"
+#import "SVProgressHUD.h"
+#import "DataStore.h"
+#import "UserNameTool.h"
+#import "MJRefresh.h"
+#import "BaseTableViewController.h"
+#import "MainNavigationController.h"
+#import "SGQRCode.h"
+#import "LPDQuoteImagesView.h"
+#import "DSWebViewController.h"
+#import "YHYButton.h"
+#import "MainTabBarController.h"
+#import "AFHTTPSessionManager.h"
+#import "CustomAlertView.h"
+#import "ChatViewController.h"
+#import "CALayer+Addition.h"
+#import "ScrollTitleView.h"
+
+#define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
+#define HttpImageString @""
+#define HttpURLString @"http://jx.zimogame.com/index.php/api/"
+//#define HttpURLString @"http://192.168.2.103:8888/api/"
+#define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
+#define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
+#define ADAPTATIONRATIO SCREEN_HEIGHT / 667.0
+#define stringForDict(string)  [NSString stringWithFormat:@"%@",[dict objectForKey:@"string"]]
+#define isKindOfNSDictionary(obj) (obj && ![obj isEqual:[NSNull null]] && [obj isKindOfClass:[NSDictionary class]])
+#define isKindOfNSArray(obj)      (obj && ![obj isEqual:[NSNull null]] && [obj isKindOfClass:[NSArray class]])
+#define isKindOfNSString(obj)      (obj && ![obj isEqual:[NSNull null]] && [obj isKindOfClass:[NSString class]])
+#define WS(weakSelf) __weak __typeof(&*self)weakSelf = self;
+//Get a __weak type of self
+#define WEAKSELF typeof(self) __weak weakSelf = self;
+//Get a __strong type of Self
+#define STRONGSELF typeof(weakSelf) __strong strongSelf = weakSelf;
+// 获取RGB颜色
+#define RGBA(r,g,b,a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
+#define RGB(r,g,b) RGBA(r,g,b,1.0f)
+#define QQ_OPEN_ID @"1106746110"
+#define Pink_color [EBUtility colorWithHexString:@"#E9A9EF" alpha:1]
+#define Nav_color [EBUtility colorWithHexString:@"#36a4df" alpha:1]
+#define DSOpen  @"switch://open"  //打开网页
+#define DSFinish @"switch://finish" // 关闭网页
+#define DSMsgToast  @"msg://toast?"  //弹框消息
+#define DSMsgDialog @"msg://dialog"  //弹框消息
+#define DSShopOrder    @"shop://order" //结算订单
+#define DSOpenIndex @"switch://index" //打开首页
+#define DSOpenLogin @"switch:///login" //打开登录界面
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+// 引入JPush功能所需头文件
+#import "JPUSHService.h"
+// iOS10注册APNs所需头文件
+#ifdef NSFoundationVersionNumber_iOS_9_x_Max
+#import <UserNotifications/UserNotifications.h>
+#endif
+#endif
+#endif /* PrefixHeader_pch */
