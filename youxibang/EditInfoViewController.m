@@ -19,17 +19,17 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    if (self.type == 1){
+    if (self.type == 0){
         self.title = @"编辑昵称";
         self.tf.placeholder = @"编辑昵称";
         self.tf.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
         [self.tf becomeFirstResponder];
-    }else if (self.type == 4){
+    }else if (self.type == 3){
         self.title = @"编辑签名";
         self.tf.placeholder = @"编辑签名";
         self.tf.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"mysign"]];
         [self.tf becomeFirstResponder];
-    }else if (self.type == 5){
+    }else if (self.type == 4){
         self.title = @"兴趣爱好";
         self.tf.hidden = YES;
         self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
@@ -131,7 +131,7 @@
 
 - (void)commitInfo:(UIButton*)sender{
     NSString* interest = @"";
-    if (self.type == 5){
+    if (self.type == 4){
         for (int i = 0;i < self.btnAry.count - 1; i++){
             UIButton* btn = self.btnAry[i];
             if (btn.selected){
@@ -151,13 +151,13 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图）
-    if (self.type == 1){
+    if (self.type == 0){
         [dict setObject:@"2" forKey:@"typeid"];
         [dict setObject:self.tf.text forKey:@"nickname"];
-    }else if (self.type == 4){
+    }else if (self.type == 3){
         [dict setObject:@"3" forKey:@"typeid"];
         [dict setObject:self.tf.text forKey:@"mysign"];
-    }else if (self.type == 5){
+    }else if (self.type == 4){
         [dict setObject:@"4" forKey:@"typeid"];
         [dict setObject:interest forKey:@"interest"];
     }
@@ -168,36 +168,27 @@
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
-            
             if (code == 1) {
-
                 [SVProgressHUD showSuccessWithStatus:msg];
-                [self.navigationController popToRootViewControllerAnimated:1];
+                [self.navigationController popViewControllerAnimated:YES];
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
             }
         }
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
         [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
     }];
-        
 }
 
 //当用户按下return去键盘
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.tf resignFirstResponder];
- 
 }
 /*
 #pragma mark - Navigation
