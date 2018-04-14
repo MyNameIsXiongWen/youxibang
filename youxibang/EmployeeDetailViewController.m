@@ -252,7 +252,7 @@
         photo.layer.borderWidth = 3;
         
         UILabel* signLab = [EBUtility labfrome:CGRectMake(0, 0, SCREEN_WIDTH, 20) andText:@"" andColor:[UIColor whiteColor] andView:hv];
-        signLab.textAlignment = NSTextAlignmentCenter;
+        signLab.textAlignment = NSTextAlignmentLeft;
         signLab.font = [UIFont systemFontOfSize:13];
         signLab.numberOfLines = 0;
         [signLab mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -458,6 +458,7 @@
                 [zlPhotoArray addObject:photo];
             }
             pickerBrowser.photos = zlPhotoArray;
+            pickerBrowser.currentIndex = index;
             [pickerBrowser showPushPickerVc:self];
         }
         else {
