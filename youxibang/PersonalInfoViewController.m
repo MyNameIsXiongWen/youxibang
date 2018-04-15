@@ -254,7 +254,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
-        return 215;
+        return 50+(SCREEN_WIDTH-45)/2;
     }
     else if (indexPath.section == 1) {
         return ((SCREEN_WIDTH-30-30)/4+10)*(self.picArray.count/4+1) + 10+25;
@@ -269,7 +269,9 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         if (self.dataInfo){
             UIImageView* img = [cell viewWithTag:1];
             [img sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
-            img.width = (SCREEN_WIDTH-40)/2;
+            img.userInteractionEnabled = YES;
+            UIGestureRecognizer *tap = [[UIGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
+            [img addGestureRecognizer:tap];
         }
         return cell;
     }
@@ -324,6 +326,11 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     }
 }
 
+- (void)clickImageView:(UITapGestureRecognizer *)tap {
+//    id object = tap.view;
+//    [self amendHeadImg:object.superView];
+}
+
 #pragma mark - otherDelegate/DataSource
 - (void)editNickName:(NSString *)name{
     UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
@@ -368,12 +375,23 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
                 // 取消
                 return;
         }
+//        NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+//        if ([availableMediaTypes containsObject:(NSString *)kUTTypeMovie]) {
+//            // 支持视频录制
+//            UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+//            imagePickerController.delegate = self;
+//            imagePickerController.allowsEditing = YES;
+//            imagePickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
+//            imagePickerController.sourceType = sourceType;
+//            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+//            [self presentViewController:imagePickerController animated:YES completion:^{}];
+//        }
     }
     else {
         if (type == 1) {
             return;
         } else {
-            type = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+            sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
         }
     }
     // 跳转到相机或相册页面
@@ -384,8 +402,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     [self presentViewController:imagePickerController animated:YES completion:^{}];
 }
 
-- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
-{
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     [navigationController.navigationBar setBarStyle:(UIBarStyleBlackTranslucent)];
 }
 
@@ -395,19 +412,20 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     UIGraphicsBeginImageContext(image.size);
     [image drawInRect:CGRectMake(0,0,image.size.width,image.size.height)];
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
-    
     UIGraphicsEndImageContext();
-    NSData *data= UIImageJPEGRepresentation(newImage, 0.1);
-    NSString *str = [data base64Encoding];
-    //    NSData *data = UIImageJPEGRepresentation(newImage, 1.0f);
     
-    NSString *encodedImageStr = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     dispatch_async(dispatch_get_main_queue(), ^{
         UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
         UIImageView* i = [cell viewWithTag:1];
         [i setImage:newImage]; //设置头像
         [self uploadHeadImage:newImage];
     });
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    //获取媒体 Url
+    NSURL *VideoUrl = [info objectForKey:UIImagePickerControllerMediaURL];
+    PHPhotoLibrary *library = [PHPhotoLibrary sharedPhotoLibrary];
     
 }
 

@@ -1023,27 +1023,49 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="头像" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="77R-lv-QEd">
-                                                    <rect key="frame" x="15" y="11" width="29" height="15"/>
+                                                    <rect key="frame" x="15" y="11" width="50" height="15"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="15" id="2cT-we-i9e"/>
-                                                        <constraint firstAttribute="width" constant="29" id="R97-OG-kEW"/>
+                                                        <constraint firstAttribute="width" constant="50" id="R97-OG-kEW"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ico_tx_l" translatesAutoresizingMaskIntoConstraints="NO" id="pzE-O5-Qzt">
-                                                    <rect key="frame" x="15" y="35" width="170" height="170"/>
+                                                    <rect key="frame" x="15" y="35" width="165" height="165"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="pzE-O5-Qzt" secondAttribute="height" multiplier="1:1" id="MD3-fJ-lN7"/>
-                                                        <constraint firstAttribute="width" constant="170" identifier="head_w" id="tAL-py-942"/>
+                                                        <constraint firstAttribute="width" constant="165" identifier="head_w" id="tAL-py-942"/>
                                                     </constraints>
                                                 </imageView>
+                                                <imageView userInteractionEnabled="NO" tag="3" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ico_add1" translatesAutoresizingMaskIntoConstraints="NO" id="0zu-rv-UTT">
+                                                    <rect key="frame" x="195" y="35" width="165" height="165"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="165" identifier="head_w" id="5kH-eQ-fyv"/>
+                                                        <constraint firstAttribute="width" secondItem="0zu-rv-UTT" secondAttribute="height" multiplier="1:1" id="VFW-tr-rMi"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="视频" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O7O-h8-9B8">
+                                                    <rect key="frame" x="195" y="11" width="50" height="15"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="15" id="5OD-O9-byo"/>
+                                                        <constraint firstAttribute="width" constant="50" id="dFb-OS-yZM"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="O7O-h8-9B8" firstAttribute="leading" secondItem="0zu-rv-UTT" secondAttribute="leading" id="3XR-eT-C6t"/>
                                                 <constraint firstItem="77R-lv-QEd" firstAttribute="leading" secondItem="Hre-sB-L7X" secondAttribute="leading" constant="15" id="5WX-9q-guJ"/>
                                                 <constraint firstItem="pzE-O5-Qzt" firstAttribute="top" secondItem="77R-lv-QEd" secondAttribute="bottom" constant="9" id="BLm-5a-ETl"/>
+                                                <constraint firstItem="O7O-h8-9B8" firstAttribute="top" secondItem="Hre-sB-L7X" secondAttribute="top" constant="11" id="QND-x1-BLL"/>
+                                                <constraint firstItem="0zu-rv-UTT" firstAttribute="leading" secondItem="pzE-O5-Qzt" secondAttribute="trailing" constant="15" id="ZiI-4C-49t"/>
                                                 <constraint firstItem="pzE-O5-Qzt" firstAttribute="leading" secondItem="Hre-sB-L7X" secondAttribute="leading" constant="15" id="gU2-Du-F0e"/>
+                                                <constraint firstItem="0zu-rv-UTT" firstAttribute="top" secondItem="O7O-h8-9B8" secondAttribute="bottom" constant="9" id="o4w-Zk-mVG"/>
+                                                <constraint firstAttribute="trailing" secondItem="0zu-rv-UTT" secondAttribute="trailing" constant="15" id="pme-qX-pwW"/>
                                                 <constraint firstItem="77R-lv-QEd" firstAttribute="top" secondItem="Hre-sB-L7X" secondAttribute="top" constant="11" id="tdK-dB-e6J"/>
                                             </constraints>
                                         </tableViewCellContentView>
