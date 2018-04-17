@@ -42,8 +42,8 @@
 
 #define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
 #define HttpImageString @""
-//#define HttpURLString @"http://jx.zimogame.com/index.php/api/"
-#define HttpURLString @"http://192.168.2.105:8888/api/"
+#define HttpURLString @"http://jx.zimogame.com/index.php/api/"
+//#define HttpURLString @"http://192.168.2.105:8888/api/"
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
 #define ADAPTATIONRATIO SCREEN_HEIGHT / 667.0

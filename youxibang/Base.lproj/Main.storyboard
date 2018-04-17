@@ -1032,13 +1032,13 @@
                                                     <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ico_tx_l" translatesAutoresizingMaskIntoConstraints="NO" id="pzE-O5-Qzt">
+                                                <imageView tag="1" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ico_tx_l" translatesAutoresizingMaskIntoConstraints="NO" id="pzE-O5-Qzt">
                                                     <rect key="frame" x="15" y="35" width="165" height="165"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="pzE-O5-Qzt" secondAttribute="height" multiplier="1:1" id="MD3-fJ-lN7"/>
                                                     </constraints>
                                                 </imageView>
-                                                <imageView userInteractionEnabled="NO" tag="3" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="add_video" translatesAutoresizingMaskIntoConstraints="NO" id="0zu-rv-UTT">
+                                                <imageView tag="3" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="add_video" translatesAutoresizingMaskIntoConstraints="NO" id="0zu-rv-UTT">
                                                     <rect key="frame" x="195" y="35" width="165" height="165"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="0zu-rv-UTT" secondAttribute="height" multiplier="1:1" id="VFW-tr-rMi"/>

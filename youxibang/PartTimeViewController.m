@@ -108,17 +108,8 @@
     } failoperation:^(NSError *error) {
         [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
     }];
-    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-    if ([DataStore sharedDataStore].city) {
-        [dic setObject:[DataStore sharedDataStore].city forKey:@"city"];
-    }
-    if ([DataStore sharedDataStore].latitude) {
-        [dic setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
-    }
-    if ([DataStore sharedDataStore].longitude) {
-        [dic setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
-    }
-    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/gmlists.html",HttpURLString] Paremeters:dic successOperation:^(id object) {
+    
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/gmlists.html",HttpURLString] Paremeters:nil successOperation:^(id object) {
         if (isKindOfNSDictionary(object)){
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
@@ -156,9 +147,6 @@
         [dict setObject:[NSString stringWithFormat:@"%d",self.sex] forKey:@"sex"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"p"];
         [dict setObject:@"20" forKey:@"psize"];
-        if ([DataStore sharedDataStore].city) {
-            [dict setObject:[DataStore sharedDataStore].city forKey:@"city"];
-        }
         if ([DataStore sharedDataStore].latitude) {
             [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
         }
@@ -198,6 +186,12 @@
         [dict setObject:[NSString stringWithFormat:@"%d",self.pricerange] forKey:@"pricerange"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"p"];
         [dict setObject:@"10" forKey:@"psize"];
+        if ([DataStore sharedDataStore].latitude) {
+            [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+        }
+        if ([DataStore sharedDataStore].longitude) {
+            [dict setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+        }
         
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/partlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
             [SVProgressHUD dismiss];

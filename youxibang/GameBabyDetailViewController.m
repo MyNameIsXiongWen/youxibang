@@ -373,7 +373,7 @@
                 price.text = [NSString stringWithFormat:@"¥%@/小时",self.dataInfo[@"price"]];
                 
                 UILabel* times = [cell viewWithTag: 4];
-                times.text = [NSString stringWithFormat:@"接单%@次",self.dataInfo[@"ordernum"]];
+                times.text = [NSString stringWithFormat:@"接单%@次",self.dataInfo[@"ordernum"]?:@"0"];
             }
         }else if (indexPath.section == 1){
             UIImageView* img = [cell viewWithTag: 1];

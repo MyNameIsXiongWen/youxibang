@@ -18,9 +18,9 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 
 //最大录制视频时间
-#define VideoMaximumDuration
+#define VideoMaximumDuration 10
 //最大上传视频大小M
-#define VideoMaximumMemory 30
+#define VideoMaximumMemory 10
 //图片URL路径
 #define ImageUrlPath [NSTemporaryDirectory() stringByAppendingString:@"image.png"]
 
@@ -48,7 +48,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     self.client = [[VODUploadSVideoClient alloc] init];
     self.client.delegate = self;
     self.client.transcode = YES;
-    [self getVideoUploadToken:NO];
+    [self getVideoUploadToken:NO UploadVideo:NO VideoPath:@"" ImagePath:@"" VideoInfo:nil];
 }
 
 - (void)configPhotoImageViewWithCell:(UITableViewCell *)cell {
@@ -285,7 +285,9 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell0"];
         cell.accessoryType = UITableViewCellAccessoryNone;
         UIImageView *photoImg = [cell viewWithTag:1];
+        photoImg.layer.masksToBounds = YES;
         UIImageView *videoImg = [cell viewWithTag:3];
+        videoImg.layer.masksToBounds = YES;
         if (self.dataInfo){
             [photoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
             if (self.dataInfo[@"video"]) {
@@ -300,9 +302,9 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         }
         UITapGestureRecognizer *photoTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
         UITapGestureRecognizer *videoTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
-        photoImg.userInteractionEnabled = YES;
+//        photoImg.userInteractionEnabled = YES;
         [photoImg addGestureRecognizer:photoTap];
-        videoImg.userInteractionEnabled = YES;
+//        videoImg.userInteractionEnabled = YES;
         [videoImg addGestureRecognizer:videoTap];
         return cell;
     }
@@ -431,12 +433,10 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     if (type == 2 || type == 3) {
         NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
         if ([availableMediaTypes containsObject:(NSString *)kUTTypeMovie]) {
-            imagePickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
-            imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
         }
-        else {
-            imagePickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
-        }
+        imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+        imagePickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
+        imagePickerController.videoMaximumDuration = VideoMaximumDuration;
     }
     [self presentViewController:imagePickerController animated:YES completion:^{}];
 }
@@ -477,7 +477,12 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
             info.title = title;
             [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
             [SVProgressHUD show];
-            [weakSelf.client uploadWithVideoPath:videoPath imagePath:imagePath svideoInfo:info accessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"] accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"] accessToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"]];
+            if (tokenDictionary) {
+                [weakSelf.client uploadWithVideoPath:videoPath imagePath:imagePath svideoInfo:info accessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"] accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"] accessToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"]];
+            }
+            else {
+                [self getVideoUploadToken:NO UploadVideo:YES VideoPath:videoPath ImagePath:imagePath VideoInfo:info];
+            }
         }];
     }
     else if ([mediaType isEqualToString:(NSString *)kUTTypeImage]) {
@@ -559,7 +564,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     }];
 }
 
-- (void)getVideoUploadToken:(BOOL)upload {
+- (void)getVideoUploadToken:(BOOL)uploadToken UploadVideo:(BOOL)uploadVideo VideoPath:(NSString *)videoPath ImagePath:(NSString *)imagePath VideoInfo:(VodSVideoInfo *)info {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
@@ -570,8 +575,13 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
             NSString *str = [response objectForKey:@"message"];
             if (msg == 1) {
                 tokenDictionary = (NSDictionary *)response;
-                if (upload) {
+                if (uploadToken) {
                     [self.client refreshWithAccessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"] accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"] accessToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"] expireTime:tokenDictionary[@"data"][@"Credentials"][@"Expiration"]];
+                }
+                if (uploadVideo) {
+                    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+                    [SVProgressHUD show];
+                    [self.client uploadWithVideoPath:videoPath imagePath:imagePath svideoInfo:info accessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"] accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"] accessToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"]];
                 }
             }else{
                 [SVProgressHUD showErrorWithStatus:str];
@@ -600,7 +610,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 }
 
 - (void)uploadTokenExpired {
-    [self getVideoUploadToken:YES];
+    [self getVideoUploadToken:YES UploadVideo:NO VideoPath:@"" ImagePath:@"" VideoInfo:nil];
 }
 
 - (void)uploadRetry {

@@ -86,7 +86,7 @@
     self.grade.backgroundColor = [EBUtility colorWithHexString:[NSString stringWithFormat:@"%@",dic[@"fontcolor"]] alpha:1];
     [self.grade sizeToFit];
     self.name.text = [NSString stringWithFormat:@"%@",dic[@"title"]];
-    self.times.text = [NSString stringWithFormat:@"接单%@次",dic[@"ordernum"]];
+    self.times.text = [NSString stringWithFormat:@"接单%@次",dic[@"ordernum"]?:@"0"];
     self.price.text = [NSString stringWithFormat:@"%@",dic[@"price"]];
     self.describe.text = [NSString stringWithFormat:@"%@",dic[@"selfdesc"]];
     if (dic[@"status"]){
