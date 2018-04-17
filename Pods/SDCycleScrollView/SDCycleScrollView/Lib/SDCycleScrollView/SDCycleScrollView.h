@@ -142,6 +142,9 @@ typedef enum {
 /** 是否显示分页控件 */
 @property (nonatomic, assign) BOOL showPageControl;
 
+/** 是否显示阴影层 */
+@property (nonatomic, assign) BOOL hideBkgView;
+
 /** 是否在只有一张图时隐藏pagecontrol，默认为YES */
 @property(nonatomic) BOOL hidesForSinglePage;
 

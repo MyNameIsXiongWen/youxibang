@@ -14,11 +14,23 @@
 #import "UIImage+ZLPhotoLib.h"
 #import "ZLPhotoPickerBrowserViewController.h"
 
-@interface PersonalInfoViewController ()<EditInfoViewControllerDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate, UIAlertViewDelegate> {
-    
+#import <VODUpload/VODUploadSVideoClient.h>
+#import <AssetsLibrary/AssetsLibrary.h>
+
+//最大录制视频时间
+#define VideoMaximumDuration
+//最大上传视频大小M
+#define VideoMaximumMemory 30
+//图片URL路径
+#define ImageUrlPath [NSTemporaryDirectory() stringByAppendingString:@"image.png"]
+
+@interface PersonalInfoViewController ()<EditInfoViewControllerDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate, UIAlertViewDelegate, VODUploadSVideoClientDelegate> {
+    NSDictionary *tokenDictionary;
+    NSString *VideoUploadedPath;
 }
 @property (strong, nonatomic) NSMutableArray *picArray;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) VODUploadSVideoClient *client;
 
 @end
 
@@ -32,6 +44,11 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerNib:[UINib nibWithNibName:@"MineTableViewCell" bundle:nil] forCellReuseIdentifier:PERSONAL_TABLEVIEW_IDENTIFIER];
     self.picArray = [[NSMutableArray alloc] initWithArray:self.dataInfo[@"bgimg"]];
+    
+    self.client = [[VODUploadSVideoClient alloc] init];
+    self.client.delegate = self;
+    self.client.transcode = YES;
+    [self getVideoUploadToken:NO];
 }
 
 - (void)configPhotoImageViewWithCell:(UITableViewCell *)cell {
@@ -43,7 +60,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         btn.frame = imgView.frame;
         [cell addSubview:btn];
         if (i == self.picArray.count) {
-            imgView.image = [UIImage imageNamed:@"ico_add1"];
+            imgView.image = [UIImage imageNamed:@"add_photo"];
             [btn addTarget:self action:@selector(addPhotoClick) forControlEvents:UIControlEventTouchUpInside];
             if (i == 5) {
                 imgView.hidden = YES;
@@ -100,7 +117,6 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 }
 /** 相册 */
 - (void)photoFromPhotoLib {
-    
     ZLPhotoPickerViewController *pickerVc = [[ZLPhotoPickerViewController alloc] init];
     pickerVc.maxCount = 5 - self.picArray.count;
     
@@ -120,13 +136,12 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
             UIImage *uploadImage = [strongSelf scaleImage:asset.originImage toScale:.8];
             [array addObject:uploadImage];
         }
-        [strongSelf uploadImage:array];
+        [strongSelf uploadImage:array ExecuteHandle:NO completeHandler:nil];
     };
     [pickerVc showPickerVc:self];
 }
 
-- (UIImage *)scaleImage:(UIImage *)image toScale:(float)scaleSize
-{
+- (UIImage *)scaleImage:(UIImage *)image toScale:(float)scaleSize {
     UIGraphicsBeginImageContext(CGSizeMake(image.size.width * scaleSize, image.size.height * scaleSize));
     [image drawInRect:CGRectMake(0, 0, image.size.width * scaleSize, image.size.height * scaleSize)];
     UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
@@ -136,8 +151,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 /**
  *  拍照
  */
--(void)cameraBtnClick
-{
+-(void)cameraBtnClick {
     [self.view endEditing:YES];
     // 拍照
     __weak typeof(self)weakSelf = self;
@@ -147,7 +161,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         STRONGSELF
         for (ZLCamera *cameraObject in img) {
             UIImage *uploadImage = [strongSelf scaleImage:cameraObject.photoImage toScale:.8];
-            [strongSelf uploadImage:@[uploadImage]];
+            [strongSelf uploadImage:@[uploadImage] ExecuteHandle:NO completeHandler:nil];
             UIImageWriteToSavedPhotosAlbum(cameraObject.photoImage, strongSelf, @selector(imageSavedToPhotosAlbum:didFinishSavingWithError:contextInfo:), nil);
         }
     };
@@ -188,7 +202,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 }
 
 //上传图片
-- (void)uploadImage:(NSArray *)imgArray {
+- (void)uploadImage:(NSArray *)imgArray ExecuteHandle:(BOOL)execute completeHandler:(void (^)(NSString *imagePath))handler {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = @{@"token":[DataStore sharedDataStore].token,
@@ -197,6 +211,10 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     [[NetWorkEngine shareNetWorkEngine] onlyPostImageAryInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@index/upload_image",HttpURLString] Paremeters:dic Image:imgArray ImageName:imgArray successOperation:^(id response) {
         if ([response[@"errcode"] intValue] == 1) {
             if ([response[@"image"] isKindOfClass:[NSArray class]]) {
+                if (execute) {
+                    handler(response[@"image"][0]);
+                    return;
+                }
                 for (NSString *str in response[@"image"]) {
                     [weakSelf.picArray addObject:str];
                 }
@@ -266,13 +284,26 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell0"];
         cell.accessoryType = UITableViewCellAccessoryNone;
+        UIImageView *photoImg = [cell viewWithTag:1];
+        UIImageView *videoImg = [cell viewWithTag:3];
         if (self.dataInfo){
-            UIImageView* img = [cell viewWithTag:1];
-            [img sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
-            img.userInteractionEnabled = YES;
-            UIGestureRecognizer *tap = [[UIGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
-            [img addGestureRecognizer:tap];
+            [photoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
+            if (self.dataInfo[@"video"]) {
+                if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
+                    if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
+                        if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"]) {
+                            [videoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"]]] placeholderImage:[UIImage imageNamed:@"add_video"]];
+                        }
+                    }
+                }
+            }
         }
+        UITapGestureRecognizer *photoTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
+        UITapGestureRecognizer *videoTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
+        photoImg.userInteractionEnabled = YES;
+        [photoImg addGestureRecognizer:photoTap];
+        videoImg.userInteractionEnabled = YES;
+        [videoImg addGestureRecognizer:videoTap];
         return cell;
     }
     else if (indexPath.section == 1) {
@@ -293,7 +324,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     else {
         NSArray* title = @[@"昵称",@"生日",@"性别",@"签名",@"兴趣爱好"];
         NSArray* img = @[@"ico_nc",@"ico_sr",@"ico_xb",@"ico_qm",@"ico_ah"];
-        NSArray* detail = @[self.dataInfo[@"nickname"],self.dataInfo[@"birthday"],self.dataInfo[@"sexstr"],@"",@""];
+        NSArray* detail = @[self.dataInfo?self.dataInfo[@"nickname"]:@"",self.dataInfo?self.dataInfo[@"birthday"]:@"",self.dataInfo?self.dataInfo[@"sexstr"]:@"",@"",@""];
         MineTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:PERSONAL_TABLEVIEW_IDENTIFIER];
         cell.leftLabel.text = title[indexPath.row];
         cell.rightLabel.text = detail[indexPath.row];
@@ -311,11 +342,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView endEditing:1];
-    if (indexPath.section == 0){
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-        [self amendHeadImg:cell];
-    }
-    else if (indexPath.section == 2) {
+    if (indexPath.section == 2) {
         if (indexPath.row == 0 || indexPath.row == 3 || indexPath.row == 4){
             EditInfoViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ei"];
             vc.delegate = self;
@@ -327,8 +354,8 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 }
 
 - (void)clickImageView:(UITapGestureRecognizer *)tap {
-//    id object = tap.view;
-//    [self amendHeadImg:object.superView];
+    UIImageView *imgView = (UIImageView *)tap.view;
+    [self amendHeadImg:imgView];
 }
 
 #pragma mark - otherDelegate/DataSource
@@ -337,58 +364,60 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     cell.detailTextLabel.text = name;
 }
 
-- (void)amendHeadImg:(UITableViewCell *)sender {
+- (void)amendHeadImg:(UIImageView *)sender {
     UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-    UIAlertAction *actionPhoto = [UIAlertAction actionWithTitle:@"从相册选择" style:0 handler:^(UIAlertAction * action) {
-        [self clickAlertControllerType:0];
+    NSString *libraryDes = @"";
+    NSString *cameraDes = @"";
+    if (sender.tag == 1) {
+        libraryDes = @"从相册选择";
+        cameraDes = @"拍照";
+    }
+    else if (sender.tag == 3) {
+        libraryDes = @"从视频库选择";
+        cameraDes = @"视频拍摄";
+    }
+    UIAlertAction *actionPhoto = [UIAlertAction actionWithTitle:libraryDes style:0 handler:^(UIAlertAction * action) {
+        if (sender.tag == 1) {
+            [self clickAlertControllerType:0];
+        }
+        else if (sender.tag == 3) {
+            [self clickAlertControllerType:3];
+        }
     }];
-    UIAlertAction *actionCamera = [UIAlertAction actionWithTitle:@"拍照" style:0 handler:^(UIAlertAction * action) {
-        [self clickAlertControllerType:1];
+    UIAlertAction *actionCamera = [UIAlertAction actionWithTitle:cameraDes style:0 handler:^(UIAlertAction * action) {
+        if (sender.tag == 1) {
+            [self clickAlertControllerType:1];
+        }
+        else if (sender.tag == 3) {
+            [self clickAlertControllerType:2];
+        }
     }];
     [alertVC addAction:actionCamera];
     [alertVC addAction:actionPhoto];
     [alertVC addAction:actionCancel];
     alertVC.modalPresentationStyle = UIModalPresentationPopover;
     [self presentViewController:alertVC animated:YES completion:nil];
-    UIPopoverPresentationController *popover = alertVC.popoverPresentationController;
-    if (popover){
-        popover.sourceView = sender;
-        popover.sourceRect = sender.bounds;
-        popover.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    }
+//    UIPopoverPresentationController *popover = alertVC.popoverPresentationController;
+//    if (popover){
+//        popover.sourceView = sender.superview;
+//        popover.sourceRect = sender.superview.bounds;
+//        popover.permittedArrowDirections = UIPopoverArrowDirectionAny;
+//    }
 }
 - (void)clickAlertControllerType:(int)type {
     NSUInteger sourceType = 0;
     // 判断是否支持相机
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        switch (type) {
-            case 0:
-                // 相册
-                sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-                break;
-            case 1:
-                // 相机
-                sourceType = UIImagePickerControllerSourceTypeCamera;
-                break;
-            case 2:
-                // 取消
-                return;
+        if (type == 0 || type == 3) {
+            sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         }
-//        NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
-//        if ([availableMediaTypes containsObject:(NSString *)kUTTypeMovie]) {
-//            // 支持视频录制
-//            UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-//            imagePickerController.delegate = self;
-//            imagePickerController.allowsEditing = YES;
-//            imagePickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
-//            imagePickerController.sourceType = sourceType;
-//            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-//            [self presentViewController:imagePickerController animated:YES completion:^{}];
-//        }
+        else if (type == 1 || type == 2) {
+            sourceType = UIImagePickerControllerSourceTypeCamera;
+        }
     }
     else {
-        if (type == 1) {
+        if (type == 1 || type == 2) {
             return;
         } else {
             sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
@@ -399,6 +428,16 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     imagePickerController.delegate = self;
     imagePickerController.allowsEditing = YES;
     imagePickerController.sourceType = sourceType;
+    if (type == 2 || type == 3) {
+        NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+        if ([availableMediaTypes containsObject:(NSString *)kUTTypeMovie]) {
+            imagePickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
+            imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+        }
+        else {
+            imagePickerController.mediaTypes = @[(NSString *)kUTTypeMovie];
+        }
+    }
     [self presentViewController:imagePickerController animated:YES completion:^{}];
 }
 
@@ -406,33 +445,189 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     [navigationController.navigationBar setBarStyle:(UIBarStyleBlackTranslucent)];
 }
 
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo{
-    [picker dismissViewControllerAnimated:YES completion:^{ }]; //关闭摄像头或用户相册
-    
-    UIGraphicsBeginImageContext(image.size);
-    [image drawInRect:CGRectMake(0,0,image.size.width,image.size.height)];
-    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    //获取用户选择或拍摄的是照片还是视频
+    NSURL *videoUrl = [info objectForKey:UIImagePickerControllerMediaURL];
+    NSString *mediaType = info[UIImagePickerControllerMediaType];
+    if ([mediaType isEqualToString:(NSString *)kUTTypeMovie]) {
         UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-        UIImageView* i = [cell viewWithTag:1];
-        [i setImage:newImage]; //设置头像
-        [self uploadHeadImage:newImage];
-    });
+        UIImageView* i = [cell viewWithTag:3];
+        UIImage *preimage = [self getVideoPreViewImageWithPath:videoUrl];
+        [i setImage:preimage];
+        NSData *imageData = UIImagePNGRepresentation(preimage);
+        [imageData writeToFile:ImageUrlPath atomically:YES];
+        NSURL *newImageUrl = [NSURL fileURLWithPath:ImageUrlPath];
+        NSFileManager *filemanager = [NSFileManager defaultManager];
+        NSString *imagePath = newImageUrl.path;
+        if ([filemanager fileExistsAtPath:newImageUrl.path]) {
+            imagePath = newImageUrl.path;
+        }
+        if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+            if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoUrl.path)) {
+                UISaveVideoAtPathToSavedPhotosAlbum(videoUrl.path, self, @selector(video:didFinishSavingWithError:contextInfo:), NULL);
+            }
+        }
+//        生成视频名称
+        NSString *title = [self getVideoTitleBaseCurrentTime];
+        NSURL *newVideoUrl = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:title]];
+        WEAKSELF
+        [self convertVideoQuailtyWithInputURL:videoUrl outputURL:newVideoUrl completeHandler:nil pathBlock:^(NSString *videoPath) {
+            VodSVideoInfo *info = [[VodSVideoInfo alloc] init];
+            info.title = title;
+            [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+            [SVProgressHUD show];
+            [weakSelf.client uploadWithVideoPath:videoPath imagePath:imagePath svideoInfo:info accessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"] accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"] accessToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"]];
+        }];
+    }
+    else if ([mediaType isEqualToString:(NSString *)kUTTypeImage]) {
+        UIImage *tempImage = info[UIImagePickerControllerEditedImage];
+        UIGraphicsBeginImageContext(tempImage.size);
+        [tempImage drawInRect:CGRectMake(0,0,tempImage.size.width,tempImage.size.height)];
+        UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            UIImageView* i = [cell viewWithTag:1];
+            [i setImage:newImage]; //设置头像
+            [self uploadHeadImage:newImage];
+        });
+    }
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
-    //获取媒体 Url
-    NSURL *VideoUrl = [info objectForKey:UIImagePickerControllerMediaURL];
-    PHPhotoLibrary *library = [PHPhotoLibrary sharedPhotoLibrary];
+// 视频保存回调
+- (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo: (void *)contextInfo {
+    NSLog(@"%@",videoPath);
+    NSLog(@"%@",error);
+}
+
+//以当前时间合成视频名称
+- (NSString *)getVideoNameBaseCurrentTime {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH-mm-ss"];
+    return [[dateFormatter stringFromDate:[NSDate date]] stringByAppendingString:@".MOV"];
+}
+//以当前时间合成视频名称
+- (NSString *)getVideoTitleBaseCurrentTime {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+    return [[dateFormatter stringFromDate:[NSDate date]] stringByAppendingString:@".mp4"];
+}
+
+//上传视频
+- (void)postVideoWithPath:(NSString *)videopath Name:(NSString *)videoName {
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
+    NSDictionary *dict = @{@"token":[DataStore sharedDataStore].token};
+    [[NetWorkEngine shareNetWorkEngine] postVideoFromServerWithUrlStr:[NSString stringWithFormat:@"%@index/upload_video",HttpURLString] Paremeters:dict VideoPath:videopath VideoName:videoName successOperation:^(id response) {
+        if (isKindOfNSDictionary(response)) {
+            NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
+            NSString *str = [response objectForKey:@"message"];
+            if (msg == 1) {
+                [self uploadVideoWithPath:[response objectForKey:@"video"]];
+            }else{
+                [SVProgressHUD showErrorWithStatus:str];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+    }];
+}
+//上传视频地址
+- (void)uploadVideoWithPath:(NSString *)videopath {
+    NSDictionary *dict = @{@"token":[DataStore sharedDataStore].token,
+                           @"video":videopath};
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/update_video",HttpURLString] Paremeters:dict successOperation:^(id response) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(response)) {
+            NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
+            NSString *str = [response objectForKey:@"message"];
+            if (msg == 1) {
+                [SVProgressHUD showSuccessWithStatus:str];
+            }else{
+                [SVProgressHUD showErrorWithStatus:str];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+    }];
+}
+
+- (void)getVideoUploadToken:(BOOL)upload {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(response)) {
+            NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
+            NSString *str = [response objectForKey:@"message"];
+            if (msg == 1) {
+                tokenDictionary = (NSDictionary *)response;
+                if (upload) {
+                    [self.client refreshWithAccessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"] accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"] accessToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"] expireTime:tokenDictionary[@"data"][@"Credentials"][@"Expiration"]];
+                }
+            }else{
+                [SVProgressHUD showErrorWithStatus:str];
+            }
+        }
+    } failoperation:^(NSError *error) {
+    }];
+}
+
+- (void)uploadSuccessWithVid:(NSString *)vid imageUrl:(NSString *)imageUrl {
+    NSLog(@"%@-------%@",vid,imageUrl);
+    [self uploadVideoWithPath:vid];
+    NSFileManager *filemanager = [NSFileManager defaultManager];
+    if ([filemanager fileExistsAtPath:ImageUrlPath]) {
+        [filemanager removeItemAtPath:ImageUrlPath error:nil];
+    }
+}
+
+- (void)uploadFailedWithCode:(NSString *)code message:(NSString *)message {
+    NSLog(@"%@-------%@",code,message);
+    [SVProgressHUD showErrorWithStatus:@"上传失败"];
+}
+
+- (void)uploadProgressWithUploadedSize:(long long)uploadedSize totalSize:(long long)totalSize {
+    NSLog(@"%lld-------%lld",uploadedSize,totalSize);
+}
+
+- (void)uploadTokenExpired {
+    [self getVideoUploadToken:YES];
+}
+
+- (void)uploadRetry {
     
+}
+
+- (void)uploadRetryResume {
+    
+}
+
+//获取视频的第一帧截图, 返回UIImage
+//需要导入AVFoundation.h
+- (UIImage*)getVideoPreViewImageWithPath:(NSURL *)videoPath {
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:videoPath options:nil];
+    AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    gen.appliesPreferredTrackTransform = YES;
+    CMTime time = CMTimeMakeWithSeconds(0.0, 600);
+    NSError *error = nil;
+    CMTime actualTime;
+    CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
+    UIImage *img = [[UIImage alloc] initWithCGImage:image];
+    return img;
 }
 
 - (void)uploadHeadImage:(UIImage*)img{
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图）
     [dict setObject:@"1" forKey:@"typeid"];
@@ -453,8 +648,78 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         [SVProgressHUD setDefaultMaskType:1];
         [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
     }];
-
 }
+
+- (void)convertVideoQuailtyWithInputURL:(NSURL*)inputURL
+                              outputURL:(NSURL*)outputURL
+                        completeHandler:(void (^)(AVAssetExportSession*))handler
+                              pathBlock:(void (^)(NSString *videoPath))path {
+    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:inputURL options:nil];
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:avAsset presetName:AVAssetExportPresetMediumQuality];
+    exportSession.outputURL = outputURL;
+    exportSession.outputFileType = AVFileTypeMPEG4;
+    exportSession.shouldOptimizeForNetworkUse = YES;
+    [exportSession exportAsynchronouslyWithCompletionHandler:^(void) {
+         switch (exportSession.status) {
+             case AVAssetExportSessionStatusCancelled:
+                 NSLog(@"AVAssetExportSessionStatusCancelled");
+                 break;
+             case AVAssetExportSessionStatusUnknown:
+                 NSLog(@"AVAssetExportSessionStatusUnknown");
+                 break;
+             case AVAssetExportSessionStatusWaiting:
+                 NSLog(@"AVAssetExportSessionStatusWaiting");
+                 break;
+             case AVAssetExportSessionStatusExporting:
+                 NSLog(@"AVAssetExportSessionStatusExporting");
+                 break;
+             case AVAssetExportSessionStatusCompleted:
+             {
+                 NSLog(@"AVAssetExportSessionStatusCompleted");
+                 NSLog(@"%@",[NSString stringWithFormat:@"%f s", [self getVideoLength:outputURL]]);
+                 NSLog(@"%@", [NSString stringWithFormat:@"%.2f MB", [self getFileSize:[outputURL path]]]);
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     if ([self getFileSize:[outputURL path]] > VideoMaximumMemory) {
+                         UIAlertController * alertController = [UIAlertController alertControllerWithTitle:@"提示" message:[NSString stringWithFormat:@"视频大小不能超过%dMB,请重新选择或拍摄",VideoMaximumMemory] preferredStyle:UIAlertControllerStyleAlert];
+                         [alertController addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                             return;
+                         }]];
+                         [self presentViewController:alertController animated:YES completion:nil];
+                     }else {
+                         path(outputURL.path);
+                     }
+                 });
+             }
+                 break;
+             case AVAssetExportSessionStatusFailed:
+                 NSLog(@"AVAssetExportSessionStatusFailed");
+                 break;
+         }
+     }];
+}
+//获取文件的大小,单位KB。
+- (CGFloat)getFileSize:(NSString *)path {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    float filesize = - 1.0;
+    if ([fileManager fileExistsAtPath:path]) {
+        //获取文件的属性
+        NSDictionary *fileDic = [fileManager attributesOfItemAtPath:path error:nil];
+        unsigned long long size = [[fileDic objectForKey:NSFileSize] longLongValue];
+        filesize = 1.0 * size / 1024 / 1024;
+        
+    }else {
+        NSLog(@"文件不存在");
+    }
+    return filesize;
+}
+//获取视频文件的时长
+- (CGFloat)getVideoLength:(NSURL *)URL {
+    AVURLAsset *avUrl = [AVURLAsset assetWithURL:URL];
+    CMTime time = [avUrl duration];
+    int second = ceil(time.value/time.timescale);
+    return second;
+}
+
 /*
 #pragma mark - Navigation
 

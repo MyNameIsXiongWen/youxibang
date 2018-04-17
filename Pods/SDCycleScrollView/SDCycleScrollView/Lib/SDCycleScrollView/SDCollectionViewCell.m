@@ -72,6 +72,17 @@
     UIImageView *imageView = [[UIImageView alloc] init];
     _imageView = imageView;
     [self.contentView addSubview:imageView];
+    UIView *bkgView = [[UIView alloc] init];
+    bkgView.backgroundColor = UIColor.blackColor;
+    bkgView.alpha = 0.2;
+    _videoBackGroundView = bkgView;
+    [self.contentView addSubview:bkgView];
+    UIImageView *playImageView = [[UIImageView alloc] init];
+    playImageView.contentMode = UIViewContentModeCenter;
+    playImageView.userInteractionEnabled = YES;
+    playImageView.image = [UIImage imageNamed:@"video_play"];
+    _videoPlayImageView = playImageView;
+    [self.contentView addSubview:playImageView];
 }
 
 - (void)setupTitleLabel
@@ -110,6 +121,8 @@
         CGFloat titleLabelX = 0;
         CGFloat titleLabelY = self.sd_height - titleLabelH;
         _titleLabel.frame = CGRectMake(titleLabelX, titleLabelY, titleLabelW, titleLabelH);
+        _videoBackGroundView.frame = self.bounds;
+        _videoPlayImageView.frame = self.bounds;
     }
 }
 

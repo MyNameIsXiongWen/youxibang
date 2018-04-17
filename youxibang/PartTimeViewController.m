@@ -42,7 +42,7 @@
     self.gid = @"0";
     self.currentPage = 1;
     if (self.ptOrBaby){
-        self.title = @"游戏宝贝";
+        self.title = @"游戏达人";
     }
     [self downloadOther];
     [self downloadInfo];
@@ -108,8 +108,17 @@
     } failoperation:^(NSError *error) {
         [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
     }];
-    
-    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/gmlists.html",HttpURLString] Paremeters:nil successOperation:^(id object) {
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    if ([DataStore sharedDataStore].city) {
+        [dic setObject:[DataStore sharedDataStore].city forKey:@"city"];
+    }
+    if ([DataStore sharedDataStore].latitude) {
+        [dic setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+    }
+    if ([DataStore sharedDataStore].longitude) {
+        [dic setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+    }
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/gmlists.html",HttpURLString] Paremeters:dic successOperation:^(id object) {
         if (isKindOfNSDictionary(object)){
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
@@ -380,7 +389,7 @@
                 cycleScrollView.height = 350;
             }
             cycleScrollView.infiniteLoop = YES;
-            
+            cycleScrollView.hideBkgView = YES;
             cycleScrollView.delegate = self;
             cycleScrollView.tag = 100;
             cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;

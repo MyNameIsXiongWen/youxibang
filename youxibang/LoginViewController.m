@@ -46,20 +46,17 @@
     [btn addTarget:self action:@selector(changeLogin:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
     
-    
     //第三方登录通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(InfoNotificationAction:) name:@"threeLogin" object:nil];
-    
 }
 //返回首页
-- (void)back{
+- (void)back {
     [self.view endEditing:1];
-
     MainTabBarController *minTa = [[MainTabBarController alloc] init];
     [minTa setupChildVcs];
     self.view.window.rootViewController = minTa;
 }
--(void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     //如果未安装微信或qq，隐藏按键
     if (![WXApi isWXAppInstalled]) {
@@ -68,7 +65,6 @@
 //    if (!([TencentOAuth iphoneQQInstalled] || [TencentOAuth iphoneTIMInstalled])) {
 //        self.qqBtn.hidden = YES;
 //    }
-    
     //自定义返回键，因为要重写返回方法
     UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
     img.image = [UIImage imageNamed:@"back"];
@@ -76,6 +72,21 @@
     [leftBtn addSubview:img];
     [leftBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
+    if (self.phoneNumberString && (self.passwordString || self.codeString)) {
+        if (!self.codeOrPassword){
+            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+            [dict setObject:self.phoneNumberString forKey:@"mobile"];
+            [dict setObject:self.passwordString forKey:@"password"];
+            [dict setObject:@"0" forKey:@"typeid"];
+            [self lg:dict];
+        }else{
+            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+            [dict setObject:self.phoneNumberString forKey:@"mobile"];
+            [dict setObject:self.codeString forKey:@"smscode"];
+            [dict setObject:@"1" forKey:@"typeid"];
+            [self lg:dict];
+        }
+    }
 }
 //切换登录模式
 - (void)changeLogin:(UIButton *)sender {
@@ -94,6 +105,7 @@
     self.threeToken = userInfo[@"threetoken"];
     [self lg:userInfo];
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -104,18 +116,13 @@
         [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号码"];
         return;
     }
-    
     [self gainCodeRequest:self.phoneNumber.text];
 }
 
--(void)gainCodeRequest:(NSString *)phoneString
-{
-    
+- (void)gainCodeRequest:(NSString *)phoneString {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:phoneString forKey:@"mobile"];
-    //        [dict setObject:@"send" forKey:@"act"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/sendsms",HttpURLString] Paremeters:dict successOperation:^(id object) {
-        
         NSInteger code = [object[@"errcode"] integerValue];
         NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]];
         NSLog(@"验证码输出 %@--%@",object,msg);
@@ -132,14 +139,12 @@
                 countDownButton.enabled = YES;
                 return @"获取验证码";
             }];
-        }else
-        {
+        }else {
             [SVProgressHUD showErrorWithStatus:msg];
             
         }
     } failoperation:^(NSError *error) {
         NSLog(@"errr %@",error);
-        
     }];
 }
 
@@ -159,17 +164,20 @@
         [self lg:dict];
     }
 }
+
 //注册按钮
 - (IBAction)signBtn:(id)sender {
     SignViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"sign"];
     vc.type = @"0";
     [self.navigationController pushViewController:vc animated:1];
 }
+
 //忘记密码
 - (IBAction)forgotPassword:(id)sender {
     ForgotPasswordViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"fpw"];
     [self.navigationController pushViewController:vc animated:1];
 }
+
 //微信登录
 - (IBAction)wxLogin:(id)sender {
     if ([WXApi isWXAppInstalled]) {
@@ -181,6 +189,7 @@
         [SVProgressHUD showErrorWithStatus:@"未安装微信"];
     }
 }
+
 //qq登录
 - (IBAction)qqLogin:(id)sender {
     self.tencentOAuth = [[TencentOAuth alloc] initWithAppId:QQ_OPEN_ID andDelegate:self];
@@ -190,7 +199,6 @@
 
 //登录主方法，传入登录所需的字典
 - (void)lg:(NSMutableDictionary*)dic{
-    
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     if ([DataStore sharedDataStore].city) {
@@ -213,7 +221,6 @@
             if (code == 1) {
                 NSDictionary* user = object[@"data"];
                 [self.view.window endEditing:YES];
-//                [SVProgressHUD showSuccessWithStatus:msg];
                 //单例注入数据
                 [DataStore sharedDataStore].userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
                 [DataStore sharedDataStore].mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
@@ -244,11 +251,8 @@
                         
                     }
                 }];
-
                 MainTabBarController *minTa = [[MainTabBarController alloc] init];
-                
                 self.view.window.rootViewController = minTa;
-
             }else if (code == 8){//验证码首次登录，设置密码
                 SetPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spw"];
                 vc.phoneNum = self.phoneNumber.text;
@@ -279,11 +283,9 @@
     if ([resp isKindOfClass:[SendAuthResp class]]) {
         SendAuthResp *temp = (SendAuthResp *)resp;
         [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx9409b172842c7d01&secret=e4a47d8a0bc2ba61fa2adb0091788e35&code=%@&grant_type=authorization_code",temp.code] Paremeters:nil successOperation:^(id response) {
-
             NSLog(@"绑定输出 %@",response);
             NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"2",@"typeid",response[@"openid"],@"threetoken",response[@"unionid"],@"unionid", nil]];
             [[NSNotificationCenter defaultCenter] postNotification:notification];
-
         } failoperation:^(NSError *error) {
             NSLog(@"errr %@",error);
         }];
@@ -291,9 +293,8 @@
 }
 
 #pragma mark - TencentSessionDelegate
-
 //登录成功回调
-- (void)tencentDidLogin{
+- (void)tencentDidLogin {
     if (_tencentOAuth.accessToken && 0 != [_tencentOAuth.accessToken length]){
         NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"3",@"typeid",[_tencentOAuth getUserOpenID],@"threetoken", nil]];
         [[NSNotificationCenter defaultCenter] postNotification:notification];
@@ -301,15 +302,15 @@
     }
 }
 //登录失败回调
-- (void)tencentDidNotLogin:(BOOL)cancelled{
+- (void)tencentDidNotLogin:(BOOL)cancelled {
     NSLog(@"登录失败");
 }
 //没有网络
-- (void)tencentDidNotNetWork{
+- (void)tencentDidNotNetWork {
     [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
 }
 //获取回调的用户信息
-- (void)getUserInfoResponse:(APIResponse *)response{
+- (void)getUserInfoResponse:(APIResponse *)response {
     
 }
 /*
@@ -323,14 +324,13 @@
 */
 //当用户按下return去键盘
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:YES];
 }
+
 @end

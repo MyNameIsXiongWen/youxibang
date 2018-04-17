@@ -12,13 +12,20 @@
 #import "PartTimeTableViewCell.h"
 #import "LoginViewController.h"
 #import "ZLPhotoPickerBrowserViewController.h"
+#import <AliyunVodPlayerSDK/AliyunVodPlayerSDK.h>
 
-@interface EmployeeDetailViewController ()<UITableViewDelegate,UITableViewDataSource,UIScrollViewDelegate, SDCycleScrollViewDelegate, ZLPhotoPickerBrowserViewControllerDelegate>
-@property (nonatomic,strong)UIView *nav;//渐显view
-@property (nonatomic,strong)NSMutableDictionary* dataInfo;
+@interface EmployeeDetailViewController ()<UITableViewDelegate,UITableViewDataSource,UIScrollViewDelegate, SDCycleScrollViewDelegate, ZLPhotoPickerBrowserViewControllerDelegate,AliyunVodPlayerDelegate>
+@property (nonatomic,strong) UIView *nav;//渐显view
+@property (nonatomic,strong) NSMutableDictionary* dataInfo;
+@property (nonatomic,strong) AliyunVodPlayer *aliPlayer;
+@property (nonatomic,strong) UIView *playerView;//播放view
 @end
 
 @implementation EmployeeDetailViewController
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -58,9 +65,87 @@
         confirm.tag = 101;
         [confirm addTarget:self action:@selector(conBtn:) forControlEvents:UIControlEventTouchUpInside];
     }
-    
     [self downloadInfo];
+    
+    [self configMediaPlayer];
 }
+
+- (void)configMediaPlayer {
+    //创建播放器对象，可以创建多个示例
+    self.aliPlayer = [[AliyunVodPlayer alloc] init];
+    //设置播放器代理
+    self.aliPlayer.delegate = self;
+}
+
+- (void)vodPlayer:(AliyunVodPlayer *)vodPlayer onEventCallback:(AliyunVodPlayerEvent)event{
+    //这里监控播放事件回调
+    //主要事件如下：
+    switch (event) {
+        case AliyunVodPlayerEventPrepareDone:
+            //播放准备完成时触发
+            //开始播放
+            [self.aliPlayer start];
+            break;
+        case AliyunVodPlayerEventPlay:
+            //暂停后恢复播放时触发
+            break;
+        case AliyunVodPlayerEventFirstFrame:
+            //播放视频首帧显示出来时触发
+            break;
+        case AliyunVodPlayerEventPause:
+            //视频暂停时触发
+            break;
+        case AliyunVodPlayerEventStop:
+            //主动使用stop接口时触发
+            break;
+        case AliyunVodPlayerEventFinish:
+            //视频正常播放完成时触发
+            [self.playerView removeFromSuperview];
+            break;
+        case AliyunVodPlayerEventBeginLoading:
+            //视频开始载入时触发
+            [SVProgressHUD dismiss];
+            [SVProgressHUD setDefaultMaskType:1];
+            break;
+        case AliyunVodPlayerEventEndLoading:
+            //视频加载完成时触发
+            break;
+        case AliyunVodPlayerEventSeekDone:
+            //视频Seek完成时触发
+            break;
+        default:
+            break;
+    }
+}
+- (void)vodPlayer:(AliyunVodPlayer *)vodPlayer playBackErrorModel:(ALPlayerVideoErrorModel *)errorModel{
+    //播放出错时触发，通过errorModel可以查看错误码、错误信息、视频ID、视频地址和requestId。
+}
+- (void)vodPlayer:(AliyunVodPlayer*)vodPlayer willSwitchToQuality:(AliyunVodPlayerVideoQuality)quality{
+    //将要切换清晰度时触发
+}
+- (void)vodPlayer:(AliyunVodPlayer *)vodPlayer didSwitchToQuality:(AliyunVodPlayerVideoQuality)quality{
+    //清晰度切换完成后触发
+}
+- (void)vodPlayer:(AliyunVodPlayer*)vodPlayer failSwitchToQuality:(AliyunVodPlayerVideoQuality)quality{
+    //清晰度切换失败触发
+}
+- (void)onCircleStartWithVodPlayer:(AliyunVodPlayer*)vodPlayer{
+    //开启循环播放功能，开始循环播放时接收此事件。
+}
+- (void)onTimeExpiredErrorWithVodPlayer:(AliyunVodPlayer *)vodPlayer{
+    //播放器鉴权数据过期回调，出现过期可重新prepare新的地址或进行UI上的错误提醒。
+}
+/*
+ *功能：播放过程中鉴权即将过期时提供的回调消息（过期前一分钟回调）
+ *参数：videoid：过期时播放的videoId
+ *参数：quality：过期时播放的清晰度，playauth播放方式和STS播放方式有效。
+ *参数：videoDefinition：过期时播放的清晰度，MPS播放方式时有效。
+ *备注：使用方法参考高级播放器-点播。
+ */
+- (void)vodPlayerPlaybackAddressExpiredWithVideoId:(NSString *)videoId quality:(AliyunVodPlayerVideoQuality)quality videoDefinition:(NSString*)videoDefinition{
+    //鉴权有效期为2小时，在这个回调里面可以提前请求新的鉴权，stop上一次播放，prepare新的地址，seek到当前位置
+}
+
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = YES;
@@ -98,7 +183,6 @@
                     [SVProgressHUD showErrorWithStatus:msg];
                 }
             }
-            
         } failoperation:^(NSError *error) {
             
             [SVProgressHUD dismiss];
@@ -207,8 +291,7 @@
     }
     return 225 * ADAPTATIONRATIO;
 }
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-    
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView* hv = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 45) andColor:[UIColor whiteColor] andView:nil];
     if (section > 0){
         UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, SCREEN_WIDTH, 10) andText:@"" andColor:nil andView:hv];
@@ -226,21 +309,40 @@
     }else{
         hv.frame = CGRectMake(0, 0, SCREEN_WIDTH, 225 * ADAPTATIONRATIO);
         //轮播图
-        NSArray *bgImgAry = [NSArray array];
+        NSMutableArray *bgImgAry = [NSMutableArray array];
+        BOOL existBgimg = NO;
+        BOOL existVideo = NO;
         if (self.dataInfo) {
-            if ([self.dataInfo[@"bgimg"] count]>0) {
-                bgImgAry = self.dataInfo[@"bgimg"];
+            if (self.dataInfo[@"bgimg"]) {
+                if ([self.dataInfo[@"bgimg"] count]>0) {
+                    existBgimg = YES;
+                }
             }
-            else {
-                bgImgAry = @[@"img_my111"];
+            if (self.dataInfo[@"video"]) {
+                if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
+                    if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
+                        if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] || self.dataInfo[@"video"][@"VideoMeta"][@"VideoId"]) {
+                            existVideo = YES;
+                        }
+                    }
+                }
+            }
+        }
+        if (existBgimg) {
+            for (NSString *str in self.dataInfo[@"bgimg"]) {
+                [bgImgAry addObject:str];
             }
         }
         else {
-            bgImgAry = @[@"img_my111"];
+            bgImgAry = @[@"img_my111"].mutableCopy;
+        }
+        if (existVideo) {
+            [bgImgAry insertObject:self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] atIndex:0];
         }
         SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, CGRectGetHeight(hv.frame)) imageNamesGroup:bgImgAry];
         cycleScrollView.infiniteLoop = YES;
         cycleScrollView.delegate = self;
+        cycleScrollView.hideBkgView = NO;
         cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
         [hv addSubview:cycleScrollView];
         
@@ -439,6 +541,33 @@
 #pragma mark - otherDelegate/DataSource
 
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index {
+    BOOL existVideo = NO;
+    if (self.dataInfo) {
+        if (self.dataInfo[@"video"]) {
+            if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
+                if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
+                    if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] || self.dataInfo[@"video"][@"VideoMeta"][@"VideoId"]) {
+                        existVideo = YES;
+                    }
+                }
+            }
+        }
+    }
+    if (existVideo) {
+        if (index == 0) {
+//            播放视频
+            [self start];
+        }
+        else {
+            [self clickPhotoWithIndex:index-1];
+        }
+    }
+    else {
+        [self clickPhotoWithIndex:index];
+    }
+}
+
+- (void)clickPhotoWithIndex:(NSInteger)index {
     ZLPhotoPickerBrowserViewController *pickerBrowser = [[ZLPhotoPickerBrowserViewController alloc] init];
     // 淡入淡出效果
     pickerBrowser.status = UIViewAnimationAnimationStatusFade;
@@ -470,8 +599,58 @@
     }
 }
 
-- (void) photoBrowser:(ZLPhotoPickerBrowserViewController *)pickerBrowser photoDidSelectView:(UIView *)scrollBoxView atIndex:(NSInteger)index {
+- (void)photoBrowser:(ZLPhotoPickerBrowserViewController *)pickerBrowser photoDidSelectView:(UIView *)scrollBoxView atIndex:(NSInteger)index {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)start{
+    //使用vid+STS方式播放（点播用户推荐使用）
+    if (self.aliPlayer.playerState == 4) {
+        [self.aliPlayer resume];
+    }
+    else if (self.aliPlayer.playerState == 6) {
+        [self.aliPlayer replay];
+    }
+    else {
+        [self getVideoUploadToken];
+    }
+    self.playerView = self.aliPlayer.playerView;
+    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    //添加播放器视图到需要展示的界面上
+    [self.view addSubview:self.playerView];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPlayerView)];
+    [self.playerView addGestureRecognizer:tap];
+}
+
+- (void)tapPlayerView {
+    [self.aliPlayer pause];
+    [self.playerView removeFromSuperview];
+}
+
+- (void)getVideoUploadToken {
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
+        if (isKindOfNSDictionary(response)) {
+            NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
+            NSString *str = [response objectForKey:@"message"];
+            if (msg == 1) {
+                NSDictionary *tokenDictionary = (NSDictionary *)response;
+                [self.aliPlayer prepareWithVid:self.dataInfo[@"video"][@"VideoMeta"][@"VideoId"]
+                                   accessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"]
+                               accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"]
+                                 securityToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"]];
+            }else{
+                [SVProgressHUD showErrorWithStatus:str];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+    }];
 }
 
 /*

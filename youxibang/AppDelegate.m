@@ -24,12 +24,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //iconfont注册
     [TBCityIconFont setFontName:@"iconfont"];
-    
     //从userdefault中获取信息自动登录
     NSDictionary *user =  [UserNameTool readLoginData];
-    
-    if (user.count)
-    {
+    if (user.count) {
         [self lg:user];
     }
     //微信注册

@@ -20,5 +20,7 @@ target'youxibang'do
     
     pod 'MJExtension', '~> 3.0.10'
     pod 'Colours'
+    pod 'VODUpload'
+    pod 'AliyunPlayer_iOS/AliyunVodPlayerSDK'
     
 end

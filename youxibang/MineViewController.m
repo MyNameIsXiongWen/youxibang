@@ -88,6 +88,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, CGRectGetHeight(headerView.frame)) imageNamesGroup:bgImgAry];
     cycleScrollView.infiniteLoop = YES;
     cycleScrollView.delegate = self;
+    cycleScrollView.hideBkgView = NO;
     cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
     [headerView addSubview:cycleScrollView];
     

@@ -135,7 +135,7 @@
             btn.layer.masksToBounds = YES;
             btn.titleLabel.font = [UIFont systemFontOfSize:13];
         }else if ([[NSString stringWithFormat:@"%@",dic[@"partstatus"]] isEqualToString:@"2"]){
-            UIButton* btn = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH - 75, 8, 65, 25) andText:@"选择宝贝" andColor:[UIColor whiteColor] andimg:nil andView:self.btnView];
+            UIButton* btn = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH - 75, 8, 65, 25) andText:@"选择达人" andColor:[UIColor whiteColor] andimg:nil andView:self.btnView];
             [btn addTarget:self action:@selector(touchBtn:) forControlEvents:UIControlEventTouchUpInside];
             btn.backgroundColor = Nav_color;
             btn.layer.cornerRadius = 10;
