@@ -283,8 +283,15 @@
     // 向微信请求授权后,得到响应结果
     if ([resp isKindOfClass:[SendAuthResp class]]) {
         SendAuthResp *temp = (SendAuthResp *)resp;
-        [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx9409b172842c7d01&secret=e4a47d8a0bc2ba61fa2adb0091788e35&code=%@&grant_type=authorization_code",temp.code] Paremeters:nil successOperation:^(id response) {
+        [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",WX_APP_ID,WX_APP_SECRET,temp.code] Paremeters:nil successOperation:^(id response) {
             NSLog(@"绑定输出 %@",response);
+            
+//            [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%@&grant_type=refresh_token&refresh_token=%@",WX_APP_ID,response[@"refresh_token"]] Paremeters:nil successOperation:^(id response) {
+//                NSLog(@"绑定输出 %@",response);
+//            } failoperation:^(NSError *error) {
+//                NSLog(@"errr %@",error);
+//            }];
+            
             NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"2",@"typeid",response[@"openid"],@"threetoken",response[@"unionid"],@"unionid", nil]];
             [[NSNotificationCenter defaultCenter] postNotification:notification];
         } failoperation:^(NSError *error) {

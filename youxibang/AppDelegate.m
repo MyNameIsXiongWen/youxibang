@@ -30,7 +30,7 @@
         [self lg:user];
     }
     //微信注册
-    [WXApi registerApp:@"wx9409b172842c7d01"];
+    [WXApi registerApp:WX_APP_ID];
     //talkingdata注册
     [TalkingData sessionStarted:@"7AF6493B08F141FC8EF2450B65B3C0B2" withChannelId:@"iOS正式版"];
     [TalkingData setExceptionReportEnabled:YES];
@@ -156,39 +156,39 @@
     return false;
 }
 //与上同
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
-    NSString *string =[url absoluteString];
-
-    if ([string hasPrefix:@"tencent"]){
-        return [TencentOAuth HandleOpenURL:url];
-    }else if ([string hasPrefix:@"alipayYouxibang://safepay/"]){
-        [[AlipaySDK defaultService] processOrderWithPaymentResult:url standbyCallback:^(NSDictionary *resultDic) {
-            if ([[NSString stringWithFormat:@"%@",resultDic[@"resultStatus"]] isEqualToString:@"9000"]){
-                NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
-                [[NSNotificationCenter defaultCenter] postNotification:notification];
-            }
-        }];
-
-    }else if ([string hasPrefix:@"wx9409b172842c7d01://pay/"]){
-        if ([string hasSuffix:@"ret=0"]){
-            NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
-            [[NSNotificationCenter defaultCenter] postNotification:notification];
-        }
-
+//- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
+//    NSString *string =[url absoluteString];
+//
+//    if ([string hasPrefix:@"tencent"]){
+//        return [TencentOAuth HandleOpenURL:url];
+//    }else if ([string hasPrefix:@"alipayYouxibang://safepay/"]){
+//        [[AlipaySDK defaultService] processOrderWithPaymentResult:url standbyCallback:^(NSDictionary *resultDic) {
+//            if ([[NSString stringWithFormat:@"%@",resultDic[@"resultStatus"]] isEqualToString:@"9000"]){
+//                NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
+//                [[NSNotificationCenter defaultCenter] postNotification:notification];
+//            }
+//        }];
+//
+//    }else if ([string hasPrefix:@"wx9409b172842c7d01://pay/"]){
+//        if ([string hasSuffix:@"ret=0"]){
+//            NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
+//            [[NSNotificationCenter defaultCenter] postNotification:notification];
+//        }
+//
+////        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+////        TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
+////        return [WXApi handleOpenURL:url delegate:vc];
+//        
+//    }else if ([string hasPrefix:@"wx"]){
+//        
 //        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//        TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
+//        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
 //        return [WXApi handleOpenURL:url delegate:vc];
-        
-    }else if ([string hasPrefix:@"wx"]){
-        
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-        return [WXApi handleOpenURL:url delegate:vc];
-
-    }
-    
-    return false;
-}
+//
+//    }
+//    
+//    return false;
+//}
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
     
