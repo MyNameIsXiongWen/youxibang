@@ -624,7 +624,6 @@
 
 //轮播图片点击事件
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index{
-    
     if ([NSString stringWithFormat:@"%@",self.bannerAry[index][@"link_lock"]].integerValue == 1){
         DSWebViewController* vc = [[DSWebViewController alloc]initWithURLSting: [NSString stringWithFormat:@"%@",self.bannerAry[index][@"detail"]]];
         vc.title = [NSString stringWithFormat:@"%@",self.bannerAry[index][@"ad_name"]];

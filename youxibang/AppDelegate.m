@@ -61,7 +61,6 @@
 }
 //自动登录方法
 - (void)lg:(NSDictionary*)dic{
-    
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/login.html",HttpURLString] Paremeters:dic successOperation:^(id object) {
@@ -74,6 +73,7 @@
             NSLog(@"登录输出 %@--%@",object,msg);
             if (code == 1) {
                 NSDictionary* user = object[@"data"];
+                [UserModel keyarchiveUertModelWithDict:user];
 
                 [DataStore sharedDataStore].userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
                 [DataStore sharedDataStore].mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];

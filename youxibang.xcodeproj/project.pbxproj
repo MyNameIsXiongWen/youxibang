@@ -161,9 +161,9 @@
 		878323D9207CB2EB0048E4E9 /* SDCityPickerCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323CE207CB2EB0048E4E9 /* SDCityPickerCollectionView.m */; };
 		878323DA207CB2EB0048E4E9 /* SDCityPickerTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323D0207CB2EB0048E4E9 /* SDCityPickerTableView.m */; };
 		878323DB207CB2EB0048E4E9 /* SDCityPickerTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323D2207CB2EB0048E4E9 /* SDCityPickerTableViewCell.m */; };
+		87A285742087128900AF966B /* UserModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A285732087128900AF966B /* UserModel.m */; };
 		87B273A420805A1B00E80019 /* LPDImageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87B273A220805A1B00E80019 /* LPDImageTableViewCell.m */; };
 		87B273A520805A1B00E80019 /* LPDImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87B273A320805A1B00E80019 /* LPDImageTableViewCell.xib */; };
-		87B273A72084BE7C00E80019 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 87B273A62084BE7C00E80019 /* 1.png */; };
 		87B273AD2085F89B00E80019 /* LocationTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87B273AC2085F89B00E80019 /* LocationTableViewCell.m */; };
 		8D6039412081CABD00336B65 /* UIImage+ZLPhotoLib.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6038F62081CABD00336B65 /* UIImage+ZLPhotoLib.m */; };
 		8D6039422081CABD00336B65 /* DALabeledCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6038F82081CABD00336B65 /* DALabeledCircularProgressView.m */; };
@@ -491,10 +491,11 @@
 		878323D0207CB2EB0048E4E9 /* SDCityPickerTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCityPickerTableView.m; sourceTree = "<group>"; };
 		878323D1207CB2EB0048E4E9 /* SDCityPickerTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCityPickerTableViewCell.h; sourceTree = "<group>"; };
 		878323D2207CB2EB0048E4E9 /* SDCityPickerTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCityPickerTableViewCell.m; sourceTree = "<group>"; };
+		87A285722087128900AF966B /* UserModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserModel.h; sourceTree = "<group>"; };
+		87A285732087128900AF966B /* UserModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserModel.m; sourceTree = "<group>"; };
 		87B273A120805A1B00E80019 /* LPDImageTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPDImageTableViewCell.h; sourceTree = "<group>"; };
 		87B273A220805A1B00E80019 /* LPDImageTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LPDImageTableViewCell.m; sourceTree = "<group>"; };
 		87B273A320805A1B00E80019 /* LPDImageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LPDImageTableViewCell.xib; sourceTree = "<group>"; };
-		87B273A62084BE7C00E80019 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
 		87B273AB2085F89B00E80019 /* LocationTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationTableViewCell.h; sourceTree = "<group>"; };
 		87B273AC2085F89B00E80019 /* LocationTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationTableViewCell.m; sourceTree = "<group>"; };
 		8D6038F62081CABD00336B65 /* UIImage+ZLPhotoLib.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ZLPhotoLib.m"; sourceTree = "<group>"; };
@@ -652,7 +653,6 @@
 				1873625D201030A80045EF9E /* Assets.xcassets */,
 				1873625F201030A80045EF9E /* LaunchScreen.storyboard */,
 				18736262201030A80045EF9E /* Info.plist */,
-				87B273A62084BE7C00E80019 /* 1.png */,
 				18736263201030A80045EF9E /* main.m */,
 				1873630F2010366D0045EF9E /* PrefixHeader.pch */,
 			);
@@ -815,6 +815,8 @@
 				187362D9201031450045EF9E /* DataStore.m */,
 				187362DA201031450045EF9E /* UserNameTool.h */,
 				187362DB201031450045EF9E /* UserNameTool.m */,
+				87A285722087128900AF966B /* UserModel.h */,
+				87A285732087128900AF966B /* UserModel.m */,
 			);
 			path = UserDefault;
 			sourceTree = "<group>";
@@ -1662,7 +1664,6 @@
 				878323D6207CB2EB0048E4E9 /* City.plist in Resources */,
 				187362FB201031450045EF9E /* AlipaySDK.bundle in Resources */,
 				874D1FBD207B4D2C0076A5AA /* MineTableViewCell.xib in Resources */,
-				87B273A72084BE7C00E80019 /* 1.png in Resources */,
 				18C8B4752016CDFB0028853C /* iconfont.ttf in Resources */,
 				18736261201030A80045EF9E /* LaunchScreen.storyboard in Resources */,
 				1873625E201030A80045EF9E /* Assets.xcassets in Resources */,
@@ -1797,6 +1798,7 @@
 				5E5DF4D9203A9A9700211F7F /* EvaluateViewController.m in Sources */,
 				18F6D0502022F6410001917B /* TopUpAndWithdrawViewController.m in Sources */,
 				874E3356207DBAAE006F0AAD /* UploadParam.m in Sources */,
+				87A285742087128900AF966B /* UserModel.m in Sources */,
 				18B398F9201ABE72004E09ED /* NumberTableViewCell.m in Sources */,
 				18F22CD02040E8F000B74B65 /* LPDPhotoPreviewController.m in Sources */,
 				18F6D06F2025B5240001917B /* RealNameViewController.m in Sources */,

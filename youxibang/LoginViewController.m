@@ -220,6 +220,7 @@
             NSLog(@"登录输出 %@--%@",object,msg);
             if (code == 1) {
                 NSDictionary* user = object[@"data"];
+                [UserModel keyarchiveUertModelWithDict:user];
                 [self.view.window endEditing:YES];
                 //单例注入数据
                 [DataStore sharedDataStore].userid = [NSString stringWithFormat:@"%@",user[@"userid"]];

@@ -246,13 +246,13 @@
 //        [self.navigationController popViewControllerAnimated:1];
 //    }else if ([self.type isEqualToString:@"OrderViewController"]){
     [UserNameTool reloadPersonalData:nil];
-        CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"支付完成，即将跳转到个人页面。" AndType:0];
-        alert.resultIndex = ^(NSInteger index) {
-            NSNotification *notification = [NSNotification notificationWithName:@"pushMineView" object:nil userInfo:nil];
-            [[NSNotificationCenter defaultCenter] postNotification:notification];
-            [self.navigationController popToRootViewControllerAnimated:1];
-        };
-        [alert showAlertView];
+    CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"支付完成，即将跳转到个人页面。" AndType:0];
+    alert.resultIndex = ^(NSInteger index) {
+        NSNotification *notification = [NSNotification notificationWithName:@"pushMineView" object:nil userInfo:nil];
+        [[NSNotificationCenter defaultCenter] postNotification:notification];
+        [self.navigationController popToRootViewControllerAnimated:1];
+    };
+    [alert showAlertView];
 //    }
 }
 #pragma mark - tableViewDelegate/DataSource

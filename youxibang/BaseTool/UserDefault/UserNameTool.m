@@ -11,13 +11,11 @@
 @implementation UserNameTool
 
 + (void)saveLoginData:(NSDictionary *)dic {
-    
     [[NSUserDefaults standardUserDefaults] setObject:dic forKey:@"loginInfo"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+(void)updateSomeData:(NSDictionary *)dic{
-
++ (void)updateSomeData:(NSDictionary *)dic {
     NSMutableDictionary *oldDic = [[[NSUserDefaults standardUserDefaults] objectForKey:@"loginInfo"] mutableCopy];
     [oldDic addEntriesFromDictionary:dic];
     [[NSUserDefaults standardUserDefaults] setObject:oldDic forKey:@"loginInfo"];
@@ -25,13 +23,10 @@
 }
 
 + (NSMutableDictionary *)readLoginData {
-    
     return [[[NSUserDefaults standardUserDefaults] objectForKey:@"loginInfo"] mutableCopy];
 }
 
-
-+(void)updatePersonalData:(NSDictionary *)dic{
-
++ (void)updatePersonalData:(NSDictionary *)dic {
     NSMutableDictionary *oldDic = [[[NSUserDefaults standardUserDefaults] objectForKey:@"personalInfo"] mutableCopy];
     if (!oldDic){
         oldDic = [NSMutableDictionary dictionary];
@@ -41,25 +36,23 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 
 }
-+ (NSMutableDictionary *)readPersonalData {
 
++ (NSMutableDictionary *)readPersonalData {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:@"personalInfo"] mutableCopy];
 }
 
-+ (void)loginStatus:(BOOL)login{
-    
++ (void)loginStatus:(BOOL)login {
     [[NSUserDefaults standardUserDefaults] setBool:login forKey:@"isLogin"];
 
 }
 
-+ (BOOL)isLogin{
-    
++ (BOOL)isLogin {
    return  [[NSUserDefaults standardUserDefaults] boolForKey:@"isLogin"];
     
 }
+
 //清除历史记录数据
 + (void)cleanloginData {
-    
 //    NSArray *paths=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
 //    NSString *path=[paths objectAtIndex:0];
 //        NSLog(@"path = %@",path);
@@ -70,7 +63,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"loginInfo"];
 }
 
-+ (void)reloadPersonalData:(void (^ __nullable)(void))completion{
++ (void)reloadPersonalData:(void (^ __nullable)(void))completion {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/userinfo.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -82,6 +75,7 @@
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {
                 NSMutableDictionary* dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
+                [UserModel keyarchiveUertModelWithDict:dataInfo];
                 [UserNameTool updatePersonalData:dataInfo];
                 if (completion){
                     completion();
@@ -93,4 +87,5 @@
     } failoperation:^(NSError *error) {
     }];
 }
+
 @end

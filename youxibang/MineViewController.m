@@ -57,7 +57,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = YES;
-    //刷新个人信息
+    //刷新个人信息 
     [UserNameTool reloadPersonalData:^{
         self.dataInfo = [UserNameTool readPersonalData];
         self.tableView.tableHeaderView = [self configTableViewHeaderView];
