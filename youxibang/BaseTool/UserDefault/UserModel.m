@@ -66,7 +66,7 @@ static dispatch_once_t onceToken;
     return shareUser;
 }
 
-+ (void)keyarchiveUertModelWithDict:(NSDictionary *)dict {
++ (void)keyarchiveUserModelWithDict:(NSDictionary *)dict {
     [UserModel teardown];
     UserModel *model = [UserModel mj_objectWithKeyValues:dict];
     NSMutableData *data = [NSMutableData data];

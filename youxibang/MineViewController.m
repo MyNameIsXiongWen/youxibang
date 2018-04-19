@@ -23,7 +23,7 @@
 
 @interface MineViewController ()<UITableViewDataSource,UITableViewDelegate,TopUpTableViewCellDelegate, SDCycleScrollViewDelegate>
 
-@property (nonatomic,strong)NSMutableDictionary *dataInfo;
+//@property (nonatomic,strong)NSMutableDictionary *dataInfo;
 
 @end
 
@@ -59,7 +59,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     self.navigationController.navigationBar.hidden = YES;
     //刷新个人信息 
     [UserNameTool reloadPersonalData:^{
-        self.dataInfo = [UserNameTool readPersonalData];
+//        self.dataInfo = [UserNameTool readPersonalData];
         self.tableView.tableHeaderView = [self configTableViewHeaderView];
         [self.tableView reloadData];
     }];
@@ -74,17 +74,24 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 225 * ADAPTATIONRATIO)];
     //轮播图
     NSArray *bgImgAry = [NSArray array];
-    if (self.dataInfo) {
-        if ([self.dataInfo[@"bgimg"] count]>0) {
-            bgImgAry = self.dataInfo[@"bgimg"];
-        }
-        else {
-            bgImgAry = @[@"img_my111"];
-        }
+    UserModel *userModel = UserModel.sharedUser;
+    if (userModel.bgimg.count > 0) {
+        bgImgAry = userModel.bgimg;
     }
     else {
         bgImgAry = @[@"img_my111"];
     }
+//    if (self.dataInfo) {
+//        if ([self.dataInfo[@"bgimg"] count]>0) {
+//            bgImgAry = self.dataInfo[@"bgimg"];
+//        }
+//        else {
+//            bgImgAry = @[@"img_my111"];
+//        }
+//    }
+//    else {
+//        bgImgAry = @[@"img_my111"];
+//    }
     SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, CGRectGetHeight(headerView.frame)) imageNamesGroup:bgImgAry];
     cycleScrollView.infiniteLoop = YES;
     cycleScrollView.delegate = self;
@@ -127,29 +134,44 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         make.left.equalTo(sex.mas_right).offset(10);
         make.size.mas_equalTo(CGSizeMake(17, 15));
     }];
-    if (self.dataInfo){
-        [photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
-        name.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
-        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"sex"]].integerValue == 1){
-            sex.text = [NSString stringWithFormat:@" ♂%@岁 ",self.dataInfo[@"age"]];
-            sex.backgroundColor = Nav_color;
-        }else{
-            sex.text = [NSString stringWithFormat:@" ♀%@岁 ",self.dataInfo[@"age"]];
-            sex.backgroundColor = Pink_color;
-        }
-        [sex sizeToFit];
-        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_vip"]].integerValue == 1){
-            vipImg.selected = YES;
-        }else{
-            vipImg.selected = NO;
-        }
+//    if (self.dataInfo){
+//        [photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+//        name.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
+//        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"sex"]].integerValue == 1){
+//            sex.text = [NSString stringWithFormat:@" ♂%@岁 ",self.dataInfo[@"age"]];
+//            sex.backgroundColor = Nav_color;
+//        }else{
+//            sex.text = [NSString stringWithFormat:@" ♀%@岁 ",self.dataInfo[@"age"]];
+//            sex.backgroundColor = Pink_color;
+//        }
+//        [sex sizeToFit];
+//        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_vip"]].integerValue == 1){
+//            vipImg.selected = YES;
+//        }else{
+//            vipImg.selected = NO;
+//        }
+//    }
+    [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+    name.text = userModel.nickname;
+    if (userModel.sex.integerValue == 1){
+        sex.text = [NSString stringWithFormat:@" ♂%@岁 ",userModel.age];
+        sex.backgroundColor = Nav_color;
+    }else{
+        sex.text = [NSString stringWithFormat:@" ♀%@岁 ",userModel.age];
+        sex.backgroundColor = Pink_color;
+    }
+    [sex sizeToFit];
+    if (userModel.is_vip.integerValue == 1){
+        vipImg.selected = YES;
+    }else{
+        vipImg.selected = NO;
     }
     return headerView;
 }
 
 - (void)refreshHead {
     [UserNameTool reloadPersonalData:^{
-        self.dataInfo = [UserNameTool readPersonalData];
+//        self.dataInfo = [UserNameTool readPersonalData];
         self.tableView.tableHeaderView = [self configTableViewHeaderView];
         [self.tableView reloadData];
     }];
@@ -163,7 +185,12 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 //跳转加V页面
 - (void)applyVip {
-    if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_vip"]].integerValue != 1){
+//    if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_vip"]].integerValue != 1){
+//        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//        ApplyForVipViewController* vc = [sb instantiateViewControllerWithIdentifier:@"afv"];
+//        [self.navigationController pushViewController:vc animated:1];
+//    }
+    if (UserModel.sharedUser.is_vip.integerValue != 1){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         ApplyForVipViewController* vc = [sb instantiateViewControllerWithIdentifier:@"afv"];
         [self.navigationController pushViewController:vc animated:1];
@@ -174,7 +201,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 - (void)changeInfo:(id)sender {
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PersonalInfoViewController* vc = [sb instantiateViewControllerWithIdentifier:@"pi"];
-    vc.dataInfo = self.dataInfo;
+//    vc.dataInfo = self.dataInfo;
     [self.navigationController pushViewController:vc animated:1];
     
 }
@@ -240,7 +267,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     if (indexPath.section == 0 && indexPath.row == 0){
         cell.accessoryType = UITableViewCellAccessoryNone;
         //余额数字显示
-        NSMutableAttributedString *mAttStr = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"余额%@元",(self.dataInfo[@"user_money"]) ? (self.dataInfo[@"user_money"]) : @"0"]];
+        NSMutableAttributedString *mAttStr = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"余额%@元",UserModel.sharedUser.user_money ? : @"0"]];
         [mAttStr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:14] range:NSMakeRange(2, mAttStr.length - 3)];
         [mAttStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(2, mAttStr.length - 3)];
         cell.rightLabel.attributedText = mAttStr;
@@ -249,7 +276,9 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     }else if (indexPath.section == 1 && indexPath.row == 5){
         //邀请码
         cell.rightLabel.text = @"EE0F85D131C1";
+        cell.rightLabelTrailingConstraint.constant = 15;
     }else{
+        cell.rightLabel.text = @"";
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     cell.leftLabel.text = ary[indexPath.section][indexPath.row];
@@ -264,7 +293,8 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
             MyTaskViewController* vc = [[MyTaskViewController alloc]init];
             [self.navigationController pushViewController:vc animated:1];
         }else if (indexPath.row == 1){//实名认证或者个人技能
-            if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_realauth"]].integerValue == 1){
+//            if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_realauth"]].integerValue == 1){
+            if ([UserModel sharedUser].is_realauth.integerValue == 1){
                 MySkillViewController *vc = [[MySkillViewController alloc]init];
                 [self.navigationController pushViewController:vc animated:1];
             }else{

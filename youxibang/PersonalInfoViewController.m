@@ -43,12 +43,18 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     self.title = @"完善信息";
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerNib:[UINib nibWithNibName:@"MineTableViewCell" bundle:nil] forCellReuseIdentifier:PERSONAL_TABLEVIEW_IDENTIFIER];
-    self.picArray = [[NSMutableArray alloc] initWithArray:self.dataInfo[@"bgimg"]];
+//    self.picArray = [[NSMutableArray alloc] initWithArray:self.dataInfo[@"bgimg"]];
+    self.picArray = [[NSMutableArray alloc] initWithArray:UserModel.sharedUser.bgimg];
     
     self.client = [[VODUploadSVideoClient alloc] init];
     self.client.delegate = self;
     self.client.transcode = YES;
     [self getVideoUploadToken:NO UploadVideo:NO VideoPath:@"" ImagePath:@"" VideoInfo:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 - (void)configPhotoImageViewWithCell:(UITableViewCell *)cell {
@@ -288,14 +294,24 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         photoImg.layer.masksToBounds = YES;
         UIImageView *videoImg = [cell viewWithTag:3];
         videoImg.layer.masksToBounds = YES;
-        if (self.dataInfo){
-            [photoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
-            if (self.dataInfo[@"video"]) {
-                if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
-                    if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
-                        if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"]) {
-                            [videoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"]]] placeholderImage:[UIImage imageNamed:@"add_video"]];
-                        }
+//        if (self.dataInfo){
+//            [photoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
+//            if (self.dataInfo[@"video"]) {
+//                if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
+//                    if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
+//                        if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"]) {
+//                            [videoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"]]] placeholderImage:[UIImage imageNamed:@"add_video"]];
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        [photoImg sd_setImageWithURL:[NSURL URLWithString:UserModel.sharedUser.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
+        if (UserModel.sharedUser.video) {
+            if (isKindOfNSDictionary(UserModel.sharedUser.video)) {
+                if (isKindOfNSDictionary(UserModel.sharedUser.video[@"VideoMeta"])) {
+                    if (UserModel.sharedUser.video[@"VideoMeta"][@"CoverURL"]) {
+                        [videoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",UserModel.sharedUser.video[@"VideoMeta"][@"CoverURL"]]] placeholderImage:[UIImage imageNamed:@"add_video"]];
                     }
                 }
             }
@@ -324,9 +340,18 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         return cell;
     }
     else {
+        NSString *interest = @"";
+        NSMutableArray *temp = NSMutableArray.array;
+        for (int i = 0;i < UserModel.sharedUser.interest.count; i++){
+            NSDictionary* dic = UserModel.sharedUser.interest[i];
+            if ([dic[@"selected"] integerValue] == 1){
+                [temp addObject:dic[@"name"]];
+            }
+        }
+        interest = [temp componentsJoinedByString:@","];
         NSArray* title = @[@"昵称",@"生日",@"性别",@"签名",@"兴趣爱好"];
         NSArray* img = @[@"ico_nc",@"ico_sr",@"ico_xb",@"ico_qm",@"ico_ah"];
-        NSArray* detail = @[self.dataInfo?self.dataInfo[@"nickname"]:@"",self.dataInfo?self.dataInfo[@"birthday"]:@"",self.dataInfo?self.dataInfo[@"sexstr"]:@"",@"",@""];
+        NSArray* detail = @[UserModel.sharedUser.nickname?:@"",UserModel.sharedUser.birthday?:@"",UserModel.sharedUser.sexstr?:@"",UserModel.sharedUser.mysign?:@"",interest];
         MineTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:PERSONAL_TABLEVIEW_IDENTIFIER];
         cell.leftLabel.text = title[indexPath.row];
         cell.rightLabel.text = detail[indexPath.row];
@@ -334,9 +359,11 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         if (indexPath.row == 1 || indexPath.row == 2){
             cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.rightLabelTrailingConstraint.constant = 15;
         }
         else {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.rightLabelTrailingConstraint.constant = 7;
         }
         return cell;
     }
@@ -349,7 +376,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
             EditInfoViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ei"];
             vc.delegate = self;
             vc.type = indexPath.row;
-            vc.dataInfo = [NSMutableDictionary dictionaryWithDictionary:self.dataInfo];
+//            vc.dataInfo = [NSMutableDictionary dictionaryWithDictionary:self.dataInfo];
             [self.navigationController pushViewController:vc animated:1];
         }
     }

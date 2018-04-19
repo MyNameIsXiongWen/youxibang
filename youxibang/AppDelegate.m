@@ -73,22 +73,21 @@
             NSLog(@"登录输出 %@--%@",object,msg);
             if (code == 1) {
                 NSDictionary* user = object[@"data"];
-                [UserModel keyarchiveUertModelWithDict:user];
 
-                [DataStore sharedDataStore].userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
-                [DataStore sharedDataStore].mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
-                [DataStore sharedDataStore].yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
-                [DataStore sharedDataStore].yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
-                [DataStore sharedDataStore].token = [NSString stringWithFormat:@"%@",user[@"token"]];
+                DataStore.sharedDataStore.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
+                DataStore.sharedDataStore.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
+                DataStore.sharedDataStore.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
+                DataStore.sharedDataStore.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
+                DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 
                 [UserNameTool saveLoginData:dic];
                 
                 //jpush
-                [JPUSHService setAlias:[DataStore sharedDataStore].userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+                [JPUSHService setAlias:DataStore.sharedDataStore.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
                     NSLog(@"Alias   %@",iAlias);
                 } seq:1];
                 
-                [TalkingData onRegister:[DataStore sharedDataStore].mobile type:TDAccountTypeRegistered name:user[@"data"][@"mobile"]];
+                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:user[@"data"][@"mobile"]];
                 
                 //云信注册
                 [[NIMSDK sharedSDK] registerWithAppID:@"d27ffe90d087aaeb5c579f7485a2dcb6" cerName:nil];
@@ -156,39 +155,39 @@
     return false;
 }
 //与上同
-//- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
-//    NSString *string =[url absoluteString];
-//
-//    if ([string hasPrefix:@"tencent"]){
-//        return [TencentOAuth HandleOpenURL:url];
-//    }else if ([string hasPrefix:@"alipayYouxibang://safepay/"]){
-//        [[AlipaySDK defaultService] processOrderWithPaymentResult:url standbyCallback:^(NSDictionary *resultDic) {
-//            if ([[NSString stringWithFormat:@"%@",resultDic[@"resultStatus"]] isEqualToString:@"9000"]){
-//                NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
-//                [[NSNotificationCenter defaultCenter] postNotification:notification];
-//            }
-//        }];
-//
-//    }else if ([string hasPrefix:@"wx9409b172842c7d01://pay/"]){
-//        if ([string hasSuffix:@"ret=0"]){
-//            NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
-//            [[NSNotificationCenter defaultCenter] postNotification:notification];
-//        }
-//
-////        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-////        TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
-////        return [WXApi handleOpenURL:url delegate:vc];
-//        
-//    }else if ([string hasPrefix:@"wx"]){
-//        
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
+    NSString *string =[url absoluteString];
+
+    if ([string hasPrefix:@"tencent"]){
+        return [TencentOAuth HandleOpenURL:url];
+    }else if ([string hasPrefix:@"alipayYouxibang://safepay/"]){
+        [[AlipaySDK defaultService] processOrderWithPaymentResult:url standbyCallback:^(NSDictionary *resultDic) {
+            if ([[NSString stringWithFormat:@"%@",resultDic[@"resultStatus"]] isEqualToString:@"9000"]){
+                NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
+                [[NSNotificationCenter defaultCenter] postNotification:notification];
+            }
+        }];
+
+    }else if ([string hasPrefix:@"wx9409b172842c7d01://pay/"]){
+        if ([string hasSuffix:@"ret=0"]){
+            NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
+            [[NSNotificationCenter defaultCenter] postNotification:notification];
+        }
+
 //        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+//        TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
 //        return [WXApi handleOpenURL:url delegate:vc];
-//
-//    }
-//    
-//    return false;
-//}
+        
+    }else if ([string hasPrefix:@"wx"]){
+        
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        return [WXApi handleOpenURL:url delegate:vc];
+
+    }
+    
+    return false;
+}
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
     

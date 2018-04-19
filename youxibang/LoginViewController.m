@@ -183,7 +183,7 @@
     if ([WXApi isWXAppInstalled]) {
         SendAuthReq *req = [[SendAuthReq alloc] init];
         req.scope = @"snsapi_userinfo";
-        req.state = @"App";
+        req.state = @"AiShangBo";
         [WXApi sendReq:req];
     }else {
         [SVProgressHUD showErrorWithStatus:@"未安装微信"];
@@ -220,23 +220,24 @@
             NSLog(@"登录输出 %@--%@",object,msg);
             if (code == 1) {
                 NSDictionary* user = object[@"data"];
-                [UserModel keyarchiveUertModelWithDict:user];
                 [self.view.window endEditing:YES];
                 //单例注入数据
-                [DataStore sharedDataStore].userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
-                [DataStore sharedDataStore].mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
-                [DataStore sharedDataStore].yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
-                [DataStore sharedDataStore].yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
-                [DataStore sharedDataStore].token = [NSString stringWithFormat:@"%@",user[@"token"]];
+                DataStore.sharedDataStore.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
+                DataStore.sharedDataStore.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
+                DataStore.sharedDataStore.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
+                DataStore.sharedDataStore.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
+                DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 
-                [JPUSHService setAlias:[DataStore sharedDataStore].userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+                [UserNameTool reloadPersonalData:nil];
+                
+                [JPUSHService setAlias:DataStore.sharedDataStore.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
                     NSLog(@"Alias   %@",iAlias);
                 } seq:1];
                 
                 //长久化存储登录账号密码
                 [UserNameTool saveLoginData:dic];
                 //talkingdata注册
-                [TalkingData onRegister:[DataStore sharedDataStore].mobile type:TDAccountTypeRegistered name:[NSString stringWithFormat:@"%@",user[@"mobile"]]];
+                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:[NSString stringWithFormat:@"%@",user[@"mobile"]]];
                 //云信登录
                 [[NIMSDK sharedSDK] registerWithAppID:@"d27ffe90d087aaeb5c579f7485a2dcb6" cerName:nil];
                 NIMServerSetting *setting = [[NIMServerSetting alloc] init];

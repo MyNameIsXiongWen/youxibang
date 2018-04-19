@@ -59,6 +59,7 @@
                 <outlet property="iconImageView" destination="f8y-JM-qId" id="sGe-2P-lS5"/>
                 <outlet property="leftLabel" destination="neQ-W9-qkj" id="R9F-r1-jD3"/>
                 <outlet property="rightLabel" destination="xPK-kU-EJi" id="S1e-iS-mB3"/>
+                <outlet property="rightLabelTrailingConstraint" destination="WMv-vh-vS6" id="pIh-if-Ai1"/>
             </connections>
         </tableViewCell>
     </objects>

@@ -75,7 +75,7 @@
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {
                 NSMutableDictionary* dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
-                [UserModel keyarchiveUertModelWithDict:dataInfo];
+                [UserModel keyarchiveUserModelWithDict:dataInfo];
                 [UserNameTool updatePersonalData:dataInfo];
                 if (completion){
                     completion();

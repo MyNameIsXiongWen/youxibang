@@ -14,5 +14,5 @@
 @interface EditInfoViewController : BaseViewController
 @property (nonatomic,assign)NSInteger type;//1 昵称    4签名   5 爱好
 @property (nonatomic,assign)id<EditInfoViewControllerDelegate> delegate;
-@property (nonatomic,strong)NSMutableDictionary *dataInfo;
+//@property (nonatomic,strong)NSMutableDictionary *dataInfo;
 @end
