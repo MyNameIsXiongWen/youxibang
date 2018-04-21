@@ -52,7 +52,7 @@
 
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    if ([self.tv.text isEqualToString:@"评价一下宝贝吧"]){
+    if ([self.tv.text isEqualToString:@"评价一下达人吧"]){
         self.tv.text = @"";
     }
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -100,7 +100,7 @@
 }
 
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
-    if ([textView.text isEqualToString:@"评价一下宝贝吧"]){
+    if ([textView.text isEqualToString:@"评价一下达人吧"]){
         textView.text = @"";
     }
     return YES;
@@ -108,7 +108,7 @@
 
 -(void)textViewDidEndEditing:(UITextView *)textView{
     if ([textView.text isEqualToString:@""]){
-        textView.text = @"评价一下宝贝吧";
+        textView.text = @"评价一下达人吧";
     }
 }
 //当用户按下return去键盘

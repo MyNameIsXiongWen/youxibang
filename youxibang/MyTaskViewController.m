@@ -199,7 +199,7 @@
         };
         [alert showAlertView];
         
-    }else if ([name isEqualToString:@"选择宝贝"]){
+    }else if ([name isEqualToString:@"选择达人"]){
         OrderSelectViewController* vc = [[OrderSelectViewController alloc]init];
         vc.orderId = [NSString stringWithFormat:@"%@",self.dataAry[row][@"id"]];
         [self.navigationController pushViewController:vc animated:1];

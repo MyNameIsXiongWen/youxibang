@@ -37,7 +37,7 @@
     searchView.layer.cornerRadius = 5;
     searchView.layer.masksToBounds = NO;
     UIImageView* img = [EBUtility imgfrome:CGRectMake(10, 7, 16, 16) andImg:[UIImage imageNamed:@"ico_search"] andView:searchView];
-    UITextField* tf = [EBUtility textFieldfrome:CGRectMake(30, 6, searchView.width - img.width - 20, 20) andText:@"搜索宝贝昵称" andColor:[UIColor whiteColor] andView:searchView];
+    UITextField* tf = [EBUtility textFieldfrome:CGRectMake(30, 6, searchView.width - img.width - 20, 20) andText:@"搜索达人昵称" andColor:[UIColor whiteColor] andView:searchView];
     self.tf = tf;
     tf.delegate = self;
     tf.returnKeyType = UIReturnKeySearch;

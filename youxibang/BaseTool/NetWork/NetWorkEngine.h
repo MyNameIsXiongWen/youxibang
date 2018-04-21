@@ -62,5 +62,12 @@ typedef void(^Fail)(NSError *error);
                                 File:(NSString *)file
                     successOperation:(Success)success
                        failoperation:(Fail)fail;
+//上传视频
+- (void)postVideoFromServerWithUrlStr:(NSString *)str
+                           Paremeters:(id)parameters
+                            VideoPath:(NSString *)videopath
+                            VideoName:(NSString *)videoname
+                     successOperation:(Success)success
+                        failoperation:(Fail)fail;
 
 @end

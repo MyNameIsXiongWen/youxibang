@@ -48,4 +48,7 @@
 /** 只展示文字轮播 */
 @property (nonatomic, assign) BOOL onlyDisplayText;
 
+@property (weak, nonatomic) UIView *videoBackGroundView;
+@property (weak, nonatomic) UIImageView *videoPlayImageView;
+
 @end

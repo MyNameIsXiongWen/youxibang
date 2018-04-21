@@ -9,5 +9,10 @@
 #import "WXApi.h"
 
 @interface LoginViewController : UIViewController<WXApiDelegate>
-@property (nonatomic,assign)BOOL codeOrPassword;
+
+@property (nonatomic,assign) BOOL codeOrPassword;
+@property (nonatomic,copy) NSString *phoneNumberString;
+@property (nonatomic,copy) NSString *passwordString;
+@property (nonatomic,copy) NSString *codeString;
+
 @end

@@ -589,10 +589,21 @@ NSString * const ID = @"SDCycleScrollViewCell";
             }
             cell.imageView.image = image;
         }
+        if (@available(iOS 8.0, *)) {
+            if ([imagePath containsString:@"video"]) {
+                cell.videoPlayImageView.hidden = NO;
+            }
+            else {
+                cell.videoPlayImageView.hidden = YES;
+            }
+        } else {
+            // Fallback on earlier versions
+            cell.videoPlayImageView.hidden = YES;
+        }
     } else if (!self.onlyDisplayText && [imagePath isKindOfClass:[UIImage class]]) {
         cell.imageView.image = (UIImage *)imagePath;
     }
-    
+    cell.videoBackGroundView.hidden = self.hideBkgView;
     if (_titlesGroup.count && itemIndex < _titlesGroup.count) {
         cell.title = _titlesGroup[itemIndex];
     }

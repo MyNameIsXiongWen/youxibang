@@ -397,6 +397,50 @@
     
 }
 
+//上传视频
+- (void)postVideoFromServerWithUrlStr:(NSString *)str
+                           Paremeters:(id)parameters
+                            VideoPath:(NSString *)videopath
+                            VideoName:(NSString *)videoname
+                     successOperation:(Success)success
+                        failoperation:(Fail)fail {
+    self.manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", @"text/xml", @"application/json", @"text/json", @"text/javascript", @"text/plain", nil];
+    [self.manager POST:str parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"yyyyMMddHHmmss";
+        NSString *time = [formatter stringFromDate:[NSDate date]];
+        NSString *fileName = [NSString stringWithFormat:@"%@.mp4",time];
+//        [formData appendPartWithFileData:videodata name:videoname fileName:fileName mimeType:@"video/mp4"];
+        [formData appendPartWithFileURL:[NSURL fileURLWithPath:videopath] name:videoname fileName:fileName mimeType:@"video/mpeg4" error:nil];
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        NSLog(@"--------------%@",uploadProgress);
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]){
+            if ([NSString stringWithFormat:@"%@",(NSDictionary*)responseObject[@"errcode"]].intValue < -100){
+                [self logout:(NSDictionary*)responseObject];
+            }
+            success(responseObject);
+            return ;
+        }
+        NSString * str = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        NSString * str1 =  [str stringByReplacingOccurrencesOfString:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>" withString:@""];
+        NSString * str2 = [str1 stringByReplacingOccurrencesOfString:@"<string xmlns=\"huaxin.org\">" withString:@""];
+        str2 = [str2 stringByReplacingOccurrencesOfString:@"\r\n" withString:@""];
+        str2 = [str2 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+        str2 = [str2 stringByReplacingOccurrencesOfString:@"\t" withString:@""];
+        NSString * STR3 = [str2 stringByReplacingOccurrencesOfString:@"</string>" withString:@""];
+        NSData *JSONData = [STR3 dataUsingEncoding:NSUTF8StringEncoding];
+        NSError *err;
+        NSDictionary *responseJSON = [NSJSONSerialization JSONObjectWithData:JSONData options:NSJSONReadingMutableContainers error:&err];
+        if(err) {
+            NSLog(@"json解析失败：%@",err);
+        }
+        success((NSArray*)responseJSON);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        fail(error);
+    }];
+}
+
 - (void)logout:(NSDictionary*)dic{
     [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@",dic[@"message"]]];
     NSNotification *notification = [NSNotification notificationWithName:@"Logout" object:nil userInfo:nil];

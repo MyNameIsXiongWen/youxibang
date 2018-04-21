@@ -40,25 +40,10 @@
         [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号码"];
         return;
     }
-    
-//    sender.enabled = NO;
-//    //button type要 设置成custom 否则会闪动
-//    [sender startWithSecond:60];
-//
-//    [sender didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
-//        NSString *title = [NSString stringWithFormat:@"剩余%d秒",second];
-//        return title;
-//    }];
-//    [sender didFinished:^NSString *(JKCountDownButton *countDownButton, int second) {
-//        countDownButton.enabled = YES;
-//        return @"获取验证码";
-//    }];
-    
     [self gainCodeRequest:self.phone.text];
 }
-- (void)gainCodeRequest:(NSString *)phoneString
-{
-    
+
+- (void)gainCodeRequest:(NSString *)phoneString {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:phoneString forKey:@"mobile"];
 
@@ -125,17 +110,18 @@
         }else if (code == 6){//绑定成功，跳转登录
             [SVProgressHUD showSuccessWithStatus:msg];
             LoginViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"loginPWD"];
+            vc.phoneNumberString = self.phone.text;
+            vc.codeString = self.code.text;
+            vc.codeOrPassword = YES;
             [self.navigationController pushViewController:vc animated:1];
         }else{
             [SVProgressHUD showErrorWithStatus:msg];
         }
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
         [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
     }];
-    
 }
 //当用户按下return去键盘
 

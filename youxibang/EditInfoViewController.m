@@ -22,19 +22,24 @@
     if (self.type == 0){
         self.title = @"编辑昵称";
         self.tf.placeholder = @"编辑昵称";
-        self.tf.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
+//        self.tf.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
+        self.tf.text = UserModel.sharedUser.nickname;
         [self.tf becomeFirstResponder];
     }else if (self.type == 3){
         self.title = @"编辑签名";
         self.tf.placeholder = @"编辑签名";
-        self.tf.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"mysign"]];
+//        self.tf.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"mysign"]];
+        self.tf.text = UserModel.sharedUser.mysign;
         [self.tf becomeFirstResponder];
     }else if (self.type == 4){
         self.title = @"兴趣爱好";
         self.tf.hidden = YES;
         self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
         _titleAry = [NSMutableArray array];
-        for (NSMutableDictionary* i in self.dataInfo[@"interest"]){
+//        for (NSMutableDictionary* i in self.dataInfo[@"interest"]){
+//            [_titleAry addObject:[@{@"name":[NSString stringWithFormat:@"%@",i[@"name"]],@"selected":[NSString stringWithFormat:@"%@",i[@"selected"]]} mutableCopy]];
+//        }
+        for (NSMutableDictionary* i in UserModel.sharedUser.interest){
             [_titleAry addObject:[@{@"name":[NSString stringWithFormat:@"%@",i[@"name"]],@"selected":[NSString stringWithFormat:@"%@",i[@"selected"]]} mutableCopy]];
         }
         [_titleAry addObject:@{@"name":@"自定义",@"selected":@"1"}];
@@ -138,7 +143,6 @@
                 interest = [NSString stringWithFormat:@"%@##%@",interest,btn.titleLabel.text];
             }
         }
-
     }else{
         if ([EBUtility isBlankString:self.tf.text]){
             [SVProgressHUD showErrorWithStatus:@"内容不能为空"];
@@ -169,6 +173,18 @@
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {
+                if (self.type == 0){
+                    UserModel.sharedUser.nickname = self.tf.text;
+                }else if (self.type == 3){
+                    UserModel.sharedUser.mysign = self.tf.text;
+                }else if (self.type == 4){
+                    NSMutableArray *tempArray = NSMutableArray.array;
+                    for (int i = 0;i < self.btnAry.count - 1; i++){
+                        UIButton* btn = self.btnAry[i];
+                        [tempArray addObject:@{@"name":btn.titleLabel.text,@"selected":@(btn.selected)}];
+                    }
+                    UserModel.sharedUser.interest = tempArray;
+                }
                 [SVProgressHUD showSuccessWithStatus:msg];
                 [self.navigationController popViewControllerAnimated:YES];
             }else{

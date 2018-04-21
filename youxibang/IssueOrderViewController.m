@@ -9,6 +9,7 @@
 #import "RemarksTextViewTableViewCell.h"
 #import "NumberTableViewCell.h"
 #import "DiscountViewController.h"
+#import "LocationTableViewCell.h"
 
 @interface IssueOrderViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,UITextFieldDelegate,DiscountViewControllerDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -16,6 +17,7 @@
 @property (nonatomic,strong) NSMutableArray* dataAry;//游戏列表
 @property (nonatomic,copy) NSString* gameId;//游戏id
 @property (nonatomic,copy) NSString* date;
+@property (nonatomic,copy) NSString* locationAddress;
 @end
 
 @implementation IssueOrderViewController
@@ -28,6 +30,7 @@
     [self downLoadInfo];
     self.tableView.tableFooterView = [UIView new];
     self.title = @"发布任务";
+    self.locationAddress = @"全国";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -70,7 +73,6 @@
 }
 //提交
 - (IBAction)commitOrder:(UIButton *)sender {
-
     UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     UITextField* title = [cell viewWithTag:1];
     if ([EBUtility isBlankString:title.text]){
@@ -87,7 +89,7 @@
         [SVProgressHUD showErrorWithStatus:@"单价不能为空"];
         return;
     }
-    RemarksTextViewTableViewCell *cell1 = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0]];
+    RemarksTextViewTableViewCell *cell1 = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
     
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
@@ -100,6 +102,15 @@
     [dict setObject:self.hour forKey:@"num"];
     [dict setObject:price.text forKey:@"price"];
     [dict setObject:cell1.tv.text forKey:@"note"];
+    if ([self.locationAddress isEqualToString:[DataStore sharedDataStore].city]) {
+        [dict setObject:[DataStore sharedDataStore].city forKey:@"city"];
+    }
+    if ([DataStore sharedDataStore].latitude) {
+        [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+    }
+    if ([DataStore sharedDataStore].longitude) {
+        [dict setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+    }
 
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/publishpart.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
         [SVProgressHUD dismiss];
@@ -151,7 +162,7 @@
     
     NSInteger p = price.text.integerValue * self.hour.integerValue;
     
-    cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
+    cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:7 inSection:0]];
     UILabel* l = [cell viewWithTag:1];
     l.text = [NSString stringWithFormat:@"¥%ld",p];
     
@@ -162,7 +173,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 7;
+    return 8;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -176,9 +187,14 @@
     if (indexPath.row == 4){//小时数cell
        NumberTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"cell%ld",indexPath.row]];
         return cell;
-    }else if (indexPath.row == 5){//备注cell
+    }else if (indexPath.row == 5){//定位cell
+        LocationTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"cell%ld",indexPath.row]];
+        cell.locationLabel.text = [DataStore sharedDataStore].city?:@"全国";
+        [cell.locationSwitch addTarget:self action:@selector(switchLocation:) forControlEvents:UIControlEventValueChanged];
+        self.locationAddress = cell.locationLabel.text;
+        return cell;
+    }else if (indexPath.row == 6){//备注cell
         RemarksTextViewTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"cell%ld",indexPath.row]];
-//        cell.tv.delegate = self;
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
         paragraphStyle.firstLineHeadIndent = 42.f;    /**首行缩进宽度*/
         paragraphStyle.alignment = NSTextAlignmentJustified;
@@ -197,6 +213,17 @@
     }
     
     return cell;
+}
+
+- (void)switchLocation:(UISwitch *)sender {
+    LocationTableViewCell *cell = (LocationTableViewCell *)sender.superview.superview;
+    if (sender.isOn) {
+        cell.locationLabel.text = [DataStore sharedDataStore].city?:@"全国";
+    }
+    else {
+        cell.locationLabel.text = @"全国";
+    }
+    self.locationAddress = cell.locationLabel.text;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -260,7 +287,7 @@
     }
 }
 - (void)selectSomeThing:(NSString *)name AndId:(NSString *)pid{//优惠券回调 弃用
-//    UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0]];
+//    UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
 //    UILabel* lab = [cell viewWithTag:1];
 //    lab.text = name;
 }
@@ -277,7 +304,7 @@
         textView.text = [textView.text substringToIndex:200];
     }
     
-    RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0]];
+    RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
     cell.zsbd.text = [NSString stringWithFormat:@"(%lu/200)",(unsigned long)textView.text.length];
     
 }
@@ -294,7 +321,7 @@
     
 }
 -(BOOL)textViewShouldBeginEditing:(UITextView *)textView{
-    RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0]];
+    RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
     cell.placeholdLab.hidden = YES;
     if ([textView.text isEqualToString:@" "]){
         textView.text = @"";
@@ -327,7 +354,7 @@
         
     }];
     if ([textField.text isEqualToString:@""]){
-        RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0]];
+        RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
         cell.placeholdLab.hidden = NO;
         cell.zsbd.text = @"(0/200)";
     }

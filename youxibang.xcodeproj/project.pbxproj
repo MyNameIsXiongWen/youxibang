@@ -161,8 +161,10 @@
 		878323D9207CB2EB0048E4E9 /* SDCityPickerCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323CE207CB2EB0048E4E9 /* SDCityPickerCollectionView.m */; };
 		878323DA207CB2EB0048E4E9 /* SDCityPickerTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323D0207CB2EB0048E4E9 /* SDCityPickerTableView.m */; };
 		878323DB207CB2EB0048E4E9 /* SDCityPickerTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323D2207CB2EB0048E4E9 /* SDCityPickerTableViewCell.m */; };
+		87A285742087128900AF966B /* UserModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A285732087128900AF966B /* UserModel.m */; };
 		87B273A420805A1B00E80019 /* LPDImageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87B273A220805A1B00E80019 /* LPDImageTableViewCell.m */; };
 		87B273A520805A1B00E80019 /* LPDImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87B273A320805A1B00E80019 /* LPDImageTableViewCell.xib */; };
+		87B273AD2085F89B00E80019 /* LocationTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87B273AC2085F89B00E80019 /* LocationTableViewCell.m */; };
 		8D6039412081CABD00336B65 /* UIImage+ZLPhotoLib.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6038F62081CABD00336B65 /* UIImage+ZLPhotoLib.m */; };
 		8D6039422081CABD00336B65 /* DALabeledCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6038F82081CABD00336B65 /* DALabeledCircularProgressView.m */; };
 		8D6039432081CABD00336B65 /* DACircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6038F92081CABD00336B65 /* DACircularProgressView.m */; };
@@ -489,9 +491,13 @@
 		878323D0207CB2EB0048E4E9 /* SDCityPickerTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCityPickerTableView.m; sourceTree = "<group>"; };
 		878323D1207CB2EB0048E4E9 /* SDCityPickerTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCityPickerTableViewCell.h; sourceTree = "<group>"; };
 		878323D2207CB2EB0048E4E9 /* SDCityPickerTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCityPickerTableViewCell.m; sourceTree = "<group>"; };
+		87A285722087128900AF966B /* UserModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserModel.h; sourceTree = "<group>"; };
+		87A285732087128900AF966B /* UserModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserModel.m; sourceTree = "<group>"; };
 		87B273A120805A1B00E80019 /* LPDImageTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPDImageTableViewCell.h; sourceTree = "<group>"; };
 		87B273A220805A1B00E80019 /* LPDImageTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LPDImageTableViewCell.m; sourceTree = "<group>"; };
 		87B273A320805A1B00E80019 /* LPDImageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LPDImageTableViewCell.xib; sourceTree = "<group>"; };
+		87B273AB2085F89B00E80019 /* LocationTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationTableViewCell.h; sourceTree = "<group>"; };
+		87B273AC2085F89B00E80019 /* LocationTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationTableViewCell.m; sourceTree = "<group>"; };
 		8D6038F62081CABD00336B65 /* UIImage+ZLPhotoLib.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ZLPhotoLib.m"; sourceTree = "<group>"; };
 		8D6038F82081CABD00336B65 /* DALabeledCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DALabeledCircularProgressView.m; sourceTree = "<group>"; };
 		8D6038F92081CABD00336B65 /* DACircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DACircularProgressView.m; sourceTree = "<group>"; };
@@ -809,6 +815,8 @@
 				187362D9201031450045EF9E /* DataStore.m */,
 				187362DA201031450045EF9E /* UserNameTool.h */,
 				187362DB201031450045EF9E /* UserNameTool.m */,
+				87A285722087128900AF966B /* UserModel.h */,
+				87A285732087128900AF966B /* UserModel.m */,
 			);
 			path = UserDefault;
 			sourceTree = "<group>";
@@ -927,6 +935,8 @@
 				18B398FE201AF4AE004E09ED /* PartTimeTableViewCell.m */,
 				18F22CE720494A8900B74B65 /* BabyTableViewCell.h */,
 				18F22CE820494A8900B74B65 /* BabyTableViewCell.m */,
+				87B273AB2085F89B00E80019 /* LocationTableViewCell.h */,
+				87B273AC2085F89B00E80019 /* LocationTableViewCell.m */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -1707,6 +1717,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-youxibang/Pods-youxibang-resources.sh",
 				"${PODS_ROOT}/AMap2DMap-NO-IDFA/MAMapKit.framework/AMap.bundle",
+				"${PODS_ROOT}/AliyunPlayer_iOS/AliyunLanguageSource.bundle",
 				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 				"${PODS_ROOT}/NIMKit/NIMKit/Resources/NIMKitEmoticon.bundle",
 				"${PODS_ROOT}/NIMKit/NIMKit/Resources/NIMKitResource.bundle",
@@ -1718,6 +1729,7 @@
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AMap.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AliyunLanguageSource.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NIMKitEmoticon.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NIMKitResource.bundle",
@@ -1737,9 +1749,14 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-youxibang/Pods-youxibang-frameworks.sh",
+				"${PODS_ROOT}/AliyunPlayer_iOS/AliyunPlayerSDK.framework",
+				"${PODS_ROOT}/AliyunPlayer_iOS/AliyunVodPlayerSDK.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AliyunPlayerSDK.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AliyunVodPlayerSDK.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1781,6 +1798,7 @@
 				5E5DF4D9203A9A9700211F7F /* EvaluateViewController.m in Sources */,
 				18F6D0502022F6410001917B /* TopUpAndWithdrawViewController.m in Sources */,
 				874E3356207DBAAE006F0AAD /* UploadParam.m in Sources */,
+				87A285742087128900AF966B /* UserModel.m in Sources */,
 				18B398F9201ABE72004E09ED /* NumberTableViewCell.m in Sources */,
 				18F22CD02040E8F000B74B65 /* LPDPhotoPreviewController.m in Sources */,
 				18F6D06F2025B5240001917B /* RealNameViewController.m in Sources */,
@@ -1793,6 +1811,7 @@
 				18F6D0752027F4140001917B /* AddSkillViewController.m in Sources */,
 				187362E9201031450045EF9E /* UIView+EXtension.m in Sources */,
 				1873633C20103A3F0045EF9E /* MineViewController.m in Sources */,
+				87B273AD2085F89B00E80019 /* LocationTableViewCell.m in Sources */,
 				18F22CD32040E8F000B74B65 /* LPDVideoPlayerController.m in Sources */,
 				18F6D012202198000001917B /* ReVokeViewController.m in Sources */,
 				18F22CCA2040E8F000B74B65 /* LPDImageManager.m in Sources */,
@@ -1979,6 +1998,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1998,6 +2018,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -2034,6 +2055,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2046,6 +2068,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "-fembed-bitcode";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -2157,7 +2180,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "bbdfdf28-4f9d-4a4a-aaae-ff566b14b0c5";
 				PROVISIONING_PROFILE_SPECIFIER = youxibangDevelopment;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
 			};
 			name = Debug;
@@ -2268,7 +2291,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b950f56e-5dbd-4f1e-b62e-2527eff81a2e";
 				PROVISIONING_PROFILE_SPECIFIER = youxibangDistribution;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

@@ -111,6 +111,9 @@
                 }
                 
                 LoginViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"loginPWD"];
+                vc.phoneNumberString = self.phoneNum;
+                vc.passwordString = self.password;
+                vc.codeOrPassword = NO;
                 [self.navigationController pushViewController:vc animated:1];
             }else{
                 [SVProgressHUD showErrorWithStatus:str];
@@ -127,17 +130,13 @@
 - (IBAction)selectPhoto:(UIButton *)sender {
     [self amendHeadImg];
 }
+
 #pragma mark - delegate
--(void)amendHeadImg
-{
+- (void)amendHeadImg {
     UIAlertController *alertController = [[UIAlertController alloc]init];
-    
     [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        
         NSLog(@"点击取消");
-        
     }]];
-    
     
     [alertController addAction:[UIAlertAction actionWithTitle:@"相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
@@ -150,12 +149,7 @@
             [picker setAllowsEditing:YES]; //设置选择后的图片可被编辑
             [picker setDelegate:self];
             [self presentViewController:picker animated:YES completion:^{ }];
-            
-            //                UIImagePickerControllerSourceTypePhotoLibrary,
-            //                UIImagePickerControllerSourceTypeCamera,
-            //                UIImagePickerControllerSourceTypeSavedPhotosAlbum
         }
-        
     }]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
@@ -169,31 +163,20 @@
         }
         
     }]];
-    
     [self presentViewController:alertController animated:YES completion:nil];
     
 }
-- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
-{
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     [navigationController.navigationBar setBarStyle:(UIBarStyleBlackTranslucent)];
 }
 
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo{
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
     [picker dismissViewControllerAnimated:YES completion:^{ }]; //关闭摄像头或用户相册
     
-    
-    //DBLOG(@"加载图片中...");
     UIGraphicsBeginImageContext(image.size);
     [image drawInRect:CGRectMake(0,0,image.size.width,image.size.height)];
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
-    
-    
     UIGraphicsEndImageContext();
-    NSData *data= UIImageJPEGRepresentation(newImage, 0.1);
-    NSString *str = [data base64Encoding];
-    //    NSData *data = UIImageJPEGRepresentation(newImage, 1.0f);
-    
-    NSString *encodedImageStr = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.photo setImage:newImage forState:0]; //设置头像
         self.photoImg = newImage;

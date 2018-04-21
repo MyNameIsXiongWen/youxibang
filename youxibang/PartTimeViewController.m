@@ -42,7 +42,7 @@
     self.gid = @"0";
     self.currentPage = 1;
     if (self.ptOrBaby){
-        self.title = @"游戏宝贝";
+        self.title = @"游戏达人";
     }
     [self downloadOther];
     [self downloadInfo];
@@ -147,9 +147,6 @@
         [dict setObject:[NSString stringWithFormat:@"%d",self.sex] forKey:@"sex"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"p"];
         [dict setObject:@"20" forKey:@"psize"];
-        if ([DataStore sharedDataStore].city) {
-            [dict setObject:[DataStore sharedDataStore].city forKey:@"city"];
-        }
         if ([DataStore sharedDataStore].latitude) {
             [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
         }
@@ -189,6 +186,12 @@
         [dict setObject:[NSString stringWithFormat:@"%d",self.pricerange] forKey:@"pricerange"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"p"];
         [dict setObject:@"10" forKey:@"psize"];
+        if ([DataStore sharedDataStore].latitude) {
+            [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+        }
+        if ([DataStore sharedDataStore].longitude) {
+            [dict setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+        }
         
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/partlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
             [SVProgressHUD dismiss];
@@ -380,7 +383,7 @@
                 cycleScrollView.height = 350;
             }
             cycleScrollView.infiniteLoop = YES;
-            
+            cycleScrollView.hideBkgView = YES;
             cycleScrollView.delegate = self;
             cycleScrollView.tag = 100;
             cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;

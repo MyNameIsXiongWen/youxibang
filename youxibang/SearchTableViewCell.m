@@ -99,7 +99,7 @@
 - (void)setViewWithDic:(NSDictionary*)dic withType:(int)type{
     self.name.text = [NSString stringWithFormat:@"%@",dic[@"nickname"]];
     self.price.text = [NSString stringWithFormat:@"¥%@",dic[@"price"]];
-    self.times.text = [NSString stringWithFormat:@"接单%@次|%@",dic[@"ordernum"],dic[@"last_login"]];
+    self.times.text = [NSString stringWithFormat:@"接单%@次|%@",dic[@"ordernum"]?:@"0",dic[@"last_login"]];
     
     self.grade.backgroundColor = [EBUtility colorWithHexString:[NSString stringWithFormat:@"%@",dic[@"fontcolor"]] alpha:1];
     if ([NSString stringWithFormat:@"%@",dic[@"sex"]].integerValue == 1){
@@ -144,7 +144,7 @@
             self.grade.backgroundColor = Pink_color;
         }
         self.price.text = [NSString stringWithFormat:@"¥%@",dic[@"totalprice"]];
-        self.times.text = [NSString stringWithFormat:@"接单%@次",dic[@"ordernum"]];
+        self.times.text = [NSString stringWithFormat:@"接单%@次",dic[@"ordernum"]?:@"0"];
     }
     
     

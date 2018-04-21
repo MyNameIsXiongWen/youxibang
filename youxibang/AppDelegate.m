@@ -24,16 +24,13 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //iconfont注册
     [TBCityIconFont setFontName:@"iconfont"];
-    
     //从userdefault中获取信息自动登录
     NSDictionary *user =  [UserNameTool readLoginData];
-    
-    if (user.count)
-    {
+    if (user.count) {
         [self lg:user];
     }
     //微信注册
-    [WXApi registerApp:@"wx9409b172842c7d01"];
+    [WXApi registerApp:WX_APP_ID];
     //talkingdata注册
     [TalkingData sessionStarted:@"7AF6493B08F141FC8EF2450B65B3C0B2" withChannelId:@"iOS正式版"];
     [TalkingData setExceptionReportEnabled:YES];
@@ -64,7 +61,6 @@
 }
 //自动登录方法
 - (void)lg:(NSDictionary*)dic{
-    
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/login.html",HttpURLString] Paremeters:dic successOperation:^(id object) {
@@ -78,20 +74,20 @@
             if (code == 1) {
                 NSDictionary* user = object[@"data"];
 
-                [DataStore sharedDataStore].userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
-                [DataStore sharedDataStore].mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
-                [DataStore sharedDataStore].yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
-                [DataStore sharedDataStore].yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
-                [DataStore sharedDataStore].token = [NSString stringWithFormat:@"%@",user[@"token"]];
+                DataStore.sharedDataStore.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
+                DataStore.sharedDataStore.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
+                DataStore.sharedDataStore.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
+                DataStore.sharedDataStore.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
+                DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 
                 [UserNameTool saveLoginData:dic];
                 
                 //jpush
-                [JPUSHService setAlias:[DataStore sharedDataStore].userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+                [JPUSHService setAlias:DataStore.sharedDataStore.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
                     NSLog(@"Alias   %@",iAlias);
                 } seq:1];
                 
-                [TalkingData onRegister:[DataStore sharedDataStore].mobile type:TDAccountTypeRegistered name:user[@"data"][@"mobile"]];
+                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:user[@"data"][@"mobile"]];
                 
                 //云信注册
                 [[NIMSDK sharedSDK] registerWithAppID:@"d27ffe90d087aaeb5c579f7485a2dcb6" cerName:nil];
