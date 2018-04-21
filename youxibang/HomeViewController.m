@@ -115,6 +115,7 @@
 
 #pragma mark - location
 - (void)locationUser:(UIButton *)btn {
+    [self startSerialLocation];
     SDCityPickerViewController *city =[[SDCityPickerViewController alloc]init];
     city.cityPickerBlock = ^(SDCityModel *city)
     {
