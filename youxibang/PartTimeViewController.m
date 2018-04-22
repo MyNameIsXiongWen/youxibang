@@ -42,7 +42,7 @@
     self.gid = @"0";
     self.currentPage = 1;
     if (self.ptOrBaby){
-        self.title = @"游戏达人";
+        self.title = @"技能达人";
     }
     [self downloadOther];
     [self downloadInfo];
@@ -221,7 +221,7 @@
 - (UIView*)headerView{
     if (!_headerView){
         _headerView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 40) andColor:[UIColor whiteColor] andView:nil];
-        NSArray* tAry = @[@"游戏名称",@"综合排序",@"价格区间"];
+        NSArray* tAry = @[@"技能名称",@"综合排序",@"价格区间"];
         if (self.ptOrBaby){
             tAry = @[@"综合排序",@"筛选"];
         }
