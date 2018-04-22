@@ -25,10 +25,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.tableView.scrollEnabled = NO;
-
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.scrollEnabled = NO;
     self.tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.title = @"支付";
     self.way = @"1";

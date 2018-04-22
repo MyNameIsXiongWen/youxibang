@@ -665,6 +665,12 @@
 }
 
 - (void)startVideoPlay {
+    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
     //使用vid+STS方式播放（点播用户推荐使用）
     if (self.aliPlayer.playerState == 4) {
         [self.aliPlayer resume];

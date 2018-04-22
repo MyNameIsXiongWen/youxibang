@@ -340,13 +340,13 @@
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 5){
-        return 360;
+        return 130;
     }
     return UITableViewAutomaticDimension;
 }
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath{
     if (indexPath.section == 5){
-        return 90;
+        return 130;
     }
     return UITableViewAutomaticDimension;
 }
@@ -358,9 +358,9 @@
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0){
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"celllll"];
         if (!cell) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"celllll"];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.textLabel.text = @"技能";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -372,9 +372,9 @@
         }
         return cell;
     }else if (indexPath.section == 5){
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cellll"];
         if (!cell) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cellll"];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
         UILabel *lab = [EBUtility labfrome:CGRectMake(20, 5, 100, 25) andText:@"技能封面照" andColor:[UIColor blackColor] andView:cell.viewForLastBaselineLayout];
@@ -393,6 +393,10 @@
         return cell;
     }
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"cell%ld",indexPath.section]];
+    if (indexPath.section == 1){
+        UILabel *la = [cell viewWithTag:0];
+        la.text = @"段位";
+    }
     if (self.originSkill){
         if (indexPath.section == 1){
             UITextField* tf = [cell viewWithTag: 1];
