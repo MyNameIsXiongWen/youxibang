@@ -25,10 +25,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.tableView.scrollEnabled = NO;
-
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.scrollEnabled = NO;
     self.tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.title = @"支付";
     self.way = @"1";
@@ -311,7 +308,7 @@
             cell.imageView.layer.masksToBounds = 1;
             cell.imageView.layer.cornerRadius = 10;
             
-            cell.textLabel.text = @"游戏名";
+            cell.textLabel.text = @"技能名";
             cell.detailTextLabel.text = @"1小时";
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             for (UILabel* i in cell.viewForLastBaselineLayout.subviews){

@@ -27,7 +27,7 @@
     img.layer.cornerRadius = 5;
     img.layer.masksToBounds = YES;
     
-    UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, self.viewForLastBaselineLayout.width, 20) andText:@"游戏名" andColor:[UIColor blackColor] andView:self.viewForLastBaselineLayout];
+    UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, self.viewForLastBaselineLayout.width, 20) andText:@"技能名" andColor:[UIColor blackColor] andView:self.viewForLastBaselineLayout];
     lab.textAlignment = 1;
     lab.center = CGPointMake(self.viewForLastBaselineLayout.width/2, self.viewForLastBaselineLayout.height/2 + 40);
     self.nameLab = lab;

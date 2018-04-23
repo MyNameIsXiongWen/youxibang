@@ -115,6 +115,7 @@
 
 #pragma mark - location
 - (void)locationUser:(UIButton *)btn {
+    [self startSerialLocation];
     SDCityPickerViewController *city =[[SDCityPickerViewController alloc]init];
     city.cityPickerBlock = ^(SDCityModel *city)
     {
@@ -500,7 +501,7 @@
     [self.collectionView addSubview:cycleScrollView];
     
     //三个按钮
-    NSArray *textAry = @[@"兼职接单",@"游戏达人",@"发布任务"];
+    NSArray *textAry = @[@"兼职接单",@"技能达人",@"发布任务"];
     NSArray *imgAry = @[@"ico_order",@"ico_baby",@"ico_assignment"];
     for (int i = 0;i < 3;i ++){
         UIView* v = [EBUtility viewfrome:CGRectMake(i * (SCREEN_WIDTH - 5)/3 , cycleScrollView.height, (SCREEN_WIDTH - 50)/3, 135) andColor:nil andView:self.collectionView];
@@ -516,7 +517,7 @@
     //分界线与section title
     UILabel *blackLine = [EBUtility labfrome:CGRectMake(0, 310, SCREEN_WIDTH, 10) andText:@"" andColor:nil andView:self.collectionView];
     blackLine.backgroundColor = [UIColor groupTableViewBackgroundColor];
-    UILabel* textLab = [EBUtility labfrome:CGRectMake(35, 328, 100, 15) andText:@"游戏达人" andColor:[UIColor blackColor] andView:self.collectionView];
+    UILabel* textLab = [EBUtility labfrome:CGRectMake(35, 328, 100, 15) andText:@"技能达人" andColor:[UIColor blackColor] andView:self.collectionView];
     [textLab sizeToFit];
     UIImageView* img = [EBUtility imgfrome:CGRectMake(10, 325, 18, 20) andImg:[UIImage imageNamed:@"ico_yxbb"] andView:self.collectionView];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {

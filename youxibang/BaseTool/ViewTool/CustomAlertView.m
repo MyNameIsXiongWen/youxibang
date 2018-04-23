@@ -563,7 +563,7 @@
                 btn.selected = YES;
             }
         }
-        UILabel* gameLab = [EBUtility labfrome:CGRectMake(10, 150, 30, 18) andText:@"游戏" andColor:[UIColor blackColor] andView:self.alertView];
+        UILabel* gameLab = [EBUtility labfrome:CGRectMake(10, 150, 30, 18) andText:@"技能" andColor:[UIColor blackColor] andView:self.alertView];
         
 
         for (int i = 0; i < row; i++) {

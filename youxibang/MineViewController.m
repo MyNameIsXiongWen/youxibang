@@ -220,7 +220,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (section == 1){
-        return 8;
+        return 7;
     }
     return 2;
 }
@@ -249,8 +249,8 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     //写死的title和图片
-    NSArray* ary = @[@[@"我的钱包",@""],@[@"我的任务",@"我的技能",@"优惠券",@"订单中心",@"提现账户管理",@"我的邀请码",@"联系客服",@"系统设置"]];
-    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@"ico_renwu",@"ico_gamebaby",@"ico_yhq",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+    NSArray* ary = @[@[@"我的钱包",@""],@[@"我的任务",@"我的技能",@"订单中心",@"提现账户管理",@"我的邀请码",@"联系客服",@"系统设置"]];
+    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@"ico_renwu",@"ico_gamebaby",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
     if (indexPath.section == 0 && indexPath.row == 1){
         //充值提现的cell
         TopUpTableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"TopUpTableViewCell"];
@@ -273,7 +273,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         cell.rightLabel.attributedText = mAttStr;
         cell.rightLabel.font = [UIFont systemFontOfSize:12];
 
-    }else if (indexPath.section == 1 && indexPath.row == 5){
+    }else if (indexPath.section == 1 && indexPath.row == 4){
         //邀请码
         cell.rightLabel.text = @"EE0F85D131C1";
         cell.rightLabelTrailingConstraint.constant = 15;
@@ -302,23 +302,23 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
                 RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
                 [self.navigationController pushViewController:vc animated:1];
             }
-        }else if (indexPath.row == 2){//优惠券
-            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            DiscountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"dvc"];
-            [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 3){//订单列表
+//        }else if (indexPath.row == 2){//优惠券
+//            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//            DiscountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"dvc"];
+//            [self.navigationController pushViewController:vc animated:1];
+        }else if (indexPath.row == 2){//订单列表
             UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             MyOrderListViewController* vc = [sb instantiateViewControllerWithIdentifier:@"mol"];
             [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 4){//支付宝绑定
+        }else if (indexPath.row == 3){//支付宝绑定
             UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             AlipayAccountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"aa"];
             [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 5){//点击复制邀请码
+        }else if (indexPath.row == 4){//点击复制邀请码
             UIPasteboard *pab = [UIPasteboard generalPasteboard];
             [pab setString:@"EE0F85D131C1"];
             [SVProgressHUD showInfoWithStatus:@"已将邀请码复制"];
-        }else if (indexPath.row == 6){//自定义alert显示客服电话
+        }else if (indexPath.row == 5){//自定义alert显示客服电话
             CustomAlertView* alert = [[CustomAlertView alloc]initWithAry:@[@"客服电话1：15306544612\n(微信同号)",@"客服电话2：15372402489\n(微信同号)",@"客服电话3：15372416943\n(微信同号)"]];
             alert.resultDate = ^(NSString *date) {
                 if ([date isEqualToString:@"0"]){
@@ -330,7 +330,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
                 }
             };
             [alert showAlertView];
-        }else if (indexPath.row == 7){//系统设置
+        }else if (indexPath.row == 6){//系统设置
             SystemSettingViewController* vc = [[SystemSettingViewController alloc]init];
             [self.navigationController pushViewController:vc animated:1];
         }
