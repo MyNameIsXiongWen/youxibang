@@ -10,7 +10,6 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "AppDelegate.h"
 
-
 @interface DSWebViewController ()<UIWebViewDelegate>
 
 @property (nonatomic, strong)UIWebView* webView;
@@ -18,37 +17,33 @@
 
 @end
 
-
-
 @implementation DSWebViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-
 }
+
 -(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
     [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.url]]];
 }
--(void)viewWillDisappear:(BOOL)animated{
-    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleLight];
 
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleLight];
 }
--(instancetype)initWithURLSting:(NSString *)urlString
-{
+
+-(instancetype)initWithURLSting:(NSString *)urlString {
     if (self = [super init]) {
         UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
         webView.delegate = self;
-        for (UIView *subView in [webView subviews])
-        {
-            if ([subView isKindOfClass:[UIScrollView class]])
-            {
+        for (UIView *subView in [webView subviews]) {
+            if ([subView isKindOfClass:[UIScrollView class]]) {
                 // 不显示竖直的滚动条
                 [(UIScrollView *)subView setShowsVerticalScrollIndicator:NO];
             }
         }
-        
         [self.view addSubview:webView];
         self.webView = webView;
         self.url = urlString;
@@ -57,19 +52,15 @@
 }
 
 
-- (void)webViewDidFinishLoad:(UIWebView *)webView{
-    
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
     self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
-
-
 }
 
--(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
-{
+-(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     [self.navigationController popViewControllerAnimated:YES];
 }
--(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
-{
+
+-(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     JSContext *context = [webView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
     context[@"getUserId"] = ^(){
        
@@ -156,11 +147,8 @@
 
         return NO;
     }
-    
     return YES;
-    
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

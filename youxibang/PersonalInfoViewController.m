@@ -557,7 +557,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
             NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
             NSString *str = [response objectForKey:@"message"];
             if (msg == 1) {
-                [self uploadVideoWithPath:[response objectForKey:@"video"]];
+                [self uploadVideoWithPath:[response objectForKey:@"video"] VideoImg:@""];
             }else{
                 [SVProgressHUD showErrorWithStatus:str];
             }
@@ -569,9 +569,10 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     }];
 }
 //上传视频地址
-- (void)uploadVideoWithPath:(NSString *)videopath {
+- (void)uploadVideoWithPath:(NSString *)videopath VideoImg:(NSString *)videoImg {
     NSDictionary *dict = @{@"token":[DataStore sharedDataStore].token,
-                           @"video":videopath};
+                           @"video":videopath,
+                           @"video_img":videoImg};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/update_video",HttpURLString] Paremeters:dict successOperation:^(id response) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -620,7 +621,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 
 - (void)uploadSuccessWithVid:(NSString *)vid imageUrl:(NSString *)imageUrl {
     NSLog(@"%@-------%@",vid,imageUrl);
-    [self uploadVideoWithPath:vid];
+    [self uploadVideoWithPath:vid VideoImg:imageUrl];
     NSFileManager *filemanager = [NSFileManager defaultManager];
     if ([filemanager fileExistsAtPath:ImageUrlPath]) {
         [filemanager removeItemAtPath:ImageUrlPath error:nil];

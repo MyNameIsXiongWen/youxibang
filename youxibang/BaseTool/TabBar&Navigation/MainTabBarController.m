@@ -12,7 +12,6 @@
 #import "LoginViewController.h"
 
 @interface MainTabBarController ()<UITabBarControllerDelegate>
-@property (nonatomic,strong)UIButton* centerBtn;
 @end
 
 @implementation MainTabBarController
@@ -31,43 +30,32 @@
  
 }
 
-- (void)setupChildVcs
-{
+- (void)setupChildVcs {
     //设置子控制器
-    NSArray *tabBarItemImages = @[@"\U0000e612", @"\U0000e630", @"\U0000e615"];
-
-    NSArray *tabBarItemTitles = @[@"首页",@"消息", @"我的"];
-    
-    NSArray* vcAry = @[@"HomeViewController",@"MessageViewController",@"MineViewController"];
+//    NSArray *tabBarItemImages = @[@"\U0000e612", @"\U0000e630", @"\U0000e615"];
+    NSArray *tabBarItemImages = @[@"tabbar_home_unselected",@"tabbar_news_unselected", @"tabbar_msg_unselected", @"tabbar_mine_unselected"];
+    NSArray *tabBarItemSelectedImages = @[@"tabbar_home_selected",@"tabbar_news_selected", @"tabbar_msg_selected", @"tabbar_mine_selected"];
+    NSArray *tabBarItemTitles = @[@"首页",@"资讯",@"消息", @"我的"];
+    NSArray* vcAry = @[@"HomeViewController",@"NewsViewController",@"MessageViewController",@"MineViewController"];
     
     NSMutableArray *array = [NSMutableArray array];
     for (NSInteger i = 0; i < vcAry.count; i ++ ) {
-
         NSString *image = [tabBarItemImages objectAtIndex:i];
+        NSString *selectedImage = [tabBarItemSelectedImages objectAtIndex:i];
         NSString *title = [tabBarItemTitles objectAtIndex:i];
         
         BaseTableViewController *vc = [[NSClassFromString(vcAry[i]) alloc] init];
-        
         MainNavigationController* navigation = [[MainNavigationController alloc]initWithRootViewController:vc];
-        
-        navigation.tabBarItem.image = [[UIImage iconWithInfo:TBCityIconInfoMake(image,26,[UIColor blackColor])] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-        
-        navigation.tabBarItem.selectedImage = [[UIImage iconWithInfo:TBCityIconInfoMake(image,26,Nav_color)] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-        navigation.tabBarItem.title = title;
-        
-        self.tabBarController.tabBar.tintColor = Nav_color;
         navigation.tabBarItem.tag = i;
-        NSMutableDictionary *textArray1 = [NSMutableDictionary dictionary];
-        textArray1[NSForegroundColorAttributeName] = [UIColor blackColor];
-        
-        NSMutableDictionary *textArray2 = [NSMutableDictionary dictionary];
-        textArray2[NSForegroundColorAttributeName] = Nav_color;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ) {
-            
-        }
-        [navigation.tabBarItem setTitleTextAttributes:textArray1 forState:UIControlStateNormal];
-        [navigation.tabBarItem setTitleTextAttributes:textArray2 forState:UIControlStateSelected];
-        
+        navigation.tabBarItem.title = title;
+        navigation.tabBarItem.image = [[UIImage imageNamed:image] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        navigation.tabBarItem.selectedImage = [[UIImage imageNamed:selectedImage] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        [navigation.tabBarItem setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor colorFromHexString:@"7c88a4"],NSFontAttributeName:[UIFont systemFontOfSize:10]}
+                                                  forState:UIControlStateNormal];
+        [navigation.tabBarItem setTitleTextAttributes:@{NSForegroundColorAttributeName :[UIColor colorFromHexString:@"457fea"],NSFontAttributeName:[UIFont systemFontOfSize:10]}
+                                                  forState:UIControlStateSelected];
+        //    childController.tabBarItem.imageInsets = UIEdgeInsetsMake(-1, 0, 1, 0);
+        navigation.tabBarItem.titlePositionAdjustment = UIOffsetMake(0, -1);
         [array addObject:navigation];
     }
 
@@ -89,17 +77,8 @@
 //    [tab setBackgroundImage:img];
 //    [tab setShadowImage:img];
 //}
-- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
-{
-    if (viewController.tabBarItem.tag != 2) {
-        self.centerBtn.selected = NO;
-    }else{
-        self.centerBtn.selected = YES;
-    }
-//    NSLog(@"输出--tabbaritem.title--%@---tag %ld",viewController.tabBarItem.title,(long)viewController.tabBarItem.tag);
-
-    if (viewController.tabBarItem.tag == 2 ||viewController.tabBarItem.tag == 1)
-    {
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
+    if (viewController.tabBarItem.tag == 3 ||viewController.tabBarItem.tag == 2 ||viewController.tabBarItem.tag == 1) {
         
         if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
                return YES;
@@ -107,16 +86,13 @@
                 [self skipLoginPage];
                 return NO;
             }
-
-    }else
-    {
+    }else {
         return YES;
     }
 }
 
 
--(void)skipLoginPage
-{
+- (void)skipLoginPage {
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
     MainNavigationController * HomePageNVC = [[MainNavigationController alloc] initWithRootViewController:vc];

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="198" id="KGk-i7-Jjw" customClass="LiveInformationTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="189"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="188.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="城市：杭州市" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z61-A7-VxD">
+                        <rect key="frame" x="15" y="4" width="80" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="3W4-f3-ZfJ"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="主播类型：全职" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="921-Xl-CC8">
+                        <rect key="frame" x="15" y="34" width="93" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="SJM-Oe-5TG"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="直播类型：游戏主播" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QT2-Q9-mDI">
+                        <rect key="frame" x="15" y="64" width="120" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="4LA-dP-xgy"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="经纪公司：杭州XXX有限公司" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UUr-j9-Hkl">
+                        <rect key="frame" x="15" y="94" width="290" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="p16-Wf-Eke"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="期望薪资：5000-8000" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Zl-Fy-5Tn">
+                        <rect key="frame" x="15" y="124" width="290" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="RLg-NA-l5Z"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="主播特点：XXXXXXXX" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uzh-Lz-1Av">
+                        <rect key="frame" x="15" y="153" width="290" height="16"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="微信：XXXXXXXXX" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MXg-VT-bVD">
+                        <rect key="frame" x="131" y="4" width="119" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="tc0-Vu-VI5"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="所属平台：斗鱼直播" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CQp-2j-Roq">
+                        <rect key="frame" x="185.5" y="34" width="119.5" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="kFH-Cs-5tm"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="直播经验：1年" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yhK-Gi-8fw">
+                        <rect key="frame" x="219" y="64" width="86" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="NLb-FR-Y5V"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pOq-5m-80v">
+                        <rect key="frame" x="255" y="0.0" width="50" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="50" id="glJ-25-zna"/>
+                            <constraint firstAttribute="height" constant="22" id="uQg-g3-vlk"/>
+                        </constraints>
+                        <state key="normal" image="live_detail_look"/>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="uzh-Lz-1Av" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="0Cf-nO-HmE"/>
+                    <constraint firstItem="pOq-5m-80v" firstAttribute="leading" secondItem="MXg-VT-bVD" secondAttribute="trailing" constant="5" id="3hQ-VF-toR"/>
+                    <constraint firstAttribute="trailing" secondItem="5Zl-Fy-5Tn" secondAttribute="trailing" constant="15" id="5G3-Rd-eMy"/>
+                    <constraint firstAttribute="trailing" secondItem="pOq-5m-80v" secondAttribute="trailing" constant="15" id="6Ib-aS-RfM"/>
+                    <constraint firstAttribute="trailing" secondItem="CQp-2j-Roq" secondAttribute="trailing" constant="15" id="9jW-IE-OJf"/>
+                    <constraint firstItem="921-Xl-CC8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="9uo-X5-IGR"/>
+                    <constraint firstItem="CQp-2j-Roq" firstAttribute="top" secondItem="MXg-VT-bVD" secondAttribute="bottom" constant="16" id="CXm-Gf-jzy"/>
+                    <constraint firstItem="5Zl-Fy-5Tn" firstAttribute="top" secondItem="UUr-j9-Hkl" secondAttribute="bottom" constant="16" id="GHi-TD-79B"/>
+                    <constraint firstItem="Z61-A7-VxD" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="4" id="KT4-Vx-Jjh"/>
+                    <constraint firstItem="UUr-j9-Hkl" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="Tcp-TV-1vU"/>
+                    <constraint firstItem="5Zl-Fy-5Tn" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="VCR-bB-2lP"/>
+                    <constraint firstItem="921-Xl-CC8" firstAttribute="top" secondItem="Z61-A7-VxD" secondAttribute="bottom" constant="16" id="Vl0-HS-OjA"/>
+                    <constraint firstAttribute="trailing" secondItem="yhK-Gi-8fw" secondAttribute="trailing" constant="15" id="b1Z-UG-adZ"/>
+                    <constraint firstItem="yhK-Gi-8fw" firstAttribute="top" secondItem="CQp-2j-Roq" secondAttribute="bottom" constant="16" id="fiu-Ut-v1y"/>
+                    <constraint firstAttribute="trailing" secondItem="UUr-j9-Hkl" secondAttribute="trailing" constant="15" id="hoX-n8-4pe"/>
+                    <constraint firstItem="uzh-Lz-1Av" firstAttribute="top" secondItem="5Zl-Fy-5Tn" secondAttribute="bottom" constant="15" id="hsS-Oh-stv"/>
+                    <constraint firstAttribute="trailing" secondItem="uzh-Lz-1Av" secondAttribute="trailing" constant="15" id="ivr-je-0AO"/>
+                    <constraint firstItem="UUr-j9-Hkl" firstAttribute="top" secondItem="QT2-Q9-mDI" secondAttribute="bottom" constant="16" id="l0w-0k-HPW"/>
+                    <constraint firstItem="QT2-Q9-mDI" firstAttribute="top" secondItem="921-Xl-CC8" secondAttribute="bottom" constant="16" id="sxV-fR-SmL"/>
+                    <constraint firstItem="QT2-Q9-mDI" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="uqj-sY-Qto"/>
+                    <constraint firstItem="MXg-VT-bVD" firstAttribute="centerY" secondItem="Z61-A7-VxD" secondAttribute="centerY" id="vJN-xe-K6n"/>
+                    <constraint firstItem="Z61-A7-VxD" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="xbs-hi-N3Z"/>
+                    <constraint firstItem="pOq-5m-80v" firstAttribute="centerY" secondItem="Z61-A7-VxD" secondAttribute="centerY" id="zYZ-Ku-d7C"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
+            <connections>
+                <outlet property="addressLabel" destination="Z61-A7-VxD" id="lG4-zd-ZSJ"/>
+                <outlet property="companyLabel" destination="UUr-j9-Hkl" id="bmg-dm-3tk"/>
+                <outlet property="expectSalaryLabel" destination="5Zl-Fy-5Tn" id="85k-f4-vS5"/>
+                <outlet property="liveExperienceLabel" destination="yhK-Gi-8fw" id="VeC-Wu-5yO"/>
+                <outlet property="livePlatformLabel" destination="CQp-2j-Roq" id="FGr-8e-5sx"/>
+                <outlet property="liveSpecialtyLabel" destination="uzh-Lz-1Av" id="zwg-bN-diw"/>
+                <outlet property="liveTypeLabeL" destination="QT2-Q9-mDI" id="D3l-D3-RUw"/>
+                <outlet property="lookButton" destination="pOq-5m-80v" id="1jf-Me-Rvm"/>
+                <outlet property="parttimeTypeLabel" destination="921-Xl-CC8" id="eOY-kC-tPP"/>
+                <outlet property="wechatLabel" destination="MXg-VT-bVD" id="8HT-y2-UE8"/>
+            </connections>
+            <point key="canvasLocation" x="-60" y="127"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="live_detail_look" width="50" height="20"/>
+    </resources>
+</document>

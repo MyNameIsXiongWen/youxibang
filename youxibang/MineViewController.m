@@ -34,9 +34,9 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"我的";
-    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 44);
+    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 49);
     if ([[UIDevice currentDevice] systemVersion].floatValue <= 11.f){
-        self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 44);
+        self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 49);
     }
     self.tableView.showsVerticalScrollIndicator = NO;
     self.tableView.tableFooterView = [UIView new];

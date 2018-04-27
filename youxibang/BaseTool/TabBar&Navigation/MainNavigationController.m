@@ -32,14 +32,14 @@
 }
 
 -(void)setUpNavi {
-    self.navigationBar.barStyle = UIBarStyleBlack;
-    [self.navigationBar setBackgroundImage:[UIImage imageNamed:@"navi_bg"] forBarMetrics:UIBarMetricsDefault];
-    self.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName];
+    self.navigationBar.barStyle = UIBarStyleDefault;
+    self.navigationBar.backgroundColor = [UIColor whiteColor];
+    
+    self.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor colorFromHexString:@"333333"] forKey:NSForegroundColorAttributeName];
     for (UIViewController *vc in self.childViewControllers) {
         UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
-        img.image = [UIImage imageNamed:@"back"];
+        img.image = [UIImage imageNamed:@"back_black"];
         UIButton *leftBtn = [[UIButton alloc]initWithFrame:CGRectMake(-15, 0, 40, 40)];
-//        [leftBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
         [leftBtn addSubview:img];
         [leftBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
         vc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
@@ -59,7 +59,7 @@
         
         UIView* view = [[UIView alloc]initWithFrame: CGRectMake(0, 0, 50, 40)];
         UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
-        img.image = [UIImage imageNamed:@"back"];
+        img.image = [UIImage imageNamed:@"back_black"];
         UIButton *leftBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 50, 40)];
         [leftBtn addSubview:img];
         [leftBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
@@ -72,12 +72,11 @@
 }
 
 
--(void)back
-{
+-(void)back {
     state = NO;
-    if (self.childViewControllers.count == 2) {
+    if (self.childViewControllers.count == 3) {
         for (UIViewController *vc in self.childViewControllers) {
-            if ([NSStringFromClass(vc.class) isEqualToString:@"MineViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"MessageViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"HomeViewController"] ) {
+            if ([NSStringFromClass(vc.class) isEqualToString:@"MineViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"MessageViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"HomeViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"NewsViewController"]) {
                 state = YES;
             }
             self.childViewControllers[0].tabBarController.tabBar.hidden = NO;

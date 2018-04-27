@@ -22,5 +22,6 @@ target'youxibang'do
     pod 'Colours'
     pod 'VODUpload'
     pod 'AliyunPlayer_iOS/AliyunVodPlayerSDK'
+    pod 'IQKeyboardManager', '~> 3.3.7'
     
 end

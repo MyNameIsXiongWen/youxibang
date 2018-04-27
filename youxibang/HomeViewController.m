@@ -21,38 +21,40 @@
 #import <AMapFoundationKit/AMapFoundationKit.h>
 #import <AMapLocationKit/AMapLocationKit.h>
 
+#import "ContentModel.h"
+#import "HomeIntelligentTableViewCell.h"
+#import "LiveShowViewController.h"
+#import "NewsViewController.h"
+#import "LiveCreateViewController.h"
+
 #define historyCityFilepath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"historyCity.data"]
 
-@interface HomeViewController ()<SDCycleScrollViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, AMapLocationManagerDelegate>
+static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifier";
+@interface HomeViewController ()<SDCycleScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, AMapLocationManagerDelegate>
 
-@property (nonatomic,strong)UICollectionView* collectionView;
-@property (nonatomic,strong)NSMutableArray* dataAry;
-@property (nonatomic,strong)NSMutableArray* bannerAry;
-@property (nonatomic,assign)int currentPage;
+@property (strong, nonatomic) SDCycleScrollView *cycleScrollView;
+@property (strong, nonatomic) UITableView *adTableview;
+@property (strong, nonatomic) UITableView *contentTableview;
+@property (strong, nonatomic) NSDictionary *responseDictionary;
+
+@property (nonatomic, strong) NSMutableArray* intelligentArray;
+@property (nonatomic, strong) NSMutableArray* bannerAry;
+@property (nonatomic, strong) NSMutableArray* anchorAry;
+@property (nonatomic, assign) int currentPage;
 
 @property (strong, nonatomic) UIButton *locationBtn;
 @property (nonatomic, strong) AMapLocationManager *locationManager;
-@property (nonatomic, strong) NSMutableArray *dataArr;
+@property (nonatomic, strong) NSMutableArray *locationDataSourceArray;
 
-/**
- 热门
- */
+// 热门
 @property (nonatomic,strong)NSMutableArray *hotArr;
-
-
-/**
- 历史
- */
+// 历史
 @property (nonatomic,strong)NSMutableArray *historyArr;
-
-
-/**
- 当前选择
- */
+// 当前选择
 @property (nonatomic,strong)NSMutableArray *selectArr;
-
-@property (nonatomic,strong)UIButton *btn; //左按钮
+//@property (nonatomic,strong)UIButton *btn; //左按钮
 @property (nonatomic,strong)NSMutableArray *historySelectArr;
+
 @end
 
 @implementation HomeViewController
@@ -64,53 +66,161 @@
     [self initLocationManager];
     self.currentPage = 1;
     self.view.backgroundColor = UIColor.whiteColor;
-    //白色的navi
-    UIView* navView = [EBUtility viewfrome:CGRectMake(0, -20, SCREEN_WIDTH, 84) andColor:[UIColor whiteColor] andView:self.view];
-    UILabel* title = [EBUtility labfrome:CGRectMake(0, 0, 100, 30) andText:@"爱上播" andColor:[UIColor blackColor] andView:navView];
-    title.font = [UIFont systemFontOfSize:18];
-    [title sizeToFit];
-    title.centerX = navView.centerX;
-    title.centerY = navView.height - 22;
-    //搜索按钮
-    UIButton* searchBtn = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-35, 50, 20, 20) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"ico_search"] andView:navView];
-    [searchBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 5, 0, -5)];
-    [searchBtn addTarget:self action:@selector(searchView:) forControlEvents:UIControlEventTouchUpInside];
-    
-    //定位按钮
-    self.locationBtn = [EBUtility btnfrome:CGRectMake(15, 50, 50, 20) andText:self.historySelectArr.count==0?@"全国":((SDCityModel *)self.historySelectArr.firstObject).name andColor:UIColor.grayColor andimg:[UIImage imageNamed:@"arrow_down"] andView:navView];
-    [self.locationBtn setImageEdgeInsets:UIEdgeInsetsMake(2, 22, -2, -22)];
-    [self.locationBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, -20, 0, 20)];
-    self.locationBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
-    [self.locationBtn addTarget:self action:@selector(locationUser:) forControlEvents:UIControlEventTouchUpInside];
-    
-    //collection部分
-    UICollectionViewFlowLayout* layout = [[UICollectionViewFlowLayout alloc] init];
-    [layout setHeaderReferenceSize:CGSizeMake(SCREEN_WIDTH, 340)];
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        [layout setHeaderReferenceSize:CGSizeMake(SCREEN_WIDTH, 560)];
-    }
-    layout.minimumInteritemSpacing = 20;
-    layout.minimumLineSpacing = 15;
-    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64 -44) collectionViewLayout:layout];
-    self.collectionView.delegate = self;
-    self.collectionView.dataSource = self;
-    self.collectionView.backgroundColor = [UIColor whiteColor];
-    self.collectionView.showsVerticalScrollIndicator = NO;
-    [self.collectionView registerClass:[HomeCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
-    [self initHeadView];
-    
-    [self.view addSubview:self.collectionView];
-    //refresh
-    self.collectionView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
-    self.collectionView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
-    
-    //下载数据
-    [self downloadInfo];
-    [self downloadBanner];
+
+    [self configUI];
+    [self homeDataRequest];
     
     //这个通知是付款完成后跳转个人页面的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushMineView:) name:@"pushMineView" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessage:) name:@"refreshMessage" object:nil];
+}
+
+- (void)configNavView:(UIView *)headerView {
+    //白色的navi
+    UIView* navView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:[UIColor clearColor] andView:headerView];
+    
+    UIView* searchView = [EBUtility viewfrome:CGRectMake(80, 30, SCREEN_WIDTH - 80-30*ADAPTATIONRATIO, 25) andColor:[UIColor whiteColor] andView:navView];
+    searchView.layer.cornerRadius = 12.5;
+    searchView.layer.masksToBounds = NO;
+    UIImageView* img = [EBUtility imgfrome:CGRectMake(20, 5, 15, 15) andImg:[UIImage imageNamed:@"home_search"] andView:searchView];
+    UIButton* searchBtn = [EBUtility btnfrome:CGRectMake(45, 0, searchView.frame.size.width-45-20, 25) andText:@"搜任务标题、用户昵称、ID" andColor:[UIColor colorFromHexString:@"83889a"] andimg:nil andView:searchView];
+    searchBtn.titleLabel.font = [UIFont systemFontOfSize:12.0];
+    [searchBtn addTarget:self action:@selector(searchView:) forControlEvents:UIControlEventTouchUpInside];
+    
+    //定位按钮
+    self.locationBtn = [EBUtility btnfrome:CGRectMake(15, 32, 50, 20) andText:self.historySelectArr.count==0?@"全国":((SDCityModel *)self.historySelectArr.firstObject).name andColor:UIColor.whiteColor andimg:[UIImage imageNamed:@"home_location"] andView:navView];
+    [self.locationBtn setImageEdgeInsets:UIEdgeInsetsMake(0, -5, 0, 5)];
+    [self.locationBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 2, 0, -2)];
+    self.locationBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
+    [self.locationBtn addTarget:self action:@selector(locationUser:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)configUI {
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 345)];
+    headerView.backgroundColor = UIColor.whiteColor;
+    NSMutableArray* ary = [NSMutableArray array];
+    for (NSDictionary* i in self.bannerAry){
+        [ary addObject:i[@"adimg"]];
+    }
+    self.cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 175) imageNamesGroup:ary];
+    self.cycleScrollView.infiniteLoop = YES;
+    self.cycleScrollView.delegate = self;
+    self.cycleScrollView.hideBkgView = YES;
+    self.cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
+    [headerView addSubview:self.cycleScrollView];
+    [self configNavView:headerView];
+    //三个按钮
+    NSArray *textAry = @[@"主播基地",@"兼职空间",@"发布任务",@"每日打卡"];
+    NSArray *imgAry = @[@"home_live_base",@"home_parttime",@"home_publish",@"home_daily_clock"];
+    for (int i = 0;i < 4;i ++){
+        UIView* v = [EBUtility viewfrome:CGRectMake(i * SCREEN_WIDTH/4 , 175, SCREEN_WIDTH/4, 100) andColor:UIColor.whiteColor andView:headerView];
+        
+        UIButton* btn = [EBUtility btnfrome:CGRectMake(0, 10, SCREEN_WIDTH/4, 60) andText:@"" andColor:nil andimg:[UIImage imageNamed:imgAry[i]] andView:v];
+        btn.tag = i;
+        [btn addTarget:self action:@selector(pushOrder:) forControlEvents:UIControlEventTouchUpInside];
+        UILabel *lab = [EBUtility labfrome:CGRectMake(0, 75, SCREEN_WIDTH/4, 15) andText:textAry[i] andColor:[UIColor colorFromHexString:@"333333"] andView:v];
+        lab.font = [UIFont systemFontOfSize:13.0];
+        lab.textAlignment = NSTextAlignmentCenter;
+    }
+    
+    UIImageView *iconImgView = [EBUtility imgfrome:CGRectMake(5, 275, 55, 70) andImg:[UIImage imageNamed:@"home_toutiao"] andView:headerView];
+    iconImgView.contentMode = UIViewContentModeCenter;
+    iconImgView.backgroundColor = UIColor.whiteColor;
+    self.adTableview = [[UITableView alloc] initWithFrame:CGRectMake(50, 293, SCREEN_WIDTH-50, 35) style:UITableViewStylePlain];
+    self.adTableview.delegate = self;
+    self.adTableview.dataSource = self;
+    self.adTableview.tag = 111;
+    self.adTableview.separatorStyle = UITableViewCellSelectionStyleNone;
+    [headerView addSubview:self.adTableview];
+    
+    self.contentTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT-49+20) style:UITableViewStyleGrouped];
+    self.contentTableview.delegate = self;
+    self.contentTableview.dataSource = self;
+    self.contentTableview.tag = 999;
+    self.contentTableview.estimatedSectionHeaderHeight = 0;
+    self.contentTableview.estimatedSectionFooterHeight = 0;
+    self.contentTableview.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.contentTableview registerNib:[UINib nibWithNibName:@"HomeIntelligentTableViewCell" bundle:nil] forCellReuseIdentifier:INTELLIGENT_TABLEVIEW_IDENTIFIER];
+    [self.view addSubview:self.contentTableview];
+    self.contentTableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
+    self.contentTableview.tableHeaderView = headerView;
+}
+//兼职，游戏宝贝，发布三个按钮的方法，发布任务必须登陆后才能进入
+- (void)pushOrder:(UIButton*)sender{
+    //因为第三方登录后直接获取userinfo服务器的token会与当前不符，故在首页进行点击行为时才获取userinfo
+    if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
+        [UserNameTool reloadPersonalData:^{
+
+        }];
+    }
+    if (sender.tag == 0) {
+        if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+            [self.navigationController pushViewController:vc animated:1];
+            return;
+        }
+        LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
+        [self.navigationController pushViewController:vc animated:1];
+    }
+    else if (sender.tag == 1) {
+        PartTimeViewController* vc = [[PartTimeViewController alloc]init];
+        [self.navigationController pushViewController:vc animated:1];
+    }
+    else if (sender.tag == 2) {
+        if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+            [self.navigationController pushViewController:vc animated:1];
+            return;
+        }
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        IssueOrderViewController* vc = [sb instantiateViewControllerWithIdentifier:@"io"];
+        [self.navigationController pushViewController:vc animated:1];
+    }
+    else if (sender.tag == 3) {
+
+    }
+}
+
+- (void)homeDataRequest {
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
+    NSMutableDictionary *dic = NSMutableDictionary.dictionary;
+    if ([DataStore sharedDataStore].latitude) {
+        [dic setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+    }
+    if ([DataStore sharedDataStore].longitude) {
+        [dic setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+    }
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@currency/get_info",HttpURLString] Paremeters:dic successOperation:^(id object) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            if (code == 1) {
+                self.responseDictionary = object[@"data"];
+                //banner展示 
+                self.bannerAry = self.responseDictionary[@"ad"];
+                NSMutableArray* ary = [NSMutableArray array];
+                for (NSDictionary* i in self.bannerAry){
+                    [ary addObject:i[@"adimg"]];
+                }
+                self.cycleScrollView.imageURLStringsGroup = ary;
+                //tableview展示
+                self.intelligentArray = [ContentModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"group"]];
+                self.anchorAry = [IntelligentModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"anchor"]];
+                [self.adTableview reloadData];
+                [self.contentTableview reloadData];
+            }
+            else {
+                [SVProgressHUD showErrorWithStatus:object[@"message"]];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    }];
 }
 
 #pragma mark - location
@@ -125,7 +235,7 @@
         [self.locationBtn setTitle:city.name forState:0];
         [self convertCoordinate:city.name];
     };
-    city.dataArr = [NSMutableArray arrayWithArray:self.dataArr];
+    city.dataArr = [NSMutableArray arrayWithArray:self.locationDataSourceArray];
     [self.navigationController pushViewController:city animated:YES];
 }
 -(void)setSelectCityModel:(SDCityModel *)city{
@@ -149,13 +259,9 @@
     [NSKeyedArchiver archiveRootObject:_historySelectArr toFile:historyCityFilepath];
     cityInitial.cityArrs = [NSMutableArray arrayWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:historyCityFilepath]];
     [self.historyArr addObject:cityInitial];
-    [self.dataArr replaceObjectsAtIndexes:[NSIndexSet indexSetWithIndex:1] withObjects:self.historyArr];
+    [self.locationDataSourceArray replaceObjectsAtIndexes:[NSIndexSet indexSetWithIndex:1] withObjects:self.historyArr];
 }
-
-
-/**
- 定位选择
- */
+// 定位选择
 -(NSMutableArray *)selectArr{
     if (!_selectArr){
         _selectArr = [NSMutableArray array];
@@ -170,9 +276,7 @@
     }
     return _selectArr;
 }
-/**
- 历史
- */
+// 历史
 -(NSMutableArray *)historyArr{
     if (!_historyArr){
         _historyArr = [NSMutableArray array];
@@ -183,7 +287,6 @@
     }
     return _historyArr;
 }
-
 -(NSMutableArray *)historySelectArr{
     if (!_historySelectArr){
         _historySelectArr = [NSKeyedUnarchiver unarchiveObjectWithFile:historyCityFilepath];
@@ -193,9 +296,7 @@
     }
     return _historySelectArr;
 }
-/**
- 热门
- */
+// 热门
 -(NSMutableArray *)hotArr{
     if(!_hotArr){
         _hotArr = [NSMutableArray array];
@@ -219,9 +320,9 @@
     return _hotArr;
 }
 
--(NSMutableArray *)dataArr{
-    if (!_dataArr){
-        _dataArr =[NSMutableArray array];
+-(NSMutableArray *)locationDataSourceArray{
+    if (!_locationDataSourceArray){
+        _locationDataSourceArray =[NSMutableArray array];
         NSString *path =[[NSBundle mainBundle]pathForResource:@"City" ofType:@"plist"];
         NSArray *arr =[NSArray arrayWithContentsOfFile:path];
         NSMutableArray *cityModels = [NSMutableArray array];
@@ -232,7 +333,6 @@
                 [cityModels addObject:cityModel];
             }
         }
-        
         //获取首字母
         NSMutableArray *indexArr =
         [[cityModels valueForKeyPath:@"firstLetter"] valueForKeyPath:@"@distinctUnionOfObjects.self"];
@@ -247,17 +347,17 @@
                 }
             }
             cityInitial.cityArrs = cityArrs;
-            [_dataArr addObject:cityInitial];
+            [_locationDataSourceArray addObject:cityInitial];
         }
-        [_dataArr insertObjects:self.hotArr atIndexes:[NSIndexSet indexSetWithIndex:0]];
-        [_dataArr insertObjects:self.historyArr atIndexes:[NSIndexSet indexSetWithIndex:0]];
-        [_dataArr insertObjects:self.selectArr atIndexes:[NSIndexSet indexSetWithIndex:0]];
+        [_locationDataSourceArray insertObjects:self.hotArr atIndexes:[NSIndexSet indexSetWithIndex:0]];
+        [_locationDataSourceArray insertObjects:self.historyArr atIndexes:[NSIndexSet indexSetWithIndex:0]];
+        [_locationDataSourceArray insertObjects:self.selectArr atIndexes:[NSIndexSet indexSetWithIndex:0]];
     }
-    return _dataArr;
+    return _locationDataSourceArray;
 }
 
 - (void)initLocationManager {
-    [AMapServices sharedServices].apiKey = @"5982a470da137fca97a2e41ac2a63160";
+    [AMapServices sharedServices].apiKey = AMAP_API_KEY;
     [AMapServices sharedServices].enableHTTPS = YES;
     [self configLocationManager];
 }
@@ -292,7 +392,7 @@
             cityInitial.cityArrs = selectArrs;
             [self.selectArr replaceObjectAtIndex:0 withObject:cityInitial];
             [self.locationBtn setTitle:city.name forState:0];
-            [_dataArr replaceObjectAtIndex:0 withObject:self.selectArr];
+            [_locationDataSourceArray replaceObjectAtIndex:0 withObject:self.selectArr];
             
             [self configDataStore:location withCity:city.name updateCity:YES];
         }
@@ -326,7 +426,6 @@
     if (update) {
         [self updateCoordinate];
     }
-    [self downloadInfo];
 }
 
 - (void)updateCoordinate {
@@ -370,37 +469,38 @@
 //头部刷新方法
 - (void)refreshHead {
     self.currentPage = 1;
-    [self downloadBanner];
-    [self downloadInfo];
-    [self.collectionView.mj_header endRefreshing];
+    [self homeDataRequest];
+    [self.contentTableview.mj_header endRefreshing];
 }
 //尾部刷新方法
 - (void)refreshFooter {
     self.currentPage ++;
-    [self downloadInfo];
-    [self.collectionView.mj_footer endRefreshing];
+    [self homeDataRequest];
+    [self.contentTableview.mj_footer endRefreshing];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     //改变状态栏颜色，隐藏原来的navi，改变状态栏颜色
-    self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
+//    self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
     self.navigationController.navigationBar.hidden = YES;
     
 }
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+//    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 }
 
 //懒加载
-- (NSMutableArray*)dataAry {
-    if (!_dataAry){
-        _dataAry = [NSMutableArray array];
+- (NSMutableArray*)intelligentArray {
+    if (!_intelligentArray){
+        _intelligentArray = [NSMutableArray array];
     }
-    return _dataAry;
+    return _intelligentArray;
 }
 - (NSMutableArray*)bannerAry {
     if (!_bannerAry){
@@ -408,159 +508,12 @@
     }
     return _bannerAry;
 }
-//下载banner图的方法
-- (void)downloadBanner {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:@"1" forKey:@"typeid"];
-    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/bannerlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
-        
-        if (isKindOfNSDictionary(object)){
-            NSInteger code = [object[@"errcode"] integerValue];
-            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]];
-            NSLog(@"输出 %@--%@",object,msg);
-            
-            if (code == 1) {
-                self.bannerAry = [NSMutableArray arrayWithArray:object[@"data"]];
-                [self initHeadView];
-            }else{
-                //[SVProgressHUD showErrorWithStatus:msg];
-            }
-        }
-        
-    } failoperation:^(NSError *error) {
-        
-        
-    }];
-}
 
-//下载数据的方法
-- (void)downloadInfo{
-    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
-    [SVProgressHUD show];
-    
-    NSMutableDictionary *dic = @{@"p":[NSString stringWithFormat:@"%d",self.currentPage],
-                                 @"psize":@"20"}.mutableCopy;
-    
-    if ([DataStore sharedDataStore].city) {
-        [dic setObject:[DataStore sharedDataStore].city forKey:@"city"];
-    }
-    if ([DataStore sharedDataStore].latitude) {
-        [dic setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
-    }
-    if ([DataStore sharedDataStore].longitude) {
-        [dic setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
-    }
-    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/babylist.html",HttpURLString] Paremeters:dic successOperation:^(id object) {
-        [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        if (isKindOfNSDictionary(object)){
-            NSInteger code = [object[@"errcode"] integerValue];
-            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
-            NSLog(@"输出 %@--%@",object,msg);
-            if (code == 1) {
-                if (self.currentPage == 1) {
-                    self.dataAry = object[@"data"];
-                }
-                else {
-                    [self.dataAry addObjectsFromArray:object[@"data"]];
-                }
-                [self.collectionView reloadData];
-            }else{
-                if (self.currentPage == 1) {
-                    [self.dataAry removeAllObjects];
-                }
-                [self.collectionView reloadData];
-                [SVProgressHUD showErrorWithStatus:msg];
-            }
-        }
-    } failoperation:^(NSError *error) {
-        
-        [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
-    }];
-    
-}
-
-//初始化collection的headView，即轮播图和3个按钮
-- (void)initHeadView{
-
-    NSMutableArray* ary = [NSMutableArray array];
-    for (NSDictionary* i in self.bannerAry){
-        [ary addObject:i[@"adimg"]];
-    }
-    //轮播图
-    SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 175) imageNamesGroup:ary];
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        cycleScrollView.height = 375;
-    }
-    cycleScrollView.infiniteLoop = YES;
-    cycleScrollView.delegate = self;
-    cycleScrollView.hideBkgView = YES;
-    cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
-    [self.collectionView addSubview:cycleScrollView];
-    
-    //三个按钮
-    NSArray *textAry = @[@"兼职接单",@"技能达人",@"发布任务"];
-    NSArray *imgAry = @[@"ico_order",@"ico_baby",@"ico_assignment"];
-    for (int i = 0;i < 3;i ++){
-        UIView* v = [EBUtility viewfrome:CGRectMake(i * (SCREEN_WIDTH - 5)/3 , cycleScrollView.height, (SCREEN_WIDTH - 50)/3, 135) andColor:nil andView:self.collectionView];
-        
-        UIButton* btn = [EBUtility btnfrome:CGRectMake(0, 15, (SCREEN_WIDTH - 50)/3, 83) andText:@"" andColor:nil andimg:[UIImage imageNamed:imgAry[i]] andView:v];
-        btn.tag = i;
-        [btn addTarget:self action:@selector(pushOrder:) forControlEvents:UIControlEventTouchUpInside];
-        btn.centerX = SCREEN_WIDTH/6;
-        UILabel* lab = [EBUtility labfrome:CGRectMake(0, 100, 100, 25) andText:textAry[i] andColor:[UIColor blackColor] andView:v];
-        lab.centerX = SCREEN_WIDTH/6;
-    }
-    
-    //分界线与section title
-    UILabel *blackLine = [EBUtility labfrome:CGRectMake(0, 310, SCREEN_WIDTH, 10) andText:@"" andColor:nil andView:self.collectionView];
-    blackLine.backgroundColor = [UIColor groupTableViewBackgroundColor];
-    UILabel* textLab = [EBUtility labfrome:CGRectMake(35, 328, 100, 15) andText:@"技能达人" andColor:[UIColor blackColor] andView:self.collectionView];
-    [textLab sizeToFit];
-    UIImageView* img = [EBUtility imgfrome:CGRectMake(10, 325, 18, 20) andImg:[UIImage imageNamed:@"ico_yxbb"] andView:self.collectionView];
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        blackLine.y = 510;
-        textLab.y = 528;
-        img.y = 525;
-    }
-}
-//兼职，游戏宝贝，发布三个按钮的方法，发布任务必须登陆后才能进入
-- (void)pushOrder:(UIButton*)sender{
-    //因为第三方登录后直接获取userinfo服务器的token会与当前不符，故在首页进行点击行为时才获取userinfo
-    if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
-        [UserNameTool reloadPersonalData:^{
-            
-        }];
-    }
-    //兼职
-    if (sender.tag == 0){
-        PartTimeViewController* vc = [[PartTimeViewController alloc]init];
-        [self.navigationController pushViewController:vc animated:1];
-    }else if (sender.tag == 1){//游戏宝贝
-        PartTimeViewController* vc = [[PartTimeViewController alloc]init];
-        vc.ptOrBaby = YES;
-        [self.navigationController pushViewController:vc animated:1];
-    }else{//发布任务
-        if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
-            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-            [self.navigationController pushViewController:vc animated:1];
-            return;
-        }
-
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        IssueOrderViewController* vc = [sb instantiateViewControllerWithIdentifier:@"io"];
-        [self.navigationController pushViewController:vc animated:1];
-    }
-}
 //搜索页面的跳转方法
 - (void)searchView:(UIButton*)sender{
     //因为第三方登录后直接获取userinfo服务器的token会与当前不符，故在首页进行点击行为时才获取userinfo
     if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
         [UserNameTool reloadPersonalData:^{
-            
         }];
     }
     SearchViewController* vc = [[SearchViewController alloc]init];
@@ -580,53 +533,120 @@
     [self.tabBarController setSelectedIndex:1];
 }
 
-#pragma mark - collectionDelegate/DataSource
+#pragma mark - tableviewDelegate/DataSource
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (tableView.tag == 111) {
+        return 1;
+    }
+    return self.intelligentArray.count+1;
+}
 
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (tableView.tag == 111) {
+        return [self.responseDictionary[@"information"] count];
+    }
     return 1;
 }
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
-    return self.dataAry.count;
-}
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
-{
-    return UIEdgeInsetsMake(15, 10, 15, 10);
-}
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        return CGSizeMake((SCREEN_WIDTH - 50)/2, (SCREEN_WIDTH - 50) *3 /5);
-    }else if (iPhone5){
-        return CGSizeMake((SCREEN_WIDTH - 50)/2, 170);
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (tableView.tag == 111) {
+        return 17.5;
     }
-    return CGSizeMake((SCREEN_WIDTH - 40)/2, 230);
-}
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
-    HomeCollectionViewCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
-    //字典传值
-    [cell setInfoWith: self.dataAry[indexPath.row]];
-    return cell;
-}
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-    //因为第三方登录后直接获取userinfo服务器的token会与当前不符，故在首页进行点击行为时才获取userinfo
-    if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
-        [UserNameTool reloadPersonalData:^{
-            
-        }];
+    if (indexPath.section == 0) {
+        return 135+55;
     }
-    //跳转游戏宝贝详情页面
-    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    GameBabyDetailViewController* vc = [sb instantiateViewControllerWithIdentifier:@"gbd"];
-    vc.gbId = [NSString stringWithFormat:@"%@",self.dataAry[indexPath.row][@"id"]];
+    return 180+55;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (tableView.tag == 111) {
+        return 0.1;
+    }
+    return 15;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0.1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (tableView.tag == 111) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell_id"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell_id"];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        NSDictionary *dic = self.responseDictionary[@"information"][indexPath.row];
+        cell.textLabel.text = dic[@"title"];
+        cell.textLabel.font = [UIFont systemFontOfSize:11.0];
+        cell.textLabel.textColor = [UIColor colorFromHexString:@"444444"];
+        cell.imageView.image = [UIImage imageNamed:@"home_news"];
+        return cell;
+    }
+    HomeIntelligentTableViewCell *homeCell = [tableView dequeueReusableCellWithIdentifier:INTELLIGENT_TABLEVIEW_IDENTIFIER];
+    homeCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    NSMutableArray *dataArray = NSMutableArray.array;
+    CGFloat height = 0;
+    if (indexPath.section == 0) {
+        homeCell.leftTitleLabel.text = @"热门主播";
+        homeCell.type = ContentTypeLive;
+        dataArray = self.anchorAry;
+        height = 135;
+    }
+    else {
+        ContentModel *model = self.intelligentArray[indexPath.section-1];
+        homeCell.leftTitleLabel.text = model.name;
+        homeCell.type = ContentTypeIntelligent;
+        dataArray = model.data;
+        height = 180;
+    }
+    if (dataArray.count >= 6) {
+        homeCell.contentScrollView.contentSize = CGSizeMake(145*6+100+15, height);
+    }
+    else {
+        homeCell.contentScrollView.contentSize = CGSizeMake(145*dataArray.count+15, height);
+    }
+    [homeCell createScrollViewWithIntelligent:dataArray];
+    homeCell.rightAllBtn.tag = indexPath.section;
+    [homeCell.rightAllBtn addTarget:self action:@selector(clickAllBtn:) forControlEvents:UIControlEventTouchUpInside];
+    WEAKSELF
+    typeof(homeCell) __weak weakCell = homeCell;
+    typeof(dataArray) __weak weakDataArray = dataArray;
+    homeCell.clickInformationBlock = ^(NSInteger index) {
+        [self clickInformationArray:weakDataArray WithIndex:index];
+    };
+    homeCell.clickLookMoreBlock = ^{
+        [weakSelf clickAllBtn:weakCell.rightAllBtn];
+    };
+    return homeCell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (tableView.tag == 111) {
+        NewsViewController *newsCon = [NewsViewController new];
+        [self.navigationController pushViewController:newsCon animated:YES];
+    }
+}
+
+- (void)clickAllBtn:(UIButton *)btn {
+    LiveShowViewController *showCon = [LiveShowViewController new];
+    [self.navigationController pushViewController:showCon animated:YES];
+}
+
+- (void)clickInformationArray:(NSMutableArray *)array WithIndex:(NSInteger)index {
+    //跳转主播详情页面
+    IntelligentModel *model = array[index];
+    EmployeeDetailViewController* vc = [[EmployeeDetailViewController alloc]init];
+    vc.type = 2;
+    vc.employeeId = model.id;
     [self.navigationController pushViewController:vc animated:1];
 }
-#pragma mark - otherDelegate
 
+#pragma mark - otherDelegate
 //轮播图片点击事件
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index{
     if ([NSString stringWithFormat:@"%@",self.bannerAry[index][@"link_lock"]].integerValue == 1){
-        DSWebViewController* vc = [[DSWebViewController alloc]initWithURLSting: [NSString stringWithFormat:@"%@",self.bannerAry[index][@"detail"]]];
+        DSWebViewController* vc = [[DSWebViewController alloc] initWithURLSting: [NSString stringWithFormat:@"%@",self.bannerAry[index][@"detail"]]];
         vc.title = [NSString stringWithFormat:@"%@",self.bannerAry[index][@"ad_name"]];
         [self.navigationController pushViewController:vc animated:1];
     }
