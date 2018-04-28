@@ -18,5 +18,6 @@
 @property (copy, nonatomic) NSString *is_laud;
 @property (copy, nonatomic) NSString *laud_count;
 @property (copy, nonatomic) NSString *content;
+@property (copy, nonatomic) NSString *cat_id;
 
 @end

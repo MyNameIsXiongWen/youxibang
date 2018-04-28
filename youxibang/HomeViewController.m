@@ -25,6 +25,7 @@
 #import "HomeIntelligentTableViewCell.h"
 #import "LiveShowViewController.h"
 #import "LiveCreateViewController.h"
+#import "NewsModel.h"
 
 #define historyCityFilepath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"historyCity.data"]
 
@@ -39,6 +40,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 @property (nonatomic, strong) NSMutableArray* intelligentArray;
 @property (nonatomic, strong) NSMutableArray* bannerAry;
 @property (nonatomic, strong) NSMutableArray* anchorAry;
+@property (nonatomic, strong) NSMutableArray* informationAry;
 @property (nonatomic, assign) int currentPage;
 
 @property (strong, nonatomic) UIButton *locationBtn;
@@ -153,14 +155,8 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
         }];
     }
     if (sender.tag == 0) {
-        if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
-            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-            [self.navigationController pushViewController:vc animated:1];
-            return;
-        }
-        LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
-        [self.navigationController pushViewController:vc animated:1];
+        LiveShowViewController *showCon = [LiveShowViewController new];
+        [self.navigationController pushViewController:showCon animated:YES];
     }
     else if (sender.tag == 1) {
         PartTimeViewController* vc = [[PartTimeViewController alloc]init];
@@ -209,6 +205,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
                 //tableview展示
                 self.intelligentArray = [ContentModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"group"]];
                 self.anchorAry = [IntelligentModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"anchor"]];
+                self.informationAry = [NewsModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"information"]];
                 [self.adTableview reloadData];
                 [self.contentTableview reloadData];
             }
@@ -540,7 +537,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (tableView.tag == 111) {
-        return [self.responseDictionary[@"information"] count];
+        return self.informationAry.count;
     }
     return 1;
 }
@@ -573,11 +570,16 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell_id"];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        NSDictionary *dic = self.responseDictionary[@"information"][indexPath.row];
-        cell.textLabel.text = dic[@"title"];
+        NewsModel *model = self.informationAry[indexPath.row];
+        cell.textLabel.text = model.title;
         cell.textLabel.font = [UIFont systemFontOfSize:11.0];
         cell.textLabel.textColor = [UIColor colorFromHexString:@"444444"];
-        cell.imageView.image = [UIImage imageNamed:@"home_news"];
+        if (model.cat_id.integerValue == 1) {
+            cell.imageView.image = [UIImage imageNamed:@"home_news"];
+        }
+        else {
+            cell.imageView.image = [UIImage imageNamed:@"home_hr"];
+        }
         return cell;
     }
     HomeIntelligentTableViewCell *homeCell = [tableView dequeueReusableCellWithIdentifier:INTELLIGENT_TABLEVIEW_IDENTIFIER];
