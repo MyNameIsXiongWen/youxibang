@@ -11,6 +11,7 @@
 #import "ZLPhotoPickerCommon.h"
 #import "ZLPhotoPickerCustomToolBarView.h"
 #import "ZLPhotoPickerBrowserPhotoScrollView.h"
+#import "LiveCharmPhotoModel.h"
 
 @class ZLPhotoPickerBrowserViewController;
 
@@ -62,6 +63,7 @@
 
 // 展示的图片数组<ZLPhotoPickerBrowserPhoto> == [self.dataSource photoBrowser:photoAtIndex:]
 @property (strong,nonatomic) NSArray<ZLPhotoPickerBrowserPhoto *> *photos;
+@property (strong,nonatomic) NSArray<LiveCharmPhotoModel *> *charmPhotoArray;
 // 当前提供的组
 @property (assign,nonatomic) NSInteger currentIndex;
 

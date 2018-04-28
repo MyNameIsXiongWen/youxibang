@@ -120,7 +120,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
                     [self.dataArray addObjectsFromArray:[IntelligentModel mj_objectArrayWithKeyValuesArray:object[@"data"]]];
                 }
                 [self.collectionView reloadData];
-            }else{
+            }else {
                 [SVProgressHUD showErrorWithStatus:msg];
             }
         }
@@ -212,24 +212,24 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
             distanceType = 1;
             orderby = @"4";
             [btn setImage:[UIImage imageNamed:@"live_triangle_up"] forState:0];
-            btn.titleLabel.textColor = [UIColor colorFromHexString:@"457fea"];
+            [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
         }
         else if (distanceType == 1) {
             distanceType = 2;
             orderby = @"5";
             [btn setImage:[UIImage imageNamed:@"live_triangle_down"] forState:0];
-            btn.titleLabel.textColor = [UIColor colorFromHexString:@"457fea"];
+            [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
             
         }
         else if (distanceType == 2) {
             distanceType = 0;
             orderby = nil;
             [btn setImage:[UIImage imageNamed:@"live_triangle"] forState:0];
-            btn.titleLabel.textColor = [UIColor colorFromHexString:@"333333"];
+            [btn setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
         }
         ageType = 0;
         [self.ageButton setImage:[UIImage imageNamed:@"live_triangle"] forState:UIControlStateNormal];
-        self.ageButton.titleLabel.textColor = [UIColor colorFromHexString:@"333333"];
+        [self.ageButton setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
         [self getLiveListRequest];
     }
     else if (btn.tag == 2) {
@@ -237,24 +237,24 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
             ageType = 1;
             orderby = @"3";
             [btn setImage:[UIImage imageNamed:@"live_triangle_up"] forState:0];
-            btn.titleLabel.textColor = [UIColor colorFromHexString:@"457fea"];
+            [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
         }
         else if (ageType == 1) {
             ageType = 2;
             orderby = @"2";
             [btn setImage:[UIImage imageNamed:@"live_triangle_down"] forState:0];
-            btn.titleLabel.textColor = [UIColor colorFromHexString:@"457fea"];
+            [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
             
         }
         else if (ageType == 2) {
             ageType = 0;
             orderby = nil;
             [btn setImage:[UIImage imageNamed:@"live_triangle"] forState:0];
-            btn.titleLabel.textColor = [UIColor colorFromHexString:@"333333"];
+            [btn setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
         }
         distanceType = 0;
         [self.distanceButton setImage:[UIImage imageNamed:@"live_triangle"] forState:UIControlStateNormal];
-        self.distanceButton.titleLabel.textColor = [UIColor colorFromHexString:@"333333"];
+        [self.distanceButton setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
         [self getLiveListRequest];
     }
     else if (btn.tag == 3) {
@@ -262,7 +262,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
             self.filterView = [[LiveFilterView alloc] initWithFrame:CGRectMake(0, 64+40, SCREEN_WIDTH, SCREEN_HEIGHT-64-40) WithFilterArray:self.filterArray AndSelectedIndexArray:self.selectedIndexArray];
             [self.filterView show];
             [btn setImage:[UIImage imageNamed:@"live_filter_selected"] forState:0];
-            btn.titleLabel.textColor = [UIColor colorFromHexString:@"457fea"];
+            [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
             WEAKSELF
             self.filterView.confirmFilterBlock = ^(NSMutableArray *array) {
                 _selectedIndexArray = array;
@@ -303,7 +303,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
         [self.filterView dismiss];
         self.filterView = nil;
         [self.filtButton setImage:[UIImage imageNamed:@"live_filter_unselected"] forState:0];
-        self.filtButton.titleLabel.textColor = [UIColor colorFromHexString:@"333333"];
+        [self.filtButton setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
     }
 }
 @end

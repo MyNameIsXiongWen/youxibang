@@ -7,6 +7,7 @@
 
 #import "LiveCharmTableViewCell.h"
 #import "LiveCharmCollectionViewCell.h"
+#import "LiveCharmPhotoModel.h"
 
 static NSString *const LIVECHARM_COLLECTIONVIEW_ID = @"livecharm_collectionview_id";
 @implementation LiveCharmTableViewCell
@@ -23,6 +24,11 @@ static NSString *const LIVECHARM_COLLECTIONVIEW_ID = @"livecharm_collectionview_
     self.collectionView.scrollEnabled = NO;
     self.collectionView.showsVerticalScrollIndicator = YES;
     [self.collectionView registerNib:[UINib nibWithNibName:@"LiveCharmCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:LIVECHARM_COLLECTIONVIEW_ID];
+}
+
+- (void)setLiveCharmArray:(NSArray *)liveCharmArray {
+    _liveCharmArray = liveCharmArray;
+    [self.collectionView reloadData];
 }
 
 #pragma mark - collectionDelegate/DataSource
@@ -44,13 +50,25 @@ static NSString *const LIVECHARM_COLLECTIONVIEW_ID = @"livecharm_collectionview_
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    LiveCharmPhotoModel *model = self.liveCharmArray[indexPath.row];
     LiveCharmCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:LIVECHARM_COLLECTIONVIEW_ID forIndexPath:indexPath];
-    cell.liveCharmImageView.image = [UIImage imageNamed:@"AppIcon"];
+    [cell.liveCharmImageView sd_setImageWithURL:[NSURL URLWithString:model.url] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+    cell.liveCharmImageView.layer.masksToBounds = YES;
+    if (model.is_charge.integerValue == 1) {
+        cell.msgLabel.hidden = NO;
+        cell.visualEffectView.hidden = NO;
+    }
+    else {
+        cell.visualEffectView.hidden = YES;
+        cell.msgLabel.hidden = YES;
+    }
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    
+    if (self.didSelectItemBlock) {
+        self.didSelectItemBlock(indexPath.row);
+    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

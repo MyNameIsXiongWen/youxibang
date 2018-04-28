@@ -50,7 +50,7 @@
                         <constraints>
                             <constraint firstAttribute="height" constant="30" id="s9g-IJ-caO"/>
                         </constraints>
-                        <nil key="textColor"/>
+                        <color key="textColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <textInputTraits key="textInputTraits"/>
                     </textField>

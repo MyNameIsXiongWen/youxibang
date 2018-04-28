@@ -20,4 +20,15 @@
     // Configure the view for the selected state
 }
 
+- (void)setContentWithDic:(NSDictionary *)dic Type:(NSUInteger)type {
+    self.idLabel.text = [NSString stringWithFormat:@"ID：%@",dic[@"id"]];
+    if (type == 1){
+        self.constellationLabel.text = [NSString stringWithFormat:@"星座：%@",dic[@"constellation"]];
+    }else {
+        self.constellationLabel.text = [NSString stringWithFormat:@"星座：%@",dic[@"starsign"]];
+    }
+    self.hobbyLabel.text = [NSString stringWithFormat:@"爱好：%@",dic[@"interest"]];
+    self.signLabel.text = [NSString stringWithFormat:@"签名：%@",dic[@"mysign"]];
+}
+
 @end

@@ -19,20 +19,42 @@
                 <rect key="frame" x="0.0" y="0.0" width="79" height="79"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KXi-dP-TsV">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KXi-dP-TsV">
                         <rect key="frame" x="0.0" y="0.0" width="79" height="79"/>
                     </imageView>
+                    <visualEffectView opaque="NO" alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j1Y-eD-2MK">
+                        <rect key="frame" x="0.0" y="0.0" width="79" height="79"/>
+                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="4rC-U4-X4a">
+                            <rect key="frame" x="0.0" y="0.0" width="79" height="79"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        </view>
+                        <blurEffect style="dark"/>
+                    </visualEffectView>
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="红包照片" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QLh-LZ-UuT">
+                        <rect key="frame" x="13" y="32" width="54" height="16"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
             </view>
             <constraints>
+                <constraint firstItem="QLh-LZ-UuT" firstAttribute="centerY" secondItem="SEy-5g-ep8" secondAttribute="centerY" id="2zb-vo-1Dg"/>
+                <constraint firstItem="SEy-5g-ep8" firstAttribute="bottom" secondItem="j1Y-eD-2MK" secondAttribute="bottom" id="4TQ-LA-5Dv"/>
+                <constraint firstItem="j1Y-eD-2MK" firstAttribute="leading" secondItem="SEy-5g-ep8" secondAttribute="leading" id="Aci-Va-ICr"/>
                 <constraint firstItem="KXi-dP-TsV" firstAttribute="leading" secondItem="SEy-5g-ep8" secondAttribute="leading" id="Po5-8J-Y1J"/>
                 <constraint firstItem="SEy-5g-ep8" firstAttribute="trailing" secondItem="KXi-dP-TsV" secondAttribute="trailing" id="Uoy-UP-By7"/>
+                <constraint firstItem="j1Y-eD-2MK" firstAttribute="top" secondItem="SEy-5g-ep8" secondAttribute="top" id="VbG-eV-v6b"/>
+                <constraint firstItem="QLh-LZ-UuT" firstAttribute="centerX" secondItem="SEy-5g-ep8" secondAttribute="centerX" id="kPO-k7-Tbi"/>
                 <constraint firstItem="SEy-5g-ep8" firstAttribute="bottom" secondItem="KXi-dP-TsV" secondAttribute="bottom" id="mFB-hf-3L2"/>
                 <constraint firstItem="KXi-dP-TsV" firstAttribute="top" secondItem="SEy-5g-ep8" secondAttribute="top" id="n0e-tQ-2rW"/>
+                <constraint firstItem="SEy-5g-ep8" firstAttribute="trailing" secondItem="j1Y-eD-2MK" secondAttribute="trailing" id="yUw-br-6pA"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="SEy-5g-ep8"/>
             <connections>
                 <outlet property="liveCharmImageView" destination="KXi-dP-TsV" id="LV9-jN-D2r"/>
+                <outlet property="msgLabel" destination="QLh-LZ-UuT" id="Dpd-tR-bAm"/>
+                <outlet property="visualEffectView" destination="j1Y-eD-2MK" id="Ssd-K6-iOc"/>
             </connections>
         </collectionViewCell>
     </objects>

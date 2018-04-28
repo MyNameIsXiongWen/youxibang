@@ -15,5 +15,8 @@
 @property (copy, nonatomic) NSString *publish_time;
 @property (copy, nonatomic) NSString *is_top;
 @property (copy, nonatomic) NSString *comment_count;
+@property (copy, nonatomic) NSString *is_laud;
+@property (copy, nonatomic) NSString *laud_count;
+@property (copy, nonatomic) NSString *content;
 
 @end

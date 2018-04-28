@@ -24,7 +24,6 @@
 #import "ContentModel.h"
 #import "HomeIntelligentTableViewCell.h"
 #import "LiveShowViewController.h"
-#import "NewsViewController.h"
 #import "LiveCreateViewController.h"
 
 #define historyCityFilepath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"historyCity.data"]
@@ -485,14 +484,12 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     //改变状态栏颜色，隐藏原来的navi，改变状态栏颜色
-//    self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
     self.navigationController.navigationBar.hidden = YES;
     
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
-//    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 }
 
 //懒加载
@@ -612,8 +609,8 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     WEAKSELF
     typeof(homeCell) __weak weakCell = homeCell;
     typeof(dataArray) __weak weakDataArray = dataArray;
-    homeCell.clickInformationBlock = ^(NSInteger index) {
-        [self clickInformationArray:weakDataArray WithIndex:index];
+    homeCell.clickInformationBlock = ^(NSInteger index, ContentType type) {
+        [self clickInformationArray:weakDataArray WithIndex:index ContentType:type];
     };
     homeCell.clickLookMoreBlock = ^{
         [weakSelf clickAllBtn:weakCell.rightAllBtn];
@@ -623,23 +620,37 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (tableView.tag == 111) {
-        NewsViewController *newsCon = [NewsViewController new];
-        [self.navigationController pushViewController:newsCon animated:YES];
+        [self.tabBarController setSelectedIndex:1];
     }
 }
 
 - (void)clickAllBtn:(UIButton *)btn {
-    LiveShowViewController *showCon = [LiveShowViewController new];
-    [self.navigationController pushViewController:showCon animated:YES];
+    if (btn.tag == 0) {
+        LiveShowViewController *showCon = [LiveShowViewController new];
+        [self.navigationController pushViewController:showCon animated:YES];
+    }
+    else {
+        PartTimeViewController* vc = [[PartTimeViewController alloc]init];
+        vc.ptOrBaby = YES;
+        [self.navigationController pushViewController:vc animated:1];
+    }
 }
 
-- (void)clickInformationArray:(NSMutableArray *)array WithIndex:(NSInteger)index {
+- (void)clickInformationArray:(NSMutableArray *)array WithIndex:(NSInteger)index ContentType:(ContentType)type {
     //跳转主播详情页面
     IntelligentModel *model = array[index];
-    EmployeeDetailViewController* vc = [[EmployeeDetailViewController alloc]init];
-    vc.type = 2;
-    vc.employeeId = model.id;
-    [self.navigationController pushViewController:vc animated:1];
+    if (type == ContentTypeLive) {
+        EmployeeDetailViewController *vc = [[EmployeeDetailViewController alloc] init];
+        vc.type = 2;
+        vc.employeeId = model.id;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    else if (type == ContentTypeIntelligent) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        GameBabyDetailViewController* vc = [sb instantiateViewControllerWithIdentifier:@"gbd"];
+        vc.gbId = model.id;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 #pragma mark - otherDelegate

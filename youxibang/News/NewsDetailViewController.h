@@ -6,9 +6,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NewsModel.h"
 
 @interface NewsDetailViewController : UIViewController
 
-@property (copy, nonatomic) NSString *article_id;
+@property (strong, nonatomic) NewsModel *newsModel;
 
 @end

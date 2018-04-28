@@ -41,7 +41,7 @@
                                                object:nil];
     
     UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
-    img.image = [UIImage imageNamed:@"back"];
+    img.image = [UIImage imageNamed:@"back_black"];
     UIButton *leftBtn = [[UIButton alloc]initWithFrame:CGRectMake(-15, 0, 40, 40)];
     [leftBtn addSubview:img];
     [leftBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];

@@ -20,7 +20,7 @@
     // Configure the view for the selected state
 }
 
-- (void)setContentWithDic:(NSDictionary *)dic {
+- (void)setContentWithDic:(NSDictionary *)dic IsTalk:(BOOL)istalk {
     self.addressLabel.text = [NSString stringWithFormat:@"城市：%@",dic[@"city"]];
     self.parttimeTypeLabel.text = [NSString stringWithFormat:@"主播类型：%@",dic[@"anchor_type"]];
     if ([dic[@"type"] integerValue] == 1) {
@@ -35,6 +35,21 @@
     self.wechatLabel.text = [NSString stringWithFormat:@"微信：%@",dic[@"wechat"]];
     self.livePlatformLabel.text = [NSString stringWithFormat:@"所属平台：%@",dic[@"platform"]];
     self.liveExperienceLabel.text = [NSString stringWithFormat:@"直播经验：%@",dic[@"exp"]];
+    
+    if (dic) {
+        NSMutableString *wechat = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"微信：%@",dic[@"wechat"]]];
+        [wechat replaceCharactersInRange:NSMakeRange(4, wechat.length-1-4) withString:@"****"];
+        self.wechatLabel.text = wechat;
+    }
+    if (istalk) {
+        self.wechatLabel.text = [NSString stringWithFormat:@"微信：%@",dic[@"wechat"]];
+        self.lookButton.hidden = YES;
+        self.wechatRightConstraint.constant = 15;
+    }
+    else {
+        self.lookButton.hidden = NO;
+        self.wechatRightConstraint.constant = 70;
+    }
 }
 
 @end

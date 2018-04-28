@@ -155,10 +155,6 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
     return self.dataArray.count;
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    return 112;
-//}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 0.1;
 }
@@ -171,6 +167,7 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
     NewsModel *model = self.dataArray[indexPath.row];
     NewsTableViewCell *cell =[tableView dequeueReusableCellWithIdentifier:NEWS_TABLEVIEW_ID];
     [cell.coverImageView sd_setImageWithURL:[NSURL URLWithString:model.thumb] placeholderImage:[UIImage imageNamed:@""]];
+    cell.coverImageView.layer.masksToBounds = YES;
     cell.titleLabel.text = model.title;
     cell.readCountLabel.text = [NSString stringWithFormat:@"阅读数%@",model.comment_count];
     cell.timeLabel.text = model.publish_time;
@@ -181,7 +178,7 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NewsModel *model = self.dataArray[indexPath.row];
     NewsDetailViewController *detailCon = [NewsDetailViewController new];
-    detailCon.article_id = model.article_id;
+    detailCon.newsModel = model;
     detailCon.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:detailCon animated:YES];
 }

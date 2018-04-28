@@ -31,4 +31,10 @@
 @property (copy, nonatomic) NSString *age;
 @property (copy, nonatomic) NSString *sex;
 
+//粉丝列表用
+@property (copy, nonatomic) NSString *is_realauth;
+@property (copy, nonatomic) NSString *is_follow;
+@property (copy, nonatomic) NSString *vip_grade;
+@property (copy, nonatomic) NSString *user_id;
+
 @end

@@ -44,6 +44,13 @@
         _photoImageView.backgroundColor = [UIColor blackColor];
         [self addSubview:_photoImageView];
         
+        // 毛玻璃
+        _visualEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
+        _visualEffectView.frame = _photoImageView.bounds;
+        _visualEffectView.alpha = 0.95;
+        _visualEffectView.hidden = YES;
+        [_photoImageView addSubview:_visualEffectView];
+        
         // Setup
         self.backgroundColor = [UIColor blackColor];
         self.delegate = self;
@@ -154,7 +161,7 @@
             
             _photoImageView.contentMode = UIViewContentModeScaleAspectFit;
             _photoImageView.frame = [ZLPhotoRect setMaxMinZoomScalesForCurrentBoundWithImageView:_photoImageView];
-            
+            _visualEffectView.frame = _photoImageView.bounds;
             if (_photoImageView.image == nil) {
                 [self setProgress:0.01];
             }
@@ -245,7 +252,7 @@
         photoImageViewFrame.size = img.size;
         _photoImageView.frame = photoImageViewFrame;
         self.contentSize = photoImageViewFrame.size;
-        
+        _visualEffectView.frame = _photoImageView.bounds;
         // Set zoom to minimum zoom
         [self setMaxMinZoomScalesForCurrentBounds];
         
@@ -285,7 +292,7 @@
     //    _photoImageView.frame = [ZLPhotoRect setMaxMinZoomScalesForCurrentBoundWithImageView:_photoImageView];
     // Reset position
     _photoImageView.frame = CGRectMake(0, 0, _photoImageView.frame.size.width, _photoImageView.frame.size.height);
-    
+    _visualEffectView.frame = _photoImageView.bounds;
     // Sizes
     CGSize boundsSize = [UIScreen mainScreen].bounds.size;
     CGSize imageSize = _photoImageView.image.size;
@@ -350,8 +357,10 @@
     }
     
     // Center
-    if (!CGRectEqualToRect(_photoImageView.frame, frameToCenter))
+    if (!CGRectEqualToRect(_photoImageView.frame, frameToCenter)) {
         _photoImageView.frame = frameToCenter;
+        _visualEffectView.frame = _photoImageView.bounds;
+    }
     
 }
 

@@ -26,6 +26,9 @@
 }
 
 - (void)createScrollViewWithIntelligent:(NSMutableArray *)intelligentArray {
+    for (UIView *view in self.contentScrollView.subviews) {
+        [view removeFromSuperview];
+    }
     CGFloat viewHeight = 0;
     if (self.type == ContentTypeIntelligent) {
         viewHeight = 180;
@@ -73,7 +76,7 @@
 
 - (void)clickIntView:(UIButton *)btn {
     if (self.clickInformationBlock) {
-        self.clickInformationBlock(btn.tag);
+        self.clickInformationBlock(btn.tag, self.type);
     }
 }
 

@@ -19,11 +19,10 @@
 #import "MyOrderListViewController.h"
 #import "DiscountViewController.h"
 #import "MineTableViewCell.h"
-#import "HttpManager.h"
+#import "LiveCreateViewController.h"
+#import "LiveFansViewController.h"
 
 @interface MineViewController ()<UITableViewDataSource,UITableViewDelegate,TopUpTableViewCellDelegate, SDCycleScrollViewDelegate>
-
-//@property (nonatomic,strong)NSMutableDictionary *dataInfo;
 
 @end
 
@@ -59,7 +58,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     self.navigationController.navigationBar.hidden = YES;
     //刷新个人信息 
     [UserNameTool reloadPersonalData:^{
-//        self.dataInfo = [UserNameTool readPersonalData];
         self.tableView.tableHeaderView = [self configTableViewHeaderView];
         [self.tableView reloadData];
     }];
@@ -81,17 +79,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     else {
         bgImgAry = @[@"img_my111"];
     }
-//    if (self.dataInfo) {
-//        if ([self.dataInfo[@"bgimg"] count]>0) {
-//            bgImgAry = self.dataInfo[@"bgimg"];
-//        }
-//        else {
-//            bgImgAry = @[@"img_my111"];
-//        }
-//    }
-//    else {
-//        bgImgAry = @[@"img_my111"];
-//    }
     SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, CGRectGetHeight(headerView.frame)) imageNamesGroup:bgImgAry];
     cycleScrollView.infiniteLoop = YES;
     cycleScrollView.delegate = self;
@@ -134,23 +121,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         make.left.equalTo(sex.mas_right).offset(10);
         make.size.mas_equalTo(CGSizeMake(17, 15));
     }];
-//    if (self.dataInfo){
-//        [photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
-//        name.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
-//        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"sex"]].integerValue == 1){
-//            sex.text = [NSString stringWithFormat:@" ♂%@岁 ",self.dataInfo[@"age"]];
-//            sex.backgroundColor = Nav_color;
-//        }else{
-//            sex.text = [NSString stringWithFormat:@" ♀%@岁 ",self.dataInfo[@"age"]];
-//            sex.backgroundColor = Pink_color;
-//        }
-//        [sex sizeToFit];
-//        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_vip"]].integerValue == 1){
-//            vipImg.selected = YES;
-//        }else{
-//            vipImg.selected = NO;
-//        }
-//    }
     [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
     name.text = userModel.nickname;
     if (userModel.sex.integerValue == 1){
@@ -171,7 +141,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (void)refreshHead {
     [UserNameTool reloadPersonalData:^{
-//        self.dataInfo = [UserNameTool readPersonalData];
         self.tableView.tableHeaderView = [self configTableViewHeaderView];
         [self.tableView reloadData];
     }];
@@ -220,7 +189,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (section == 1){
-        return 7;
+        return 9;
     }
     return 2;
 }
@@ -249,8 +218,8 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     //写死的title和图片
-    NSArray* ary = @[@[@"我的钱包",@""],@[@"我的任务",@"我的技能",@"订单中心",@"提现账户管理",@"我的邀请码",@"联系客服",@"系统设置"]];
-    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@"ico_renwu",@"ico_gamebaby",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+    NSArray* ary = @[@[@"我的钱包",@""],@[@"我的任务",@"我的技能",@"我是主播",@"订单中心",@"提现账户管理",@"有奖邀请",@"联系客服",@"系统设置",@"我的粉丝"]];
+    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@"ico_renwu",@"ico_gamebaby",@"ico_gamebaby",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting",@"ico_gamebaby",]];
     if (indexPath.section == 0 && indexPath.row == 1){
         //充值提现的cell
         TopUpTableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"TopUpTableViewCell"];
@@ -273,10 +242,11 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         cell.rightLabel.attributedText = mAttStr;
         cell.rightLabel.font = [UIFont systemFontOfSize:12];
 
-    }else if (indexPath.section == 1 && indexPath.row == 4){
+    }else if (indexPath.section == 1 && indexPath.row == 5){
         //邀请码
-        cell.rightLabel.text = @"EE0F85D131C1";
-        cell.rightLabelTrailingConstraint.constant = 15;
+//        cell.rightLabel.text = @"EE0F85D131C1";
+//        cell.rightLabelTrailingConstraint.constant = 15;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }else{
         cell.rightLabel.text = @"";
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -306,19 +276,22 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 //            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
 //            DiscountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"dvc"];
 //            [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 2){//订单列表
+        }else if (indexPath.row == 2){//我是主播
+            LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
+            [self.navigationController pushViewController:vc animated:1];
+        }else if (indexPath.row == 3){//订单列表
             UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             MyOrderListViewController* vc = [sb instantiateViewControllerWithIdentifier:@"mol"];
             [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 3){//支付宝绑定
+        }else if (indexPath.row == 4){//支付宝绑定
             UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             AlipayAccountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"aa"];
             [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 4){//点击复制邀请码
+        }else if (indexPath.row == 5){//点击复制邀请码
             UIPasteboard *pab = [UIPasteboard generalPasteboard];
             [pab setString:@"EE0F85D131C1"];
             [SVProgressHUD showInfoWithStatus:@"已将邀请码复制"];
-        }else if (indexPath.row == 5){//自定义alert显示客服电话
+        }else if (indexPath.row == 6){//自定义alert显示客服电话
             CustomAlertView* alert = [[CustomAlertView alloc]initWithAry:@[@"客服电话1：15306544612\n(微信同号)",@"客服电话2：15372402489\n(微信同号)",@"客服电话3：15372416943\n(微信同号)"]];
             alert.resultDate = ^(NSString *date) {
                 if ([date isEqualToString:@"0"]){
@@ -330,8 +303,11 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
                 }
             };
             [alert showAlertView];
-        }else if (indexPath.row == 6){//系统设置
+        }else if (indexPath.row == 7){//系统设置
             SystemSettingViewController* vc = [[SystemSettingViewController alloc]init];
+            [self.navigationController pushViewController:vc animated:1];
+        }else if (indexPath.row == 8){//粉丝
+            LiveFansViewController* vc = [[LiveFansViewController alloc]init];
             [self.navigationController pushViewController:vc animated:1];
         }
     }

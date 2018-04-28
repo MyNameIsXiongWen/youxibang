@@ -16,9 +16,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *expectSalaryLabel;
 @property (weak, nonatomic) IBOutlet UILabel *liveSpecialtyLabel;
 @property (weak, nonatomic) IBOutlet UILabel *wechatLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *wechatRightConstraint;
 @property (weak, nonatomic) IBOutlet UILabel *livePlatformLabel;
 @property (weak, nonatomic) IBOutlet UILabel *liveExperienceLabel;
 @property (weak, nonatomic) IBOutlet UIButton *lookButton;
-- (void)setContentWithDic:(NSDictionary *)dic;
+- (void)setContentWithDic:(NSDictionary *)dic IsTalk:(BOOL)istalk;
 
 @end

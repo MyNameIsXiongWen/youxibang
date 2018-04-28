@@ -148,6 +148,9 @@
 		5E5DF4E3203ACAA500211F7F /* MessagePromptViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5DF4E2203ACAA500211F7F /* MessagePromptViewController.m */; };
 		5E619FD7203E86860011186E /* WalletMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E619FD6203E86860011186E /* WalletMessageViewController.m */; };
 		5E619FDD203E8F210011186E /* SystemMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E619FDC203E8F210011186E /* SystemMessageViewController.m */; };
+		873838F5209418A4000A9BF5 /* NewsReviewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 873838F3209418A4000A9BF5 /* NewsReviewTableViewCell.m */; };
+		873838F6209418A4000A9BF5 /* NewsReviewTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 873838F4209418A4000A9BF5 /* NewsReviewTableViewCell.xib */; };
+		873838F920941CF9000A9BF5 /* NewsReviewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 873838F820941CF9000A9BF5 /* NewsReviewModel.m */; };
 		874D1FBC207B4D2C0076A5AA /* MineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 874D1FBA207B4D2C0076A5AA /* MineTableViewCell.m */; };
 		874D1FBD207B4D2C0076A5AA /* MineTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 874D1FBB207B4D2C0076A5AA /* MineTableViewCell.xib */; };
 		874E3355207DBAAE006F0AAD /* HttpManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 874E3352207DBAAE006F0AAD /* HttpManager.m */; };
@@ -194,6 +197,11 @@
 		875936902091D0E000591D33 /* Address.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8759368F2091D0E000591D33 /* Address.plist */; };
 		875936942091E8A300591D33 /* LiveCreateMyEvaluateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 875936922091E8A300591D33 /* LiveCreateMyEvaluateViewController.m */; };
 		875936952091E8A300591D33 /* LiveCreateMyEvaluateViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 875936932091E8A300591D33 /* LiveCreateMyEvaluateViewController.xib */; };
+		875936982092CA7B00591D33 /* LiveCreateFreeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 875936972092CA7B00591D33 /* LiveCreateFreeView.m */; };
+		8759369C2092D06800591D33 /* LiveCreateFreeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8759369A2092D06800591D33 /* LiveCreateFreeTableViewCell.m */; };
+		8759369D2092D06800591D33 /* LiveCreateFreeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8759369B2092D06800591D33 /* LiveCreateFreeTableViewCell.xib */; };
+		875936A12092E37A00591D33 /* LiveCharmPhotoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 875936A02092E37A00591D33 /* LiveCharmPhotoModel.m */; };
+		875936A420933CAE00591D33 /* LivePayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 875936A320933CAE00591D33 /* LivePayView.m */; };
 		878323D3207CB2EB0048E4E9 /* SDCityPicker.gif in Resources */ = {isa = PBXBuildFile; fileRef = 878323BF207CB2EB0048E4E9 /* SDCityPicker.gif */; };
 		878323D4207CB2EB0048E4E9 /* SDCityPickerConst.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323C1207CB2EB0048E4E9 /* SDCityPickerConst.m */; };
 		878323D5207CB2EB0048E4E9 /* SDCityPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323C5207CB2EB0048E4E9 /* SDCityPickerViewController.m */; };
@@ -509,6 +517,11 @@
 		5E619FD6203E86860011186E /* WalletMessageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalletMessageViewController.m; sourceTree = "<group>"; };
 		5E619FDB203E8F210011186E /* SystemMessageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemMessageViewController.h; sourceTree = "<group>"; };
 		5E619FDC203E8F210011186E /* SystemMessageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SystemMessageViewController.m; sourceTree = "<group>"; };
+		873838F2209418A4000A9BF5 /* NewsReviewTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewsReviewTableViewCell.h; sourceTree = "<group>"; };
+		873838F3209418A4000A9BF5 /* NewsReviewTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewsReviewTableViewCell.m; sourceTree = "<group>"; };
+		873838F4209418A4000A9BF5 /* NewsReviewTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsReviewTableViewCell.xib; sourceTree = "<group>"; };
+		873838F720941CF9000A9BF5 /* NewsReviewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewsReviewModel.h; sourceTree = "<group>"; };
+		873838F820941CF9000A9BF5 /* NewsReviewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewsReviewModel.m; sourceTree = "<group>"; };
 		874D1FB9207B4D2C0076A5AA /* MineTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineTableViewCell.h; sourceTree = "<group>"; };
 		874D1FBA207B4D2C0076A5AA /* MineTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineTableViewCell.m; sourceTree = "<group>"; };
 		874D1FBB207B4D2C0076A5AA /* MineTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MineTableViewCell.xib; sourceTree = "<group>"; };
@@ -582,6 +595,15 @@
 		875936912091E8A300591D33 /* LiveCreateMyEvaluateViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiveCreateMyEvaluateViewController.h; sourceTree = "<group>"; };
 		875936922091E8A300591D33 /* LiveCreateMyEvaluateViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiveCreateMyEvaluateViewController.m; sourceTree = "<group>"; };
 		875936932091E8A300591D33 /* LiveCreateMyEvaluateViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCreateMyEvaluateViewController.xib; sourceTree = "<group>"; };
+		875936962092CA7B00591D33 /* LiveCreateFreeView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiveCreateFreeView.h; sourceTree = "<group>"; };
+		875936972092CA7B00591D33 /* LiveCreateFreeView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiveCreateFreeView.m; sourceTree = "<group>"; };
+		875936992092D06800591D33 /* LiveCreateFreeTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiveCreateFreeTableViewCell.h; sourceTree = "<group>"; };
+		8759369A2092D06800591D33 /* LiveCreateFreeTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiveCreateFreeTableViewCell.m; sourceTree = "<group>"; };
+		8759369B2092D06800591D33 /* LiveCreateFreeTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCreateFreeTableViewCell.xib; sourceTree = "<group>"; };
+		8759369F2092E37A00591D33 /* LiveCharmPhotoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiveCharmPhotoModel.h; sourceTree = "<group>"; };
+		875936A02092E37A00591D33 /* LiveCharmPhotoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiveCharmPhotoModel.m; sourceTree = "<group>"; };
+		875936A220933CAE00591D33 /* LivePayView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LivePayView.h; sourceTree = "<group>"; };
+		875936A320933CAE00591D33 /* LivePayView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LivePayView.m; sourceTree = "<group>"; };
 		878323BF207CB2EB0048E4E9 /* SDCityPicker.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = SDCityPicker.gif; sourceTree = "<group>"; };
 		878323C0207CB2EB0048E4E9 /* SDCityPickerConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCityPickerConst.h; sourceTree = "<group>"; };
 		878323C1207CB2EB0048E4E9 /* SDCityPickerConst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCityPickerConst.m; sourceTree = "<group>"; };
@@ -1396,6 +1418,7 @@
 			isa = PBXGroup;
 			children = (
 				875936592090646100591D33 /* controller */,
+				8759369E2092E32400591D33 /* model */,
 				8759363C2090643400591D33 /* view */,
 			);
 			path = Live;
@@ -1438,6 +1461,13 @@
 				875936882091C9E900591D33 /* BottomSelectTableViewCell.h */,
 				8759368A2091C9EA00591D33 /* BottomSelectTableViewCell.m */,
 				875936872091C9E900591D33 /* BottomSelectTableViewCell.xib */,
+				875936962092CA7B00591D33 /* LiveCreateFreeView.h */,
+				875936972092CA7B00591D33 /* LiveCreateFreeView.m */,
+				875936992092D06800591D33 /* LiveCreateFreeTableViewCell.h */,
+				8759369A2092D06800591D33 /* LiveCreateFreeTableViewCell.m */,
+				8759369B2092D06800591D33 /* LiveCreateFreeTableViewCell.xib */,
+				875936A220933CAE00591D33 /* LivePayView.h */,
+				875936A320933CAE00591D33 /* LivePayView.m */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -1467,6 +1497,9 @@
 				875936702091743C00591D33 /* NewsTableViewCell.h */,
 				875936712091743C00591D33 /* NewsTableViewCell.m */,
 				875936722091743C00591D33 /* NewsTableViewCell.xib */,
+				873838F2209418A4000A9BF5 /* NewsReviewTableViewCell.h */,
+				873838F3209418A4000A9BF5 /* NewsReviewTableViewCell.m */,
+				873838F4209418A4000A9BF5 /* NewsReviewTableViewCell.xib */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -1476,6 +1509,17 @@
 			children = (
 				8759367520917A3300591D33 /* NewsModel.h */,
 				8759367620917A3300591D33 /* NewsModel.m */,
+				873838F720941CF9000A9BF5 /* NewsReviewModel.h */,
+				873838F820941CF9000A9BF5 /* NewsReviewModel.m */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		8759369E2092E32400591D33 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				8759369F2092E37A00591D33 /* LiveCharmPhotoModel.h */,
+				875936A02092E37A00591D33 /* LiveCharmPhotoModel.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1903,6 +1947,7 @@
 				875936512090643400591D33 /* LiveCharmTableViewCell.xib in Resources */,
 				8759366D2090904F00591D33 /* LiveBaseInformationTableViewCell.xib in Resources */,
 				187362FB201031450045EF9E /* AlipaySDK.bundle in Resources */,
+				8759369D2092D06800591D33 /* LiveCreateFreeTableViewCell.xib in Resources */,
 				8759367C2091837A00591D33 /* NewsDetailViewController.xib in Resources */,
 				874D1FBD207B4D2C0076A5AA /* MineTableViewCell.xib in Resources */,
 				875936572090643400591D33 /* LiveFilterTableViewCell.xib in Resources */,
@@ -1918,6 +1963,7 @@
 				878323D3207CB2EB0048E4E9 /* SDCityPicker.gif in Resources */,
 				1873625C201030A80045EF9E /* Main.storyboard in Resources */,
 				875936742091743C00591D33 /* NewsTableViewCell.xib in Resources */,
+				873838F6209418A4000A9BF5 /* NewsReviewTableViewCell.xib in Resources */,
 				8759365E209064B700591D33 /* LiveFansViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2045,6 +2091,7 @@
 				8D60395E2081CABE00336B65 /* UIView+ZLExtension.m in Sources */,
 				18CF6B232029746100D0EB95 /* TaskTableViewCell.m in Sources */,
 				18736308201031450045EF9E /* CustomAlertView.m in Sources */,
+				875936A12092E37A00591D33 /* LiveCharmPhotoModel.m in Sources */,
 				18736305201031450045EF9E /* MainTabBarController.m in Sources */,
 				1873630A201031450045EF9E /* YHYButton.m in Sources */,
 				187362FF201031450045EF9E /* BaseViewController.m in Sources */,
@@ -2053,12 +2100,14 @@
 				18F6D0502022F6410001917B /* TopUpAndWithdrawViewController.m in Sources */,
 				874E3356207DBAAE006F0AAD /* UploadParam.m in Sources */,
 				875936802091BCFE00591D33 /* LiveCreateViewController.m in Sources */,
+				8759369C2092D06800591D33 /* LiveCreateFreeTableViewCell.m in Sources */,
 				87A285742087128900AF966B /* UserModel.m in Sources */,
 				18B398F9201ABE72004E09ED /* NumberTableViewCell.m in Sources */,
 				18F22CD02040E8F000B74B65 /* LPDPhotoPreviewController.m in Sources */,
 				18F6D06F2025B5240001917B /* RealNameViewController.m in Sources */,
 				87593606208DB2DC00591D33 /* ContentModel.m in Sources */,
 				8759362F208F0B3000591D33 /* NewsViewController.m in Sources */,
+				875936A420933CAE00591D33 /* LivePayView.m in Sources */,
 				875936562090643400591D33 /* LiveFilterTableViewCell.m in Sources */,
 				18F22CDF20467CAC00B74B65 /* DiscountViewController.m in Sources */,
 				18736259201030A80045EF9E /* ViewController.m in Sources */,
@@ -2079,6 +2128,7 @@
 				5E5DF4DF203AC66C00211F7F /* NewPhoneViewController.m in Sources */,
 				875936522090643400591D33 /* LiveCollectionViewCell.m in Sources */,
 				18F6D0692025817E0001917B /* EditInfoViewController.m in Sources */,
+				873838F5209418A4000A9BF5 /* NewsReviewTableViewCell.m in Sources */,
 				8D6039532081CABD00336B65 /* ZLPhotoAssets.m in Sources */,
 				878323D7207CB2EB0048E4E9 /* SDCityInitial.m in Sources */,
 				18F6CFF4201FFF650001917B /* TopUpTableViewCell.m in Sources */,
@@ -2095,6 +2145,7 @@
 				18F6D06620255A3C0001917B /* PersonalInfoViewController.m in Sources */,
 				18F22CCB2040E8F000B74B65 /* LPDImagePickerController.m in Sources */,
 				18C8B46920119DF90028853C /* SearchViewController.m in Sources */,
+				875936982092CA7B00591D33 /* LiveCreateFreeView.m in Sources */,
 				18F22CCC2040E8F000B74B65 /* LPDPhotoArrangeCell.m in Sources */,
 				5E5DF4DC203AB41400211F7F /* AppealViewController.m in Sources */,
 				18F22CCF2040E8F000B74B65 /* LPDPhotoPreviewCell.m in Sources */,
@@ -2103,6 +2154,7 @@
 				18F22CD22040E8F000B74B65 /* LPDQuoteImagesView.m in Sources */,
 				878323D9207CB2EB0048E4E9 /* SDCityPickerCollectionView.m in Sources */,
 				8D6039472081CABD00336B65 /* ZLCameraView.m in Sources */,
+				873838F920941CF9000A9BF5 /* NewsReviewModel.m in Sources */,
 				18F6D00720207D500001917B /* OrderDetailViewController.m in Sources */,
 				8D6039432081CABD00336B65 /* DACircularProgressView.m in Sources */,
 				18736264201030A80045EF9E /* main.m in Sources */,

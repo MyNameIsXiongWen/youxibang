@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *constellationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *hobbyLabel;
 @property (weak, nonatomic) IBOutlet UILabel *signLabel;
+- (void)setContentWithDic:(NSDictionary *)dic Type:(NSInteger)type;
 
 @end

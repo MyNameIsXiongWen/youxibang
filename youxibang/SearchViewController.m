@@ -81,17 +81,15 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
--(void)viewWillAppear:(BOOL)animated
-{
-    self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = YES;
 }
--(void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 }
-- (void)searchEmployee:(UIButton*)sender{
+- (void)searchEmployee:(UIButton*)sender {
     [self.tf resignFirstResponder];
     [self.navigationController popViewControllerAnimated:1];
 }

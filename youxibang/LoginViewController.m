@@ -34,7 +34,7 @@
     self.title = @"验证码登录";
     //切换密码登录
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 55, 25)];
-    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-20, 0, 85, 25) andText:@"密码登录" andColor:[UIColor whiteColor] andimg:nil andView:rv];
+    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-20, 0, 85, 25) andText:@"密码登录" andColor:[UIColor colorFromHexString:@"333333"] andimg:nil andView:rv];
     
     if (!self.codeOrPassword){
         self.title = @"密码登录";
@@ -67,7 +67,7 @@
 //    }
     //自定义返回键，因为要重写返回方法
     UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
-    img.image = [UIImage imageNamed:@"back"];
+    img.image = [UIImage imageNamed:@"back_black"];
     UIButton *leftBtn = [[UIButton alloc]initWithFrame:CGRectMake(-15, 0, 40, 40)];
     [leftBtn addSubview:img];
     [leftBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];

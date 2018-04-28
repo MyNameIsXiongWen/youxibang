@@ -9,5 +9,7 @@
 
 @interface LiveCharmCollectionViewCell : UICollectionViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *liveCharmImageView;
+@property (weak, nonatomic) IBOutlet UILabel *msgLabel;
+@property (weak, nonatomic) IBOutlet UIVisualEffectView *visualEffectView;
 
 @end

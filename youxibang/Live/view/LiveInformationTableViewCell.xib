@@ -108,7 +108,6 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="uzh-Lz-1Av" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="0Cf-nO-HmE"/>
-                    <constraint firstItem="pOq-5m-80v" firstAttribute="leading" secondItem="MXg-VT-bVD" secondAttribute="trailing" constant="5" id="3hQ-VF-toR"/>
                     <constraint firstAttribute="trailing" secondItem="5Zl-Fy-5Tn" secondAttribute="trailing" constant="15" id="5G3-Rd-eMy"/>
                     <constraint firstAttribute="trailing" secondItem="pOq-5m-80v" secondAttribute="trailing" constant="15" id="6Ib-aS-RfM"/>
                     <constraint firstAttribute="trailing" secondItem="CQp-2j-Roq" secondAttribute="trailing" constant="15" id="9jW-IE-OJf"/>
@@ -116,6 +115,7 @@
                     <constraint firstItem="CQp-2j-Roq" firstAttribute="top" secondItem="MXg-VT-bVD" secondAttribute="bottom" constant="16" id="CXm-Gf-jzy"/>
                     <constraint firstItem="5Zl-Fy-5Tn" firstAttribute="top" secondItem="UUr-j9-Hkl" secondAttribute="bottom" constant="16" id="GHi-TD-79B"/>
                     <constraint firstItem="Z61-A7-VxD" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="4" id="KT4-Vx-Jjh"/>
+                    <constraint firstAttribute="trailing" secondItem="MXg-VT-bVD" secondAttribute="trailing" constant="70" id="LjA-TP-2WQ"/>
                     <constraint firstItem="UUr-j9-Hkl" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="Tcp-TV-1vU"/>
                     <constraint firstItem="5Zl-Fy-5Tn" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="VCR-bB-2lP"/>
                     <constraint firstItem="921-Xl-CC8" firstAttribute="top" secondItem="Z61-A7-VxD" secondAttribute="bottom" constant="16" id="Vl0-HS-OjA"/>
@@ -144,6 +144,7 @@
                 <outlet property="lookButton" destination="pOq-5m-80v" id="1jf-Me-Rvm"/>
                 <outlet property="parttimeTypeLabel" destination="921-Xl-CC8" id="eOY-kC-tPP"/>
                 <outlet property="wechatLabel" destination="MXg-VT-bVD" id="8HT-y2-UE8"/>
+                <outlet property="wechatRightConstraint" destination="LjA-TP-2WQ" id="7eV-jp-ox7"/>
             </connections>
             <point key="canvasLocation" x="-60" y="127"/>
         </tableViewCell>

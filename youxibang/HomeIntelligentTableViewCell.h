@@ -13,7 +13,7 @@ typedef enum : NSUInteger {
 } ContentType;
 
 typedef void(^ClickLookMoreBlock)(void);
-typedef void(^ClickInformationBlock)(NSInteger index);
+typedef void(^ClickInformationBlock)(NSInteger index, ContentType type);
 
 @interface HomeIntelligentTableViewCell : UITableViewCell
 

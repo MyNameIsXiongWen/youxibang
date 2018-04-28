@@ -80,9 +80,8 @@ static NSString *const LIVEFILTERTABLEVIEW_ID = @"live_filter_tableview_id";
 }
 
 - (void)clearFilter {
-    selectedIndexArray = NSMutableArray.array;
-    for (id dic in self.filterArray) {
-        [selectedIndexArray addObject:@(9999)];
+    for (int i=0; i<selectedIndexArray.count; i++) {
+        [selectedIndexArray replaceObjectAtIndex:i withObject:@(9999)];
     }
     [self.tableview reloadData];
     if (self.clearFilterBlock) {

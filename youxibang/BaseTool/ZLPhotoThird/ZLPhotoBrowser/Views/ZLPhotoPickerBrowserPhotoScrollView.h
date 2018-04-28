@@ -26,6 +26,7 @@ typedef void(^callBackPhotoBlock)(id img);
 
 @property (nonatomic,strong) ZLPhotoPickerBrowserPhoto *photo;
 @property (strong,nonatomic) ZLPhotoPickerBrowserPhotoImageView *photoImageView;
+@property (strong,nonatomic) UIVisualEffectView *visualEffectView;
 @property (nonatomic, weak) id <ZLPhotoPickerPhotoScrollViewDelegate> photoScrollViewDelegate;
 // 长按图片的操作，可以外面传入
 @property (strong,nonatomic) UIActionSheet *sheet;
