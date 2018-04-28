@@ -78,10 +78,9 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     //渐显view
     UIView *nav = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:UIColor.whiteColor andView:self.view];
     UIView *lineView = [EBUtility viewfrome:CGRectMake(0, 63.5, SCREEN_WIDTH, 0.5) andColor:[UIColor colorFromHexString:@"b2b2b2"] andView:nav];
-    UILabel *title = [EBUtility labfrome:CGRectMake((SCREEN_WIDTH-100)/2, 0, 100, 30) andText:@"昵称" andColor:[UIColor colorFromHexString:@"333333"] andView:nav];
+    UILabel *title = [EBUtility labfrome:CGRectMake(0, 32, SCREEN_WIDTH, 20) andText:@"昵称" andColor:[UIColor colorFromHexString:@"333333"] andView:nav];
     title.font = [UIFont systemFontOfSize:18];
-    [title sizeToFit];
-    title.centerY = nav.height - 22;
+    title.textAlignment = NSTextAlignmentCenter;
     title.tag = 1000;
     nav.alpha = 0;
     self.nav = nav;
@@ -581,7 +580,6 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         
         UILabel* title = [self.nav viewWithTag:1000];
         title.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
-        [title sizeToFit];
         
         if ([self.dataInfo[@"sex"] integerValue] == 1) {
             sexImg.image = [UIImage imageNamed:@"live_detail_male"];
