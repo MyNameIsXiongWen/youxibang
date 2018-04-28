@@ -110,10 +110,7 @@ static NSString *const FANSTABLEVIEW_ID = @"fanstableview_id";
         [cell.attentionButton setImage:[UIImage imageNamed:@"live_fans_attention"] forState:0];
     }
     if (model.is_realauth.integerValue == 1) {
-        [cell.realnameImgView setImage:[UIImage imageNamed:@"live_realnamed"]];
-    }
-    else {
-        [cell.realnameImgView setImage:[UIImage imageNamed:@"live_realname"]];
+        [cell.realnameImgView setImage:[UIImage imageNamed:@"live_detail_realnamed"]];
     }
     cell.vipImgView.image = [UIImage imageNamed:[NSString stringWithFormat:@"vip_grage_%@",model.vip_grade]];
     [cell.attentionButton addTarget:self action:@selector(payAttentionTo:) forControlEvents:UIControlEventTouchUpInside];
