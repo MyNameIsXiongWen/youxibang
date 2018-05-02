@@ -224,7 +224,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
                 self.anchorAry = [IntelligentModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"anchor"]];
                 self.informationAry = [NewsModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"information"]];
                 [self.adTableview reloadData];
-                [self.timer fire];
+                [self.timer fire];//新闻招聘上下滚动启动
                 [self.contentTableview reloadData];
             }
             else {
