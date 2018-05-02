@@ -51,6 +51,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     
     [self.webView sizeToFit];
     [self.webView scalesPageToFit];
+//    self.webView.scrollView.scrollEnabled = NO;
     self.tableview.tableHeaderView = self.webView;
     [self.tableview registerNib:[UINib nibWithNibName:@"NewsReviewTableViewCell" bundle:nil] forCellReuseIdentifier:REVIEW_TABLEVIEW_ID];
     [self getNewsDetailRequest];
@@ -231,6 +232,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
                 [self.tableview insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
                 self.reviewTextField.text = @"";
                 [self.reviewTextField resignFirstResponder];
+                [SVProgressHUD showSuccessWithStatus:@"评论成功"];
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
             }
