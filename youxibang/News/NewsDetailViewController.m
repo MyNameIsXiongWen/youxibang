@@ -357,10 +357,12 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
         if (islaud) {
             model.laud_count = [NSString stringWithFormat:@"%d",model.laud_count.intValue+1];
             [sender setImage:[UIImage imageNamed:@"news_liked"] forState:UIControlStateNormal];
+            [sender setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
         }
         else {
             model.laud_count = [NSString stringWithFormat:@"%d",model.laud_count.intValue-1];
             [sender setImage:[UIImage imageNamed:@"news_review_like"] forState:UIControlStateNormal];
+            [sender setTitleColor:[UIColor colorFromHexString:@"a2a2ae"] forState:0];
         }
         [sender setTitle:model.laud_count forState:0];
     }];

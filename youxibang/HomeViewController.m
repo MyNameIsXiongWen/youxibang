@@ -26,6 +26,7 @@
 #import "LiveShowViewController.h"
 #import "LiveCreateViewController.h"
 #import "NewsModel.h"
+#import "SigninViewController.h"
 
 #define historyCityFilepath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"historyCity.data"]
 
@@ -55,6 +56,9 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 @property (nonatomic,strong)NSMutableArray *selectArr;
 //@property (nonatomic,strong)UIButton *btn; //左按钮
 @property (nonatomic,strong)NSMutableArray *historySelectArr;
+//新闻招聘 上下滚动定时器
+@property (strong, nonatomic) NSTimer *timer;
+@property (assign, nonatomic) NSInteger currentIndex;
 
 @end
 
@@ -66,14 +70,26 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     self.title = @"首页";
     [self initLocationManager];
     self.currentPage = 1;
+    self.currentIndex = 0;
     self.view.backgroundColor = UIColor.whiteColor;
 
     [self configUI];
     [self homeDataRequest];
-    
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(scrollTableView) userInfo:nil repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
     //这个通知是付款完成后跳转个人页面的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushMineView:) name:@"pushMineView" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessage:) name:@"refreshMessage" object:nil];
+}
+
+- (void)scrollTableView {
+    if (self.currentIndex == self.informationAry.count-1) {
+        self.currentIndex = 0;
+    }
+    else {
+        self.currentIndex ++;
+    }
+    [self.adTableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
 - (void)configNavView:(UIView *)headerView {
@@ -174,7 +190,8 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
         [self.navigationController pushViewController:vc animated:1];
     }
     else if (sender.tag == 3) {
-
+        SigninViewController *con = [SigninViewController new];
+        [self.navigationController pushViewController:con animated:YES];
     }
 }
 
@@ -207,6 +224,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
                 self.anchorAry = [IntelligentModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"anchor"]];
                 self.informationAry = [NewsModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"information"]];
                 [self.adTableview reloadData];
+                [self.timer fire];
                 [self.contentTableview reloadData];
             }
             else {

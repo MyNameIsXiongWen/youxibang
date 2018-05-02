@@ -21,6 +21,7 @@
 #import "SetPayPasswordViewController.h"
 #import "RetrievePayPasswordViewController.h"
 #import "AwardViewController.h"
+#import "LiveCharmPhotoPayView.h"
 
 static NSString *const LIVECHARM_TABLEVIEW_ID = @"livecharm_tableview_id";
 static NSString *const LIVEINFORMATION_TABLEVIEW_ID = @"liveinformation_tableview_id";
@@ -208,20 +209,20 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             NSLog(@"输出 %@--%@",object,msg);
             LiveCharmPhotoModel *model = self.charmPhotoArray[index];
             if (code == 1) {//有权限 聊天/查看微信和制定魅力照片
-                if (type.integerValue == 2) {
+                if (type.integerValue == 2) {//聊天/查看微信
                     isCanTalk = YES;
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
                 }
                 else if (type.integerValue == 1) {
-                    model.is_charge = @"0";
+                    model.is_charge = @"0";//图片
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
                     [self configZLPhotoPickerBrowserWithArray:self.charmPhotoArray Index:index];
                 }
             }
             else if (code == 0) {//没权限 聊天/查看微信和制定魅力照片
                 price = object[@"data"];
-                if (type.integerValue == 1) {
-                    [self showPayViewWithPrice:model.fee Type:@"2" TargetId:targetId];
+                if (type.integerValue == 1) {//图片
+                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:targetId];
                 }
             }
         }
@@ -529,12 +530,12 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         make.size.mas_equalTo(CGSizeMake(35, 20));
     }];
     
-    UIImageView *statusImg = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"live_detail_online"] andView:headerView];
-    [statusImg mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.equalTo(sexImg.mas_centerY);
-        make.left.equalTo(realnamedImg.mas_right).offset(7);
-        make.size.mas_equalTo(CGSizeMake(29, 18));
-    }];
+//    UIImageView *statusImg = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"live_detail_online"] andView:headerView];
+//    [statusImg mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.centerY.equalTo(sexImg.mas_centerY);
+//        make.left.equalTo(realnamedImg.mas_right).offset(7);
+//        make.size.mas_equalTo(CGSizeMake(29, 18));
+//    }];
     
     UILabel *name = [EBUtility labfrome:CGRectZero andText:@"昵称" andColor:[UIColor whiteColor] andView:headerView];
     name.textAlignment = NSTextAlignmentLeft;
@@ -573,6 +574,14 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         make.right.equalTo(headerView.mas_right).offset(-15);
         make.size.mas_equalTo(CGSizeMake(65, 22));
     }];
+    if (self.type != 2) {
+        fans.hidden = YES;
+        attentionBtn.hidden = YES;
+    }
+    else {
+        fans.hidden = NO;
+        attentionBtn.hidden = NO;
+    }
     
     if (self.dataInfo.count > 0){
         [photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_head"]];
@@ -837,7 +846,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [self showPayViewWithPrice:price Type:@"3" TargetId:self.dataInfo[@"id"]];
 }
 
-//付款。图片/微信/聊天
+//付款。微信/聊天
 - (void)showPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
     LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284) Price:money];
     WEAKSELF
@@ -864,6 +873,33 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         }
     };
     [freeView show];
+}
+
+//付款。魅力图片
+- (void)showCharmPhotoPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
+    LiveCharmPhotoPayView *payView = [[LiveCharmPhotoPayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-171)/2, (SCREEN_HEIGHT-177)/2, 171, 177) Price:money];
+    WEAKSELF
+    typeof(payView) __weak weakPayView = payView;
+    payView.confirmPayBlock = ^(void) {
+        [weakPayView dismiss];
+        UserModel *user = UserModel.sharedUser;
+        if ([user.is_paypwd isEqualToString:@"0"]){
+            SetPayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"spp"];
+            [weakSelf.navigationController pushViewController:vc animated:1];
+            return;
+        }
+        //弹起支付密码alert
+        CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
+        alert.resultDate = ^(NSString *date) {
+            [weakSelf payRequestWithPwd:date Price:money Type:type TargetId:targetId];
+        };
+        alert.resultIndex = ^(NSInteger index) {
+            RetrievePayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"rpp"];
+            [weakSelf.navigationController pushViewController:vc animated:1];
+        };
+        [alert showAlertView];
+    };
+    [payView show];
 }
 
 //提交支付

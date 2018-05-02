@@ -535,9 +535,11 @@ static NSString *_cellIdentifier = @"collectionViewCell";
             LiveCharmPhotoModel *model = self.charmPhotoArray[indexPath.item];
             if (model.is_charge.intValue == 1) {
                 scrollView.visualEffectView.hidden = NO;
+                scrollView.placeholderLabel.hidden = NO;
             }
             else {
                 scrollView.visualEffectView.hidden = YES;
+                scrollView.placeholderLabel.hidden = YES;
             }
         }
         scrollView.sheet = self.sheet;
@@ -545,7 +547,8 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         scrollView.frame = tempF;
         scrollView.tag = 101;
         if (self.isPush) {
-            scrollView.zl_y -= 32;
+//            scrollView.zl_y -= 32;
+            scrollView.zl_y -= 52;
         }
         scrollView.photoScrollViewDelegate = self;
         scrollView.photo = photo;
