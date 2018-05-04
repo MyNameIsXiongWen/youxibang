@@ -271,9 +271,8 @@
     }
 }
 
-- (void)onResp:(QQBaseResp *)resp {
+- (void)onResp:(BaseResp *)resp {
     if ([resp isKindOfClass:SendMessageToWXResp.class]) {
-        SendMessageToWXResp *resp = (SendMessageToWXResp *)resp;
         if (resp.errCode == 0) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"SHARENOTIFICATION" object:@"success"];
         }
@@ -283,14 +282,16 @@
     }
     else if ([resp isKindOfClass:[SendAuthResp class]]) {
         SendAuthResp *temp = (SendAuthResp *)resp;
-        [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",WX_APP_ID,WX_APP_SECRET,temp.code] Paremeters:nil successOperation:^(id response) {
-            NSLog(@"绑定输出 %@",response);
-            
-            NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"2",@"typeid",response[@"openid"],@"threetoken",response[@"unionid"],@"unionid", nil]];
-            [[NSNotificationCenter defaultCenter] postNotification:notification];
-        } failoperation:^(NSError *error) {
-            NSLog(@"errr %@",error);
-        }];
+        if (temp.errCode == 0) {
+            [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",WX_APP_ID,WX_APP_SECRET,temp.code] Paremeters:nil successOperation:^(id response) {
+                NSLog(@"绑定输出 %@",response);
+                
+                NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"2",@"typeid",response[@"openid"],@"threetoken",response[@"unionid"],@"unionid", nil]];
+                [[NSNotificationCenter defaultCenter] postNotification:notification];
+            } failoperation:^(NSError *error) {
+                NSLog(@"errr %@",error);
+            }];
+        }
     }
     else if ([resp isKindOfClass:SendMessageToQQResp.class]) {
         switch (resp.type) {

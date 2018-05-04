@@ -90,7 +90,9 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     else {
         self.currentIndex ++;
     }
-    [self.adTableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    if (self.informationAry.count > 0) {
+        [self.adTableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
 }
 
 //渐显效果
@@ -688,8 +690,10 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
         [self.navigationController pushViewController:showCon animated:YES];
     }
     else {
+        ContentModel *model = self.intelligentArray[btn.tag-1];
         PartTimeViewController* vc = [[PartTimeViewController alloc]init];
         vc.ptOrBaby = YES;
+        vc.groupId = model.id;
         [self.navigationController pushViewController:vc animated:1];
     }
 }

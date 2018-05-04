@@ -301,7 +301,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
                 [subview removeFromSuperview];
             }
         }
-        UIImageView *imgView = [[UIImageView alloc] initWithFrame:cell.bounds];
+        UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 80)];
         [imgView sd_setImageWithURL:[NSURL URLWithString:adDataInfo[@"adimg"]] placeholderImage:[UIImage imageNamed:@"img_my111"]];
         [cell.contentView addSubview:imgView];
         return cell;

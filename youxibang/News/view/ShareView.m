@@ -10,6 +10,7 @@
 #import <WXApi.h>
 #import <Weibo_SDK/WeiboSDK.h>
 
+
 @implementation ShareView
 
 /*
@@ -20,10 +21,11 @@
 }
 */
 
-- (instancetype)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame WithShareUrl:(NSString *)url {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor colorFromHexString:@"f6f6f6"];
+        shareurl = url;
         [self configUI];
     }
     return self;
@@ -76,9 +78,67 @@
 
 - (void)shareSelector:(UIButton *)sender {
     NSString *type = objc_getAssociatedObject(sender, @"btn_type");
-    if (self.confirmShareBlock) {
-        self.confirmShareBlock(type);
+    if ([type isEqualToString:@"share_qq"] || [type isEqualToString:@"share_tim"]) {
+        [self QQShare:type];
     }
+    else if ([type isEqualToString:@"share_wechat"] || [type isEqualToString:@"share_timeline"]) {
+        [self WXShare:type];
+    }
+    else if ([type isEqualToString:@"share_weibo"]) {
+        [self weiboShare];
+    }
+}
+- (void)weiboShare {
+    //微博分享、需要授权
+    WBAuthorizeRequest *authorize = [WBAuthorizeRequest request];
+    authorize.redirectURI = SINA_REDIRECT_URL;
+    authorize.scope = @"all";
+    authorize.userInfo = nil;
+    
+//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//    [formatter setDateFormat:@"YYYYMMDDHHMMSS"];
+//    WBWebpageObject *object = [WBWebpageObject object];
+//    object.title = SHARE_TITLE;
+//    object.objectID = [formatter stringFromDate:NSDate.date];
+//    object.description = SHARE_DESCRIPTION;
+//    object.webpageUrl = shareurl;
+    
+    WBMessageObject *message = [WBMessageObject message];
+    message.text = [NSString stringWithFormat:@"%@ %@",SHARE_TITLE,shareurl];
+//    message.mediaObject = object;//链接无效，所以还是拼接在text里面
+    
+    WBSendMessageToWeiboRequest *req = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authorize access_token:nil];
+    req.userInfo = nil;
+    BOOL isSuccess = [WeiboSDK sendRequest:req];
+    NSLog(@"分享是否成功 %d",isSuccess);
+}
+
+- (void)QQShare:(NSString *)type {
+    NSURL *url = [NSURL URLWithString:shareurl];
+    QQApiURLObject *object = [QQApiURLObject objectWithURL:url title:SHARE_TITLE description:SHARE_DESCRIPTION previewImageURL:[NSURL URLWithString:@"share_logo"] targetContentType:QQApiURLTargetTypeNews];
+    SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:object];
+    [QQApiInterface sendReq:req];
+}
+
+- (void)WXShare:(NSString *)type {
+    WXMediaMessage *message = [WXMediaMessage message];
+    message.title = SHARE_TITLE;
+    message.description = SHARE_DESCRIPTION;
+    [message setThumbImage:[UIImage imageNamed:@"share_logo"]];
+    WXWebpageObject *webObject = [WXWebpageObject object];
+    webObject.webpageUrl = shareurl;
+    message.mediaObject = webObject;
+    
+    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
+    req.bText = NO;
+    if ([type isEqualToString:@"share_wechat"]) {
+        req.scene = WXSceneSession;
+    }
+    else {
+        req.scene = WXSceneTimeline;
+    }
+    req.message = message;
+    [WXApi sendReq:req];
 }
 
 - (void)show {

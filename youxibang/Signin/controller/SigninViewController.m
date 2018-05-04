@@ -35,7 +35,10 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 - (void)getDataInfoRequest {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dic = @{@"token":DataStore.sharedDataStore.token};
+    NSDictionary *dic = NSDictionary.dictionary;
+    if (DataStore.sharedDataStore.token) {
+        dic = @{@"token":DataStore.sharedDataStore.token};
+    }
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/get_my_gold",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -99,7 +102,10 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 - (void)signSelector:(UIButton *)sender {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dic = @{@"token":DataStore.sharedDataStore.token};
+    NSDictionary *dic = NSDictionary.dictionary;
+    if (DataStore.sharedDataStore.token) {
+        dic = @{@"token":DataStore.sharedDataStore.token};
+    }
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/sign_in",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -200,6 +206,9 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 - (void)cellBtnSelector:(UIButton *)sender {
     if (sender.tag == 999) {
         [self signSelector:sender];
+    }
+    else {
+        
     }
 }
 

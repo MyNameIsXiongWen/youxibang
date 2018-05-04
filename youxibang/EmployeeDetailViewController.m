@@ -22,12 +22,7 @@
 #import "RetrievePayPasswordViewController.h"
 #import "AwardViewController.h"
 #import "LiveCharmPhotoPayView.h"
-
-//分享
 #import "ShareView.h"
-#import <TencentOpenAPI/QQApiInterface.h>
-#import <TencentOpenAPI/TencentOAuth.h>
-#import <Weibo_SDK/WeiboSDK.h>
 
 static NSString *const LIVECHARM_TABLEVIEW_ID = @"livecharm_tableview_id";
 static NSString *const LIVEINFORMATION_TABLEVIEW_ID = @"liveinformation_tableview_id";
@@ -35,7 +30,7 @@ static NSString *const EMPLOYEEDETAIL_ID = @"EmployeeDetailTableViewCell";
 static NSString *const PARTTIMETABLEVIEW_ID = @"PartTimeTableViewCell";
 static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
-@interface EmployeeDetailViewController ()<UITableViewDelegate,UITableViewDataSource,UIScrollViewDelegate, SDCycleScrollViewDelegate, ZLPhotoPickerBrowserViewControllerDelegate,AliyunVodPlayerDelegate, TencentApiInterfaceDelegate> {
+@interface EmployeeDetailViewController ()<UITableViewDelegate,UITableViewDataSource,UIScrollViewDelegate, SDCycleScrollViewDelegate, ZLPhotoPickerBrowserViewControllerDelegate,AliyunVodPlayerDelegate> {
     UILabel *fans;//粉丝数量，因为要修改数目
     int fansCount;//粉丝数
     int laudCount;//点赞数
@@ -371,73 +366,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 #pragma mark - 分享
 - (void)shareBtn:(UIButton *)sender {
-    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140)];
-    WEAKSELF
-    self.shareView.confirmShareBlock = ^(NSString *type) {
-        if ([type isEqualToString:@"share_qq"] || [type isEqualToString:@"share_tim"]) {
-            [weakSelf QQShare:type];
-        }
-        else if ([type isEqualToString:@"share_wechat"] || [type isEqualToString:@"share_timeline"]) {
-            [weakSelf WXShare:type];
-        }
-        else if ([type isEqualToString:@"share_weibo"]) {
-            [weakSelf weiboShare];
-        }
-    };
+    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:SHARE_WEBURL];
     [self.shareView show];
-}
-
-- (void)weiboShare {
-    //微博分享、需要授权
-    WBAuthorizeRequest *authorize = [WBAuthorizeRequest request];
-    authorize.redirectURI = SINA_REDIRECT_URL;
-    authorize.scope = @"all";
-    authorize.userInfo = nil;
-    
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYYMMDDHHMMSS"];
-    WBWebpageObject *object = [WBWebpageObject object];
-    object.title = SHARE_TITLE;
-    object.objectID = [formatter stringFromDate:NSDate.date];
-    object.description = SHARE_DESCRIPTION;
-    object.webpageUrl = SHARE_WEBURL;
-    
-    WBMessageObject *message = [WBMessageObject message];
-    message.text = SHARE_TITLE;
-    message.mediaObject = object;
-    
-    WBSendMessageToWeiboRequest *req = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authorize access_token:nil];
-    req.userInfo = nil;
-    BOOL isSuccess = [WeiboSDK sendRequest:req];
-    NSLog(@"分享是否成功 %d",isSuccess);
-}
-
-- (void)QQShare:(NSString *)type {
-    NSURL *url = [NSURL URLWithString:SHARE_WEBURL];
-    QQApiURLObject *object = [QQApiURLObject objectWithURL:url title:SHARE_TITLE description:SHARE_DESCRIPTION previewImageURL:[NSURL URLWithString:@"share_logo"] targetContentType:QQApiURLTargetTypeNews];
-    SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:object];
-    [QQApiInterface sendReq:req];
-}
-
-- (void)WXShare:(NSString *)type {
-    WXMediaMessage *message = [WXMediaMessage message];
-    message.title = SHARE_TITLE;
-    message.description = SHARE_DESCRIPTION;
-    [message setThumbImage:[UIImage imageNamed:@"share_logo"]];
-    WXWebpageObject *webObject = [WXWebpageObject object];
-    webObject.webpageUrl = SHARE_WEBURL;
-    message.mediaObject = webObject;
-    
-    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
-    req.bText = NO;
-    if ([type isEqualToString:@"share_wechat"]) {
-        req.scene = WXSceneSession;
-    }
-    else {
-        req.scene = WXSceneTimeline;
-    }
-    req.message = message;
-    [WXApi sendReq:req];
 }
 
 //bottomview按键

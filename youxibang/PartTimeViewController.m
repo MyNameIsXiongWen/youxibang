@@ -90,6 +90,7 @@
         [dict setObject:@"3" forKey:@"typeid"];
     }else {
         [dict setObject:@"2" forKey:@"typeid"];
+        [dict setObject:self.groupId forKey:@"group_id"];
     }
     
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/bannerlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
