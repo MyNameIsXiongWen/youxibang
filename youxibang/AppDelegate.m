@@ -15,6 +15,7 @@
 #import <TencentOpenAPI/TencentOAuth.h>
 #import <TencentOpenAPI/QQApiInterface.h>
 #import <Weibo_SDK/WeiboSDK.h>
+#import "GuideViewController.h"
 
 @interface AppDelegate ()<WXApiDelegate,JPUSHRegisterDelegate, QQApiInterfaceDelegate, WeiboSDKDelegate>
 
@@ -24,13 +25,35 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    //iconfont注册
-    [TBCityIconFont setFontName:@"iconfont"];
+    [self registerThirdSDKWithOptions:launchOptions];
     //从userdefault中获取信息自动登录
     NSDictionary *user =  [UserNameTool readLoginData];
     if (user.count) {
         [self lg:user];
     }
+
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    [defaultCenter addObserver:self selector:@selector(networkDidReceiveMessage:) name:kJPFNetworkDidReceiveMessageNotification object:nil];
+    
+    //自定义tabbar
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:FIRST_INTO]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:FIRST_INTO];
+        GuideViewController *guideController = [[GuideViewController alloc] init];
+        MainNavigationController *nav = [[MainNavigationController alloc] initWithRootViewController:guideController];
+        self.window.rootViewController = nav;
+    }
+    else {
+        MainTabBarController *mainTab = [[MainTabBarController alloc] init];
+        self.window.rootViewController = mainTab;
+    }
+    return YES;
+}
+
+- (void)registerThirdSDKWithOptions:(NSDictionary *)launchOptions {
+    //iconfont注册
+    [TBCityIconFont setFontName:@"iconfont"];
+    
     //微信注册
     [WXApi registerApp:WX_APP_ID];
     [[TencentOAuth alloc] initWithAppId:QQ_OPEN_ID andDelegate:nil];
@@ -44,26 +67,12 @@
     //Jpush
     JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
     entity.types = JPAuthorizationOptionAlert|JPAuthorizationOptionBadge|JPAuthorizationOptionSound;
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
-        // 可以添加自定义categories
-        // NSSet<UNNotificationCategory *> *categories for iOS10 or later
-        // NSSet<UIUserNotificationCategory *> *categories for iOS8 and iOS9
-    }
     [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
     [JPUSHService setupWithOption:launchOptions appKey:JPUSH_KEY
                           channel:@"App Store"
                  apsForProduction:YES];
-
-    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
-    [defaultCenter addObserver:self selector:@selector(networkDidReceiveMessage:) name:kJPFNetworkDidReceiveMessageNotification object:nil];
-    
-    //自定义tabbar
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    MainTabBarController *minTa = [[MainTabBarController alloc] init];
-    
-    _window.rootViewController = minTa;
-    return YES;
 }
+
 //自动登录方法
 - (void)lg:(NSDictionary*)dic{
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
@@ -238,8 +247,7 @@
     if (application.applicationState == UIApplicationStateActive || application.applicationState == UIApplicationStateBackground) {
         NSLog(@"acitve or background");
 
-    }else//杀死状态下，直接跳转到跳转页面。
-    {
+    }else {//杀死状态下，直接跳转到跳转页面。
         MainTabBarController* tabbar = self.window.rootViewController;
         [tabbar setIndex:1];
     }
@@ -252,13 +260,10 @@
 }
 //jpush接收推送触发方法
 - (void)networkDidReceiveMessage:(NSNotification *)notification {
-    
     NSDictionary * userInfo = [notification userInfo];
     NSString *content = [userInfo valueForKey:@"content"];
-    NSData *jsonData = [content dataUsingEncoding:NSUTF8StringEncoding];
     NSError *err;
     NSLog(@"推送消息  %@",content);
-    
     NSNotification *n = [NSNotification notificationWithName:@"refreshMessage" object:nil userInfo:nil];
     [[NSNotificationCenter defaultCenter] postNotification:n];
     if(err) {

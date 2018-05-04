@@ -262,7 +262,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         return 50;
     }
     else if (indexPath.section == 1) {
-        return 70;
+        return 80;
     }
     return 40;
 }

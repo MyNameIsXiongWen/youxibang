@@ -58,15 +58,8 @@
                             <constraint firstAttribute="height" constant="20" id="D03-6E-cY5"/>
                         </constraints>
                     </imageView>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="live_detail_online" translatesAutoresizingMaskIntoConstraints="NO" id="78o-Cs-L1E">
-                        <rect key="frame" x="123" y="33" width="29" height="18"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="29" id="0vC-ut-J0S"/>
-                            <constraint firstAttribute="height" constant="18" id="9a8-7i-11z"/>
-                        </constraints>
-                    </imageView>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="live_detail_realnamed" translatesAutoresizingMaskIntoConstraints="NO" id="nAr-oy-fWo">
-                        <rect key="frame" x="162" y="33" width="29" height="18"/>
+                        <rect key="frame" x="123" y="33" width="29" height="18"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="18" id="7eO-ol-rIN"/>
                             <constraint firstAttribute="width" constant="29" id="rae-dA-ygP"/>
@@ -83,15 +76,13 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="5dQ-G5-ISS" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="38" id="1sD-d7-ctp"/>
-                    <constraint firstItem="nAr-oy-fWo" firstAttribute="leading" secondItem="78o-Cs-L1E" secondAttribute="trailing" constant="10" id="2C2-nt-MUw"/>
                     <constraint firstAttribute="trailing" secondItem="z9g-HY-1Pw" secondAttribute="trailing" constant="15" id="4AQ-Ee-0gj"/>
-                    <constraint firstItem="78o-Cs-L1E" firstAttribute="leading" secondItem="QSv-C5-gn4" secondAttribute="trailing" constant="5" id="6Vo-bS-PTM"/>
                     <constraint firstItem="QSv-C5-gn4" firstAttribute="centerY" secondItem="6I2-bh-adu" secondAttribute="centerY" id="ATS-2I-5aD"/>
                     <constraint firstItem="QSv-C5-gn4" firstAttribute="leading" secondItem="6I2-bh-adu" secondAttribute="trailing" constant="9" id="ISY-Lq-91C"/>
+                    <constraint firstItem="nAr-oy-fWo" firstAttribute="leading" secondItem="QSv-C5-gn4" secondAttribute="trailing" constant="5" id="M2G-Bv-nsM"/>
                     <constraint firstItem="6I2-bh-adu" firstAttribute="leading" secondItem="X26-FK-yKq" secondAttribute="trailing" constant="13" id="QGp-I0-2lP"/>
                     <constraint firstItem="a8v-fA-gRC" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="bZO-Ha-tEu"/>
                     <constraint firstItem="X26-FK-yKq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="eEY-Lm-Qxu"/>
-                    <constraint firstItem="78o-Cs-L1E" firstAttribute="centerY" secondItem="6I2-bh-adu" secondAttribute="centerY" id="f7b-Ew-DS5"/>
                     <constraint firstItem="X26-FK-yKq" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="hEI-ar-8Ht"/>
                     <constraint firstItem="z9g-HY-1Pw" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="ksK-EU-cko"/>
                     <constraint firstAttribute="bottom" secondItem="5dQ-G5-ISS" secondAttribute="bottom" constant="9.5" id="n8p-i8-1dc"/>
@@ -108,14 +99,12 @@
                 <outlet property="nameLabel" destination="a8v-fA-gRC" id="hro-b5-ppv"/>
                 <outlet property="realnameImgView" destination="nAr-oy-fWo" id="tPM-4H-zHh"/>
                 <outlet property="sexImgView" destination="6I2-bh-adu" id="OYZ-VD-4Ny"/>
-                <outlet property="statusImgView" destination="78o-Cs-L1E" id="gBS-hC-cg4"/>
                 <outlet property="vipImgView" destination="5dQ-G5-ISS" id="5Kh-PH-XHE"/>
             </connections>
             <point key="canvasLocation" x="35" y="70"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="live_detail_online" width="29" height="18"/>
         <image name="live_detail_realnamed" width="35" height="18"/>
         <image name="live_fans_attention" width="70" height="26"/>
         <image name="live_female" width="13" height="13"/>

@@ -163,6 +163,8 @@
 		87416ACA2099B97600482C26 /* ShareView.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416AC92099B97600482C26 /* ShareView.m */; };
 		87416ACE209BFB0300482C26 /* VipWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416ACC209BFB0300482C26 /* VipWebViewController.m */; };
 		87416ACF209BFB0300482C26 /* VipWebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87416ACD209BFB0300482C26 /* VipWebViewController.xib */; };
+		87416AD3209C47BD00482C26 /* GuideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416AD0209C47BC00482C26 /* GuideViewController.m */; };
+		87416AD4209C47BD00482C26 /* GuideViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87416AD2209C47BD00482C26 /* GuideViewController.xib */; };
 		874D1FBC207B4D2C0076A5AA /* MineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 874D1FBA207B4D2C0076A5AA /* MineTableViewCell.m */; };
 		874D1FBD207B4D2C0076A5AA /* MineTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 874D1FBB207B4D2C0076A5AA /* MineTableViewCell.xib */; };
 		874E3355207DBAAE006F0AAD /* HttpManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 874E3352207DBAAE006F0AAD /* HttpManager.m */; };
@@ -553,6 +555,9 @@
 		87416ACB209BFB0300482C26 /* VipWebViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VipWebViewController.h; sourceTree = "<group>"; };
 		87416ACC209BFB0300482C26 /* VipWebViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VipWebViewController.m; sourceTree = "<group>"; };
 		87416ACD209BFB0300482C26 /* VipWebViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VipWebViewController.xib; sourceTree = "<group>"; };
+		87416AD0209C47BC00482C26 /* GuideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuideViewController.m; sourceTree = "<group>"; };
+		87416AD1209C47BD00482C26 /* GuideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuideViewController.h; sourceTree = "<group>"; };
+		87416AD2209C47BD00482C26 /* GuideViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GuideViewController.xib; sourceTree = "<group>"; };
 		874D1FB9207B4D2C0076A5AA /* MineTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineTableViewCell.h; sourceTree = "<group>"; };
 		874D1FBA207B4D2C0076A5AA /* MineTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineTableViewCell.m; sourceTree = "<group>"; };
 		874D1FBB207B4D2C0076A5AA /* MineTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MineTableViewCell.xib; sourceTree = "<group>"; };
@@ -1003,6 +1008,9 @@
 				18736255201030A80045EF9E /* AppDelegate.m */,
 				18736257201030A80045EF9E /* ViewController.h */,
 				18736258201030A80045EF9E /* ViewController.m */,
+				87416AD1209C47BD00482C26 /* GuideViewController.h */,
+				87416AD0209C47BC00482C26 /* GuideViewController.m */,
+				87416AD2209C47BD00482C26 /* GuideViewController.xib */,
 			);
 			name = AppDelegate;
 			sourceTree = "<group>";
@@ -2040,6 +2048,7 @@
 				1873625C201030A80045EF9E /* Main.storyboard in Resources */,
 				87416AC720997E3800482C26 /* SigninTableViewCell.xib in Resources */,
 				87416ABD2099662800482C26 /* SigninCoinTableViewCell.xib in Resources */,
+				87416AD4209C47BD00482C26 /* GuideViewController.xib in Resources */,
 				87416ACF209BFB0300482C26 /* VipWebViewController.xib in Resources */,
 				875936742091743C00591D33 /* NewsTableViewCell.xib in Resources */,
 				873838F6209418A4000A9BF5 /* NewsReviewTableViewCell.xib in Resources */,
@@ -2164,6 +2173,7 @@
 				87593615208DED4300591D33 /* LiveShowViewController.m in Sources */,
 				875936502090643400591D33 /* LiveCharmTableViewCell.m in Sources */,
 				187362E4201031450045EF9E /* TBCityIconInfo.m in Sources */,
+				87416AD3209C47BD00482C26 /* GuideViewController.m in Sources */,
 				8D6039542081CABD00336B65 /* UIViewController+Alert.m in Sources */,
 				18736309201031450045EF9E /* ScrollTitleView.m in Sources */,
 				18736306201031450045EF9E /* DataStore.m in Sources */,

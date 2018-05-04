@@ -64,6 +64,7 @@
 #define RGBA(r,g,b,a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
 #define RGB(r,g,b) RGBA(r,g,b,1.0f)
 
+static NSString *const FIRST_INTO = @"first_into";
 #define QQ_OPEN_ID @"1106746110"
 #define WX_APP_ID @"wx9409b172842c7d01"
 #define WX_APP_SECRET @"e4a47d8a0bc2ba61fa2adb0091788e35"

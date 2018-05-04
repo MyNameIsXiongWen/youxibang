@@ -177,6 +177,11 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     arrowImgView.contentMode = UIViewContentModeCenter;
     arrowImgView.backgroundColor = UIColor.whiteColor;
     
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 50)];
+    footerView.backgroundColor = UIColor.clearColor;
+    UILabel *footerLabel = [EBUtility labfrome:footerView.bounds andText:@"然后，就没有然后了～" andColor:[UIColor colorFromHexString:@"444444"] andView:footerView];
+    footerLabel.font = [UIFont systemFontOfSize:11.0];
+    
     self.contentTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT-49+20) style:UITableViewStyleGrouped];
     self.contentTableview.delegate = self;
     self.contentTableview.dataSource = self;
@@ -188,6 +193,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [self.view addSubview:self.contentTableview];
     self.contentTableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
     self.contentTableview.tableHeaderView = headerView;
+    self.contentTableview.tableFooterView = footerView;
     
     [self configNavView];
 }

@@ -163,7 +163,6 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     UILabel *sepLabel2 = [EBUtility labfrome:CGRectMake(SCREEN_WIDTH/3*2, SCREEN_HEIGHT - 48+9, 0.5, 30) andText:@"" andColor:nil andView:self.view];
     sepLabel2.backgroundColor = [UIColor colorFromHexString:@"b2b2b2"];
     
-    
     laudCount = [self.dataInfo[@"laud_count"] intValue];
     [likeBtn setTitle:[NSString stringWithFormat:@"%d",laudCount] forState:0];
     if ([self.dataInfo[@"is_laud"] integerValue] == 0) {
@@ -215,7 +214,9 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 //查询权限  是否能查看微信/聊天/查看魅力图片
 - (void)queryJurisdictionRequestType:(NSString *)type TargetId:(NSString *)targetId Money:(NSString *)money Index:(NSInteger)index {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    if (DataStore.sharedDataStore.token) {
+        [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    }
     [dict setObject:type forKey:@"type"];
     [dict setObject:targetId forKey:@"target_id"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
