@@ -9,12 +9,14 @@
 #import "TalkingData.h"
 #import "WXApi.h"
 #import "LoginViewController.h"
-#import "BaseTool/QQFramework/TencentOpenAPI.framework/Headers/TencentOAuth.h"
 #import <AlipaySDK/AlipaySDK.h>
 #import "TopUpAndWithdrawViewController.h"
 #import <Bugly/Bugly.h>
+#import <TencentOpenAPI/TencentOAuth.h>
+#import <TencentOpenAPI/QQApiInterface.h>
+#import <Weibo_SDK/WeiboSDK.h>
 
-@interface AppDelegate ()<WXApiDelegate,JPUSHRegisterDelegate>
+@interface AppDelegate ()<WXApiDelegate,JPUSHRegisterDelegate, QQApiInterfaceDelegate, WeiboSDKDelegate>
 
 @end
 
@@ -31,6 +33,9 @@
     }
     //微信注册
     [WXApi registerApp:WX_APP_ID];
+    [[TencentOAuth alloc] initWithAppId:QQ_OPEN_ID andDelegate:nil];
+    [WeiboSDK enableDebugMode:YES];
+    [WeiboSDK registerApp:SINA_APP_KEY];
     //talkingdata注册
     [TalkingData sessionStarted:@"7AF6493B08F141FC8EF2450B65B3C0B2" withChannelId:@"iOS正式版"];
     [TalkingData setExceptionReportEnabled:YES];
@@ -45,7 +50,7 @@
         // NSSet<UIUserNotificationCategory *> *categories for iOS8 and iOS9
     }
     [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
-    [JPUSHService setupWithOption:launchOptions appKey:@"00ba7b47099c1870085c0f5a"
+    [JPUSHService setupWithOption:launchOptions appKey:JPUSH_KEY
                           channel:@"App Store"
                  apsForProduction:YES];
 
@@ -90,7 +95,7 @@
                 [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:user[@"data"][@"mobile"]];
                 
                 //云信注册
-                [[NIMSDK sharedSDK] registerWithAppID:@"d27ffe90d087aaeb5c579f7485a2dcb6" cerName:nil];
+                [[NIMSDK sharedSDK] registerWithAppID:NIM_APP_ID cerName:nil];
                 //云信的自动https支持
                 NIMServerSetting *setting = [[NIMServerSetting alloc] init];
                 setting.httpsEnabled = NO;
@@ -123,35 +128,31 @@
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     NSString *string =[url absoluteString];
-    //qq登录回调
+    
     if ([string hasPrefix:@"tencent"]){
+        [QQApiInterface handleOpenURL:url delegate:self];
         return [TencentOAuth HandleOpenURL:url];
-    }else if ([string hasPrefix:@"alipayYouxibang://safepay/"]){//支付宝回调
+    }
+    else if ([string hasPrefix:@"alipayYouxibang://safepay/"]){//支付宝回调
         [[AlipaySDK defaultService] processOrderWithPaymentResult:url standbyCallback:^(NSDictionary *resultDic) {
             if ([[NSString stringWithFormat:@"%@",resultDic[@"resultStatus"]] isEqualToString:@"9000"]){
                 NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
                 [[NSNotificationCenter defaultCenter] postNotification:notification];
             }
         }];
-        
-    }else if ([string hasPrefix:@"wx9409b172842c7d01://pay/"]){//微信支付回调，直接用通知
+    }
+    else if ([string hasPrefix:@"wx9409b172842c7d01://pay/"]){//微信支付回调，直接用通知
         if ([string hasSuffix:@"ret=0"]){
             NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
             [[NSNotificationCenter defaultCenter] postNotification:notification];
         }
-        
-        //        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        //        TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
-        //        return [WXApi handleOpenURL:url delegate:vc];
-        
-    }else if ([string hasPrefix:@"wx"]){//微信登录回调
-        
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-        return [WXApi handleOpenURL:url delegate:vc];
-        
     }
-    
+    else if ([string hasPrefix:@"wx"]){//微信登录回调
+        return [WXApi handleOpenURL:url delegate:self];
+    }
+    else if ([string hasPrefix:@"wb3625368548"]) {
+        return [WeiboSDK handleOpenURL:url delegate:self];
+    }
     return false;
 }
 //与上同
@@ -159,33 +160,29 @@
     NSString *string =[url absoluteString];
 
     if ([string hasPrefix:@"tencent"]){
+        [QQApiInterface handleOpenURL:url delegate:self];
         return [TencentOAuth HandleOpenURL:url];
-    }else if ([string hasPrefix:@"alipayYouxibang://safepay/"]){
+    }
+    else if ([string hasPrefix:@"alipayYouxibang://safepay/"]){
         [[AlipaySDK defaultService] processOrderWithPaymentResult:url standbyCallback:^(NSDictionary *resultDic) {
             if ([[NSString stringWithFormat:@"%@",resultDic[@"resultStatus"]] isEqualToString:@"9000"]){
                 NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
                 [[NSNotificationCenter defaultCenter] postNotification:notification];
             }
         }];
-
-    }else if ([string hasPrefix:@"wx9409b172842c7d01://pay/"]){
+    }
+    else if ([string hasPrefix:@"wx9409b172842c7d01://pay/"]){
         if ([string hasSuffix:@"ret=0"]){
             NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
             [[NSNotificationCenter defaultCenter] postNotification:notification];
         }
-
-//        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//        TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
-//        return [WXApi handleOpenURL:url delegate:vc];
-        
-    }else if ([string hasPrefix:@"wx"]){
-        
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-        return [WXApi handleOpenURL:url delegate:vc];
-
     }
-    
+    else if ([string hasPrefix:@"wx"]){
+        return [WXApi handleOpenURL:url delegate:self];
+    }
+    else if ([string hasPrefix:@"wb3625368548"]) {
+        return [WeiboSDK handleOpenURL:url delegate:self];
+    }
     return false;
 }
 
@@ -267,7 +264,53 @@
     if(err) {
         NSLog(@"json解析失败：%@",err);
     }
-    
+}
+
+- (void)onResp:(QQBaseResp *)resp {
+    if ([resp isKindOfClass:SendMessageToWXResp.class]) {
+        SendMessageToWXResp *resp = (SendMessageToWXResp *)resp;
+        if (resp.errCode == 0) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"SHARENOTIFICATION" object:@"success"];
+        }
+        else {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"SHARENOTIFICATION" object:@"fail"];
+        }
+    }
+    else if ([resp isKindOfClass:[SendAuthResp class]]) {
+        SendAuthResp *temp = (SendAuthResp *)resp;
+        [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",WX_APP_ID,WX_APP_SECRET,temp.code] Paremeters:nil successOperation:^(id response) {
+            NSLog(@"绑定输出 %@",response);
+            
+            NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"2",@"typeid",response[@"openid"],@"threetoken",response[@"unionid"],@"unionid", nil]];
+            [[NSNotificationCenter defaultCenter] postNotification:notification];
+        } failoperation:^(NSError *error) {
+            NSLog(@"errr %@",error);
+        }];
+    }
+    else if ([resp isKindOfClass:SendMessageToQQResp.class]) {
+        switch (resp.type) {
+            case ESENDMESSAGETOQQRESPTYPE: {
+                SendMessageToQQResp* sendResp = (SendMessageToQQResp*)resp;
+                if ([sendResp.result isEqualToString:@"0"]) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"SHARENOTIFICATION" object:@"success"];
+                } else {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"SHARENOTIFICATION" object:@"fail"];
+                } break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+}
+
+- (void)didReceiveWeiboResponse:(WBBaseResponse *)response {
+    if (response.statusCode == 0) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"SHARENOTIFICATION" object:@"success"];
+    }
+    else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"SHARENOTIFICATION" object:@"fail"];
+    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

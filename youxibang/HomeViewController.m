@@ -126,6 +126,9 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     self.cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
     [headerView addSubview:self.cycleScrollView];
     [self configNavView:headerView];
+    UIImageView *bkgImgView = [EBUtility imgfrome:CGRectMake(0, 150, SCREEN_WIDTH, 25) andImg:[UIImage imageNamed:@"banner_bg"] andView:headerView];
+    bkgImgView.contentMode = UIViewContentModeScaleToFill;
+    bkgImgView.backgroundColor = UIColor.clearColor;
     //三个按钮
     NSArray *textAry = @[@"主播基地",@"兼职空间",@"发布任务",@"每日打卡"];
     NSArray *imgAry = @[@"home_live_base",@"home_parttime",@"home_publish",@"home_daily_clock"];
@@ -143,12 +146,15 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     UIImageView *iconImgView = [EBUtility imgfrome:CGRectMake(5, 275, 55, 70) andImg:[UIImage imageNamed:@"home_toutiao"] andView:headerView];
     iconImgView.contentMode = UIViewContentModeCenter;
     iconImgView.backgroundColor = UIColor.whiteColor;
-    self.adTableview = [[UITableView alloc] initWithFrame:CGRectMake(50, 293, SCREEN_WIDTH-50, 35) style:UITableViewStylePlain];
+    self.adTableview = [[UITableView alloc] initWithFrame:CGRectMake(50, 293, SCREEN_WIDTH-50-22, 35) style:UITableViewStylePlain];
     self.adTableview.delegate = self;
     self.adTableview.dataSource = self;
     self.adTableview.tag = 111;
     self.adTableview.separatorStyle = UITableViewCellSelectionStyleNone;
     [headerView addSubview:self.adTableview];
+    UIImageView *arrowImgView = [EBUtility imgfrome:CGRectMake(SCREEN_WIDTH-22, 304, 7, 12) andImg:[UIImage imageNamed:@"arrow_right"] andView:headerView];
+    arrowImgView.contentMode = UIViewContentModeCenter;
+    arrowImgView.backgroundColor = UIColor.whiteColor;
     
     self.contentTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT-49+20) style:UITableViewStyleGrouped];
     self.contentTableview.delegate = self;
@@ -162,6 +168,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     self.contentTableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
     self.contentTableview.tableHeaderView = headerView;
 }
+
 //兼职，游戏宝贝，发布三个按钮的方法，发布任务必须登陆后才能进入
 - (void)pushOrder:(UIButton*)sender{
     //因为第三方登录后直接获取userinfo服务器的token会与当前不符，故在首页进行点击行为时才获取userinfo

@@ -31,6 +31,9 @@
 @property (copy, nonatomic) NSString *sexstr;
 @property (copy, nonatomic) NSString *is_realauthstr;
 @property (copy, nonatomic) NSString *is_realauth;
+@property (copy, nonatomic) NSString *follow_count;
+@property (copy, nonatomic) NSString *laud_count;
+@property (copy, nonatomic) NSString *is_anchor;
 @property (copy, nonatomic) NSArray *bgimg;
 @property (copy, nonatomic) NSArray *interest;
 @property (strong, nonatomic) NSDictionary *video;

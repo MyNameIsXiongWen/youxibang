@@ -51,7 +51,7 @@
                         <color key="textColor" red="0.95294117647058818" green="0.22745098039215686" blue="0.31372549019607843" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vip_grage_1" translatesAutoresizingMaskIntoConstraints="NO" id="5dQ-G5-ISS">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vip_grade_1" translatesAutoresizingMaskIntoConstraints="NO" id="5dQ-G5-ISS">
                         <rect key="frame" x="38" y="30" width="17" height="20"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="17" id="ACJ-mk-swh"/>
@@ -119,6 +119,6 @@
         <image name="live_detail_realnamed" width="35" height="18"/>
         <image name="live_fans_attention" width="70" height="26"/>
         <image name="live_female" width="13" height="13"/>
-        <image name="vip_grage_1" width="17" height="20"/>
+        <image name="vip_grade_1" width="17" height="20"/>
     </resources>
 </document>

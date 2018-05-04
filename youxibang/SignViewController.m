@@ -97,6 +97,7 @@
         
         if (code == 1) {//下一步，设置密码
             SetPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spw"];
+            vc.inviteCode = object[@"data"];
             vc.phoneNum = self.phone.text;
             vc.type = self.type;
             

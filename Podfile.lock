@@ -60,6 +60,7 @@ PODS:
     - AliyunOSSiOS
     - AliyunVideoCore (~> 1.0.0)
   - WechatOpenSDK (1.8.0)
+  - Weibo_SDK (3.2.3)
 
 DEPENDENCIES:
   - AFNetworking
@@ -81,6 +82,16 @@ DEPENDENCIES:
   - SVProgressHUD
   - VODUpload
   - WechatOpenSDK
+  - Weibo_SDK (from `https://github.com/sinaweibosdk/weibo_ios_sdk.git`)
+
+EXTERNAL SOURCES:
+  Weibo_SDK:
+    :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
+
+CHECKOUT OPTIONS:
+  Weibo_SDK:
+    :commit: f5b138320aefe0ed20b76b8510521432f1a6c9ac
+    :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
@@ -110,7 +121,8 @@ SPEC CHECKSUMS:
   TZImagePickerController: 3b9413ae5d049b1fdc5b0c720ad283f35b679a50
   VODUpload: e59dffe09707143bdcfc7d1ea38d7d898fb01a8c
   WechatOpenSDK: 0ee07a8d492299d3e47372a33da5af26524a7576
+  Weibo_SDK: 652ca78c2f7147a5de5e75e7cbea89838a81772a
 
-PODFILE CHECKSUM: 242cce5fd05ca4ac52a39ecc6767268171ba9c4d
+PODFILE CHECKSUM: bbb91b0a0c829defcbd1260fe06bdada5af2795a
 
 COCOAPODS: 1.4.0

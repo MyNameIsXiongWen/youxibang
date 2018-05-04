@@ -23,6 +23,12 @@
     self.title = @"设置密码";
     self.password.secureTextEntry = YES;
     self.secPassword.secureTextEntry = YES;
+    if (self.inviteCode) {
+        self.invitationCode.hidden = YES;
+    }
+    else {
+        self.invitationCode.hidden = NO;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -36,7 +42,12 @@
             SupplementInfoViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"si"];
             vc.phoneNum = self.phoneNum;
             vc.password = self.password.text;
-            vc.leadercode = self.invitationCode.text;
+            if (self.inviteCode) {
+                vc.leadercode = self.inviteCode;
+            }
+            else {
+                vc.leadercode = self.invitationCode.text;
+            }
             vc.type = self.type;
             if (self.type.integerValue > 1){
                 vc.threetoken = self.threetoken;

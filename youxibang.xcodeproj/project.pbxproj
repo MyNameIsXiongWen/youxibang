@@ -160,6 +160,9 @@
 		87416AC22099683600482C26 /* SigninViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87416AC02099683600482C26 /* SigninViewController.xib */; };
 		87416AC620997E3800482C26 /* SigninTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416AC420997E3800482C26 /* SigninTableViewCell.m */; };
 		87416AC720997E3800482C26 /* SigninTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87416AC520997E3800482C26 /* SigninTableViewCell.xib */; };
+		87416ACA2099B97600482C26 /* ShareView.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416AC92099B97600482C26 /* ShareView.m */; };
+		87416ACE209BFB0300482C26 /* VipWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416ACC209BFB0300482C26 /* VipWebViewController.m */; };
+		87416ACF209BFB0300482C26 /* VipWebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87416ACD209BFB0300482C26 /* VipWebViewController.xib */; };
 		874D1FBC207B4D2C0076A5AA /* MineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 874D1FBA207B4D2C0076A5AA /* MineTableViewCell.m */; };
 		874D1FBD207B4D2C0076A5AA /* MineTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 874D1FBB207B4D2C0076A5AA /* MineTableViewCell.xib */; };
 		874E3355207DBAAE006F0AAD /* HttpManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 874E3352207DBAAE006F0AAD /* HttpManager.m */; };
@@ -545,6 +548,11 @@
 		87416AC320997E3800482C26 /* SigninTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SigninTableViewCell.h; sourceTree = "<group>"; };
 		87416AC420997E3800482C26 /* SigninTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SigninTableViewCell.m; sourceTree = "<group>"; };
 		87416AC520997E3800482C26 /* SigninTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SigninTableViewCell.xib; sourceTree = "<group>"; };
+		87416AC82099B97600482C26 /* ShareView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShareView.h; sourceTree = "<group>"; };
+		87416AC92099B97600482C26 /* ShareView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShareView.m; sourceTree = "<group>"; };
+		87416ACB209BFB0300482C26 /* VipWebViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VipWebViewController.h; sourceTree = "<group>"; };
+		87416ACC209BFB0300482C26 /* VipWebViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VipWebViewController.m; sourceTree = "<group>"; };
+		87416ACD209BFB0300482C26 /* VipWebViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VipWebViewController.xib; sourceTree = "<group>"; };
 		874D1FB9207B4D2C0076A5AA /* MineTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineTableViewCell.h; sourceTree = "<group>"; };
 		874D1FBA207B4D2C0076A5AA /* MineTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineTableViewCell.m; sourceTree = "<group>"; };
 		874D1FBB207B4D2C0076A5AA /* MineTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MineTableViewCell.xib; sourceTree = "<group>"; };
@@ -1276,6 +1284,9 @@
 				18F6D06B2025A5C50001917B /* ApplyForVipViewController.m */,
 				18F6D06D2025B5240001917B /* RealNameViewController.h */,
 				18F6D06E2025B5240001917B /* RealNameViewController.m */,
+				87416ACB209BFB0300482C26 /* VipWebViewController.h */,
+				87416ACC209BFB0300482C26 /* VipWebViewController.m */,
+				87416ACD209BFB0300482C26 /* VipWebViewController.xib */,
 			);
 			name = "个人信息,认证,加V";
 			sourceTree = "<group>";
@@ -1561,6 +1572,8 @@
 				873838F2209418A4000A9BF5 /* NewsReviewTableViewCell.h */,
 				873838F3209418A4000A9BF5 /* NewsReviewTableViewCell.m */,
 				873838F4209418A4000A9BF5 /* NewsReviewTableViewCell.xib */,
+				87416AC82099B97600482C26 /* ShareView.h */,
+				87416AC92099B97600482C26 /* ShareView.m */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -2027,6 +2040,7 @@
 				1873625C201030A80045EF9E /* Main.storyboard in Resources */,
 				87416AC720997E3800482C26 /* SigninTableViewCell.xib in Resources */,
 				87416ABD2099662800482C26 /* SigninCoinTableViewCell.xib in Resources */,
+				87416ACF209BFB0300482C26 /* VipWebViewController.xib in Resources */,
 				875936742091743C00591D33 /* NewsTableViewCell.xib in Resources */,
 				873838F6209418A4000A9BF5 /* NewsReviewTableViewCell.xib in Resources */,
 				8759365E209064B700591D33 /* LiveFansViewController.xib in Resources */,
@@ -2085,6 +2099,7 @@
 				"${PODS_ROOT}/SGQRCode/SGQRCode/SGQRCode.bundle",
 				"${PODS_ROOT}/SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle",
 				"${PODS_ROOT}/TZImagePickerController/TZImagePickerController/TZImagePickerController/TZImagePickerController.bundle",
+				"${PODS_ROOT}/Weibo_SDK/libWeiboSDK/WeiboSDK.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
@@ -2098,6 +2113,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SGQRCode.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SVProgressHUD.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TZImagePickerController.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/WeiboSDK.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2163,6 +2179,7 @@
 				187362FF201031450045EF9E /* BaseViewController.m in Sources */,
 				18F22CCD2040E8F000B74B65 /* LPDPhotoArrangeCVlLayout.m in Sources */,
 				5E5DF4D9203A9A9700211F7F /* EvaluateViewController.m in Sources */,
+				87416ACA2099B97600482C26 /* ShareView.m in Sources */,
 				18F6D0502022F6410001917B /* TopUpAndWithdrawViewController.m in Sources */,
 				874E3356207DBAAE006F0AAD /* UploadParam.m in Sources */,
 				875936802091BCFE00591D33 /* LiveCreateViewController.m in Sources */,
@@ -2182,6 +2199,7 @@
 				18F22CC82040E8F000B74B65 /* LPDAssetCell.m in Sources */,
 				18C8B466201185550028853C /* EmployeeDetailTableViewCell.m in Sources */,
 				87416AB7209965B400482C26 /* SigninCoinHistoryViewController.m in Sources */,
+				87416ACE209BFB0300482C26 /* VipWebViewController.m in Sources */,
 				187362E6201031450045EF9E /* NSObject+Model.m in Sources */,
 				18F6D0752027F4140001917B /* AddSkillViewController.m in Sources */,
 				187362E9201031450045EF9E /* UIView+EXtension.m in Sources */,
@@ -2574,7 +2592,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dykj.youxibang;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "bbdfdf28-4f9d-4a4a-aaae-ff566b14b0c5";
+				PROVISIONING_PROFILE = "89c3e5c5-a6a0-4ae1-95ab-9a1124c2c8b5";
 				PROVISIONING_PROFILE_SPECIFIER = youxibangDevelopment;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
@@ -2685,7 +2703,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dykj.youxibang;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b950f56e-5dbd-4f1e-b62e-2527eff81a2e";
+				PROVISIONING_PROFILE = "2d146b91-b68a-4a38-b6b4-a0bc1d8e6068";
 				PROVISIONING_PROFILE_SPECIFIER = youxibangDistribution;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;

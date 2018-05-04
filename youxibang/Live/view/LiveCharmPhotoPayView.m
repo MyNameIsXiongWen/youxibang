@@ -43,7 +43,7 @@
     [closeBtn addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
     
     UIImageView *bkgImgView = [EBUtility imgfrome:CGRectMake(0, 50, 171, 127) andImg:[UIImage imageNamed:@"live_charm_pay_bkg"] andView:self];
-    UILabel *priceLabel = [EBUtility labfrome:CGRectMake(0, 74, self.frame.size.width, 30) andText:payPrice andColor:[UIColor colorFromHexString:@"f9d854"] andView:self];
+    UILabel *priceLabel = [EBUtility labfrome:CGRectMake(0, 74, self.frame.size.width, 30) andText:[NSString stringWithFormat:@"%@元",payPrice] andColor:[UIColor colorFromHexString:@"f9d854"] andView:self];
     priceLabel.font = [UIFont systemFontOfSize:16.0];
     
     UIButton *payBtn = [EBUtility btnfrome:bkgImgView.frame andText:@"" andColor:nil andimg:nil andView:self];

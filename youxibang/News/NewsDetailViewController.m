@@ -10,9 +10,13 @@
 #import "LoginViewController.h"
 #import "NewsReviewTableViewCell.h"
 #import "NewsReviewModel.h"
+#import "ShareView.h"
+#import <TencentOpenAPI/QQApiInterface.h>
+#import <TencentOpenAPI/TencentOAuth.h>
+#import <Weibo_SDK/WeiboSDK.h>
 
 static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
-@interface NewsDetailViewController () <UIWebViewDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource> {
+@interface NewsDetailViewController () <UIWebViewDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, TencentApiInterfaceDelegate> {
 }
 @property (assign, nonatomic) int currentPage;
 
@@ -23,6 +27,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 @property (weak, nonatomic) IBOutlet UIButton *laudButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableview;
 @property (strong, nonatomic) NSMutableArray *reviewArray;
+@property (strong, nonatomic) ShareView *shareView;
 
 @end
 
@@ -57,14 +62,95 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     [self getNewsDetailRequest];
     self.tableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
     self.tableview.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
+    
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn setImage:[UIImage imageNamed:@"share_black"] forState:UIControlStateNormal];
+    rightBtn.bounds = CGRectMake(0, 0, 40, 30);
+    [rightBtn addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
+- (void)notificationSelector:(NSNotification *)notification {
+    NSString *object = notification.object;
+    if ([object isEqualToString:@"success"]) {
+        [self.shareView dismiss];
+        [SVProgressHUD showSuccessWithStatus:@"分享成功"];
+    }
+    else {
+        [SVProgressHUD showErrorWithStatus:@"分享失败"];
+    }
 }
 
--(void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
+#pragma mark - 分享
+- (void)shareBtn:(UIButton *)sender {
+    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140)];
+    WEAKSELF
+    self.shareView.confirmShareBlock = ^(NSString *type) {
+        if ([type isEqualToString:@"share_qq"] || [type isEqualToString:@"share_tim"]) {
+            [weakSelf QQShare:type];
+        }
+        else if ([type isEqualToString:@"share_wechat"] || [type isEqualToString:@"share_timeline"]) {
+            [weakSelf WXShare:type];
+        }
+        else if ([type isEqualToString:@"share_weibo"]) {
+            [weakSelf weiboShare];
+        }
+    };
+    [self.shareView show];
+}
+
+- (void)weiboShare {
+    //微博分享、需要授权
+    WBAuthorizeRequest *authorize = [WBAuthorizeRequest request];
+    authorize.redirectURI = SINA_REDIRECT_URL;
+    authorize.scope = @"all";
+    authorize.userInfo = nil;
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"YYYYMMDDHHMMSS"];
+    WBWebpageObject *object = [WBWebpageObject object];
+    object.title = SHARE_TITLE;
+    object.objectID = [formatter stringFromDate:NSDate.date];
+    object.description = SHARE_DESCRIPTION;
+    object.webpageUrl = SHARE_WEBURL;
+    
+    WBMessageObject *message = [WBMessageObject message];
+//    message.text = @"微博分享测试";
+    message.mediaObject = object;
+    
+    WBSendMessageToWeiboRequest *req = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authorize access_token:nil];
+    req.userInfo = nil;
+    BOOL isSuccess = [WeiboSDK sendRequest:req];
+    NSLog(@"分享是否成功 %d",isSuccess);
+}
+
+- (void)QQShare:(NSString *)type {
+    NSURL *url = [NSURL URLWithString:SHARE_WEBURL];
+    QQApiURLObject *object = [QQApiURLObject objectWithURL:url title:SHARE_TITLE description:SHARE_DESCRIPTION previewImageURL:[NSURL URLWithString:@"share_logo"] targetContentType:QQApiURLTargetTypeNews];
+    SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:object];
+    [QQApiInterface sendReq:req];
+}
+
+- (void)WXShare:(NSString *)type {
+    WXMediaMessage *message = [WXMediaMessage message];
+    message.title = SHARE_TITLE;
+    message.description = SHARE_DESCRIPTION;
+    [message setThumbImage:[UIImage imageNamed:@"share_logo"]];
+    WXWebpageObject *webObject = [WXWebpageObject object];
+    webObject.webpageUrl = SHARE_WEBURL;
+    message.mediaObject = webObject;
+    
+    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
+    req.bText = NO;
+    if ([type isEqualToString:@"share_wechat"]) {
+        req.scene = WXSceneSession;
+    }
+    else {
+        req.scene = WXSceneTimeline;
+    }
+    req.message = message;
+    [WXApi sendReq:req];
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
