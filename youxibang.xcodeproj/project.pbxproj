@@ -165,6 +165,8 @@
 		87416ACF209BFB0300482C26 /* VipWebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87416ACD209BFB0300482C26 /* VipWebViewController.xib */; };
 		87416AD3209C47BD00482C26 /* GuideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416AD0209C47BC00482C26 /* GuideViewController.m */; };
 		87416AD4209C47BD00482C26 /* GuideViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87416AD2209C47BD00482C26 /* GuideViewController.xib */; };
+		87416AD8209C636900482C26 /* InviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87416AD6209C636900482C26 /* InviteViewController.m */; };
+		87416AD9209C636900482C26 /* InviteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87416AD7209C636900482C26 /* InviteViewController.xib */; };
 		874D1FBC207B4D2C0076A5AA /* MineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 874D1FBA207B4D2C0076A5AA /* MineTableViewCell.m */; };
 		874D1FBD207B4D2C0076A5AA /* MineTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 874D1FBB207B4D2C0076A5AA /* MineTableViewCell.xib */; };
 		874E3355207DBAAE006F0AAD /* HttpManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 874E3352207DBAAE006F0AAD /* HttpManager.m */; };
@@ -558,6 +560,9 @@
 		87416AD0209C47BC00482C26 /* GuideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuideViewController.m; sourceTree = "<group>"; };
 		87416AD1209C47BD00482C26 /* GuideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuideViewController.h; sourceTree = "<group>"; };
 		87416AD2209C47BD00482C26 /* GuideViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GuideViewController.xib; sourceTree = "<group>"; };
+		87416AD5209C636900482C26 /* InviteViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InviteViewController.h; sourceTree = "<group>"; };
+		87416AD6209C636900482C26 /* InviteViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InviteViewController.m; sourceTree = "<group>"; };
+		87416AD7209C636900482C26 /* InviteViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InviteViewController.xib; sourceTree = "<group>"; };
 		874D1FB9207B4D2C0076A5AA /* MineTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineTableViewCell.h; sourceTree = "<group>"; };
 		874D1FBA207B4D2C0076A5AA /* MineTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineTableViewCell.m; sourceTree = "<group>"; };
 		874D1FBB207B4D2C0076A5AA /* MineTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MineTableViewCell.xib; sourceTree = "<group>"; };
@@ -1295,6 +1300,9 @@
 				87416ACB209BFB0300482C26 /* VipWebViewController.h */,
 				87416ACC209BFB0300482C26 /* VipWebViewController.m */,
 				87416ACD209BFB0300482C26 /* VipWebViewController.xib */,
+				87416AD5209C636900482C26 /* InviteViewController.h */,
+				87416AD6209C636900482C26 /* InviteViewController.m */,
+				87416AD7209C636900482C26 /* InviteViewController.xib */,
 			);
 			name = "个人信息,认证,加V";
 			sourceTree = "<group>";
@@ -2019,6 +2027,7 @@
 				875936952091E8A300591D33 /* LiveCreateMyEvaluateViewController.xib in Resources */,
 				87593668209085C100591D33 /* LiveInformationTableViewCell.xib in Resources */,
 				8759368C2091C9EB00591D33 /* BottomSelectTableViewCell.xib in Resources */,
+				87416AD9209C636900482C26 /* InviteViewController.xib in Resources */,
 				87593616208DED4300591D33 /* LiveShowViewController.xib in Resources */,
 				8759364F2090643400591D33 /* LiveCharmCollectionViewCell.xib in Resources */,
 				875936632090651200591D33 /* FansTableViewCell.xib in Resources */,
@@ -2192,6 +2201,7 @@
 				87416ACA2099B97600482C26 /* ShareView.m in Sources */,
 				18F6D0502022F6410001917B /* TopUpAndWithdrawViewController.m in Sources */,
 				874E3356207DBAAE006F0AAD /* UploadParam.m in Sources */,
+				87416AD8209C636900482C26 /* InviteViewController.m in Sources */,
 				875936802091BCFE00591D33 /* LiveCreateViewController.m in Sources */,
 				8759369C2092D06800591D33 /* LiveCreateFreeTableViewCell.m in Sources */,
 				87A285742087128900AF966B /* UserModel.m in Sources */,
