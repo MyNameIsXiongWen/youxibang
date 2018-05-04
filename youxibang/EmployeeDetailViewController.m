@@ -402,7 +402,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     object.webpageUrl = SHARE_WEBURL;
     
     WBMessageObject *message = [WBMessageObject message];
-//    message.text = @"微博分享测试";
+    message.text = SHARE_TITLE;
     message.mediaObject = object;
     
     WBSendMessageToWeiboRequest *req = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authorize access_token:nil];

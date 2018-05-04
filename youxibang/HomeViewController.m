@@ -37,6 +37,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 @property (strong, nonatomic) UITableView *adTableview;
 @property (strong, nonatomic) UITableView *contentTableview;
 @property (strong, nonatomic) NSDictionary *responseDictionary;
+@property (strong, nonatomic) UIView* navView;
 
 @property (nonatomic, strong) NSMutableArray* intelligentArray;
 @property (nonatomic, strong) NSMutableArray* bannerAry;
@@ -92,24 +93,45 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [self.adTableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
-- (void)configNavView:(UIView *)headerView {
+//渐显效果
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"contentOffset"]) {
+        self.navView.alpha = self.contentTableview.contentOffset.y / 115;
+        UIView *search = [self.view viewWithTag:10000];
+        if (self.navView.alpha > 0.6) {
+            [self.locationBtn setImage:[UIImage imageNamed:@"home_location_black"] forState:0];
+            [self.locationBtn setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
+            search.backgroundColor = [UIColor colorFromHexString:@"f6f6f6"];
+        }
+        else {
+            [self.locationBtn setImage:[UIImage imageNamed:@"home_location"] forState:0];
+            [self.locationBtn setTitleColor:UIColor.whiteColor forState:0];
+            search.backgroundColor = [UIColor whiteColor];
+        }
+    }
+}
+
+- (void)configNavView {
     //白色的navi
-    UIView* navView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:[UIColor clearColor] andView:headerView];
+    self.navView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:[UIColor whiteColor] andView:self.view];
+    self.navView.alpha = 0;
     
-    UIView* searchView = [EBUtility viewfrome:CGRectMake(80, 30, SCREEN_WIDTH - 80-30*ADAPTATIONRATIO, 25) andColor:[UIColor whiteColor] andView:navView];
+    UIView* searchView = [EBUtility viewfrome:CGRectMake(80, 30, SCREEN_WIDTH - 80-30*ADAPTATIONRATIO, 25) andColor:[UIColor whiteColor] andView:self.view];
     searchView.layer.cornerRadius = 12.5;
     searchView.layer.masksToBounds = NO;
+    searchView.tag = 10000;
     UIImageView* img = [EBUtility imgfrome:CGRectMake(20, 5, 15, 15) andImg:[UIImage imageNamed:@"home_search"] andView:searchView];
     UIButton* searchBtn = [EBUtility btnfrome:CGRectMake(45, 0, searchView.frame.size.width-45-20, 25) andText:@"搜任务标题、用户昵称、ID" andColor:[UIColor colorFromHexString:@"83889a"] andimg:nil andView:searchView];
     searchBtn.titleLabel.font = [UIFont systemFontOfSize:12.0];
     [searchBtn addTarget:self action:@selector(searchView:) forControlEvents:UIControlEventTouchUpInside];
     
     //定位按钮
-    self.locationBtn = [EBUtility btnfrome:CGRectMake(15, 32, 50, 20) andText:self.historySelectArr.count==0?@"全国":((SDCityModel *)self.historySelectArr.firstObject).name andColor:UIColor.whiteColor andimg:[UIImage imageNamed:@"home_location"] andView:navView];
+    self.locationBtn = [EBUtility btnfrome:CGRectMake(15, 32, 50, 20) andText:self.historySelectArr.count==0?@"全国":((SDCityModel *)self.historySelectArr.firstObject).name andColor:UIColor.whiteColor andimg:[UIImage imageNamed:@"home_location"] andView:self.view];
     [self.locationBtn setImageEdgeInsets:UIEdgeInsetsMake(0, -5, 0, 5)];
     [self.locationBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 2, 0, -2)];
     self.locationBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
     [self.locationBtn addTarget:self action:@selector(locationUser:) forControlEvents:UIControlEventTouchUpInside];
+    UIView* lineView = [EBUtility viewfrome:CGRectMake(0, 63.5, SCREEN_WIDTH, 0.5) andColor:[UIColor colorFromHexString:@"b2b2b2"] andView:self.navView];
 }
 
 - (void)configUI {
@@ -125,7 +147,6 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     self.cycleScrollView.hideBkgView = YES;
     self.cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
     [headerView addSubview:self.cycleScrollView];
-    [self configNavView:headerView];
     UIImageView *bkgImgView = [EBUtility imgfrome:CGRectMake(0, 150, SCREEN_WIDTH, 25) andImg:[UIImage imageNamed:@"banner_bg"] andView:headerView];
     bkgImgView.contentMode = UIViewContentModeScaleToFill;
     bkgImgView.backgroundColor = UIColor.clearColor;
@@ -167,6 +188,8 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [self.view addSubview:self.contentTableview];
     self.contentTableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
     self.contentTableview.tableHeaderView = headerView;
+    
+    [self configNavView];
 }
 
 //兼职，游戏宝贝，发布三个按钮的方法，发布任务必须登陆后才能进入
@@ -507,11 +530,13 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [super viewWillAppear:animated];
     //改变状态栏颜色，隐藏原来的navi，改变状态栏颜色
     self.navigationController.navigationBar.hidden = YES;
+    [self.contentTableview addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
     
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
+    [self.contentTableview removeObserver:self forKeyPath:@"contentOffset"];
 }
 
 //懒加载

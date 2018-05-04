@@ -113,10 +113,10 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     object.title = SHARE_TITLE;
     object.objectID = [formatter stringFromDate:NSDate.date];
     object.description = SHARE_DESCRIPTION;
-    object.webpageUrl = SHARE_WEBURL;
+    object.webpageUrl = self.newsModel.content;
     
     WBMessageObject *message = [WBMessageObject message];
-//    message.text = @"微博分享测试";
+    message.text = SHARE_TITLE;
     message.mediaObject = object;
     
     WBSendMessageToWeiboRequest *req = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authorize access_token:nil];
@@ -126,7 +126,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 }
 
 - (void)QQShare:(NSString *)type {
-    NSURL *url = [NSURL URLWithString:SHARE_WEBURL];
+    NSURL *url = [NSURL URLWithString:self.newsModel.content];
     QQApiURLObject *object = [QQApiURLObject objectWithURL:url title:SHARE_TITLE description:SHARE_DESCRIPTION previewImageURL:[NSURL URLWithString:@"share_logo"] targetContentType:QQApiURLTargetTypeNews];
     SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:object];
     [QQApiInterface sendReq:req];
@@ -138,7 +138,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     message.description = SHARE_DESCRIPTION;
     [message setThumbImage:[UIImage imageNamed:@"share_logo"]];
     WXWebpageObject *webObject = [WXWebpageObject object];
-    webObject.webpageUrl = SHARE_WEBURL;
+    webObject.webpageUrl = self.newsModel.content;
     message.mediaObject = webObject;
     
     SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
