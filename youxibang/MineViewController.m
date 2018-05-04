@@ -22,6 +22,7 @@
 #import "LiveCreateViewController.h"
 #import "LiveFansViewController.h"
 #import "VipWebViewController.h"
+#import "InviteViewController.h"
 
 @interface MineViewController ()<UITableViewDataSource,UITableViewDelegate,TopUpTableViewCellDelegate, SDCycleScrollViewDelegate> {
     NSDictionary *adDataInfo;
@@ -368,7 +369,8 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         AlipayAccountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"aa"];
         [self.navigationController pushViewController:vc animated:1];
     }else if (indexPath.row == 5){//点击分享邀请码
-        
+        InviteViewController *invite = [InviteViewController new];
+        [self.navigationController pushViewController:invite animated:YES];
     }else if (indexPath.row == 6){//自定义alert显示客服电话
         CustomAlertView* alert = [[CustomAlertView alloc]initWithAry:@[@"客服电话1：15306544612\n(微信同号)",@"客服电话2：15372402489\n(微信同号)",@"客服电话3：15372416943\n(微信同号)"]];
         alert.resultDate = ^(NSString *date) {

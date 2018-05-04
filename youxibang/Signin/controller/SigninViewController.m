@@ -8,12 +8,13 @@
 #import "SigninViewController.h"
 #import "SigninTableViewCell.h"
 #import "SigninCoinHistoryViewController.h"
+#import "InviteViewController.h"
 
 static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 @interface SigninViewController () <UITableViewDelegate ,UITableViewDataSource> {
     UIButton *signinBtn;
     UILabel *countLabel;
-    NSDictionary *dataInfo;
+    NSMutableDictionary *dataInfo;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableview;
@@ -114,17 +115,11 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {
-                countLabel.text = [NSString stringWithFormat:@"%@",object[@"gold"]];
+                countLabel.text = [NSString stringWithFormat:@"%d",[object[@"gold"] intValue]+countLabel.text.intValue];
                 [signinBtn setImage:[UIImage imageNamed:@"signin_signined"] forState:0];
                 signinBtn.enabled = NO;
+                [dataInfo setObject:@"1" forKey:@"is_sign"];
                 [self.tableview reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-                if (sender.tag == 999) {
-                    [sender setTitle:@"已签到" forState:0];
-                    sender.backgroundColor = [UIColor colorFromHexString:@"bbbbbb"];
-                    [sender setTitleColor:UIColor.whiteColor forState:0];
-                    sender.layer.borderColor = [UIColor colorFromHexString:@"bbbbbb"].CGColor;
-                    sender.enabled = NO;
-                }
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
             }
@@ -208,7 +203,8 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
         [self signSelector:sender];
     }
     else {
-        
+        InviteViewController *invite = [InviteViewController new];
+        [self.navigationController pushViewController:invite animated:YES];
     }
 }
 
