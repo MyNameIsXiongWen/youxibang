@@ -27,7 +27,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.imgArray = @[@"aj_launch_image1",@"aj_launch_image2",@"aj_launch_image3"];
+    self.imgArray = @[@"guide_one",@"guide_two"];
     self.photoScrollView.contentSize = CGSizeMake(SCREEN_WIDTH*self.imgArray.count, 0);
     for (int i=0; i<self.imgArray.count; i++) {
         UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*i, -20, SCREEN_WIDTH, SCREEN_HEIGHT)];
@@ -41,15 +41,10 @@
         imgview.userInteractionEnabled = YES;
         imgview.contentMode = UIViewContentModeScaleAspectFit;
         [scroll addSubview:imgview];
-        if (i == 2) {
+        if (i == 1) {
             UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-            [btn setTitle:@"立即开启" forState:UIControlStateNormal];
-            btn.frame = CGRectMake((SCREEN_WIDTH - 100)/2, SCREEN_HEIGHT - 60, 100, 30);
-            btn.layer.borderColor = [UIColor colorFromHexString:@"457fea"].CGColor;
-            btn.layer.borderWidth = 0.5;
-            btn.layer.cornerRadius = 5;
-            btn.layer.masksToBounds = YES;
-            [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:UIControlStateNormal];
+            btn.frame = CGRectMake((SCREEN_WIDTH - 137)/2, SCREEN_HEIGHT - 70-37, 137, 37);
+            [btn setImage:[UIImage imageNamed:@"guide_experience"] forState:UIControlStateNormal];
             [btn addTarget:self action:@selector(goMainTabbarController) forControlEvents:UIControlEventTouchUpInside];
             [imgview addSubview:btn];
         }
@@ -58,6 +53,7 @@
     [self.photoScrollView setContentOffset:CGPointMake(SCREEN_WIDTH*self.index, 0)];
     self.pageControl.numberOfPages = self.imgArray.count;
     [self.pageControl setCurrentPage:self.index];
+    self.pageControl.hidden = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated {

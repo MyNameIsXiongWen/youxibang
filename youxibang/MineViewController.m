@@ -91,42 +91,55 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
     [headerView addSubview:cycleScrollView];
     
-    UIImageView* photo = [EBUtility imgfrome:CGRectMake(15, CGRectGetMaxY(headerView.frame)-80, 70, 70) andImg:[UIImage imageNamed:@"ico_head"] andView:headerView];
+    UIImageView *sexImg = [EBUtility imgfrome:CGRectMake(15, CGRectGetMaxY(headerView.frame)-15-20, 20, 20) andImg:[UIImage imageNamed:@"live_detail_male"] andView:headerView];
+    
+    UILabel *age = [EBUtility labfrome:CGRectZero andText:@"24岁 " andColor:[UIColor whiteColor]  andView:headerView];
+    age.textAlignment = NSTextAlignmentLeft;
+    age.font = [UIFont systemFontOfSize:13.0];
+    [age mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(sexImg.mas_centerY);
+        make.left.equalTo(sexImg.mas_right).offset(7);
+        make.size.mas_equalTo(CGSizeMake(30, 15));
+    }];
+    
+    UIImageView* vipImg = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"vip_grade_1"] andView:headerView];
+    [vipImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(sexImg.mas_centerY);
+        make.left.equalTo(age.mas_right).offset(7);
+        make.size.mas_equalTo(CGSizeMake(17, 20));
+    }];
+    
+    UIImageView *realnamedImg = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"live_detail_realnamed"] andView:headerView];
+    [realnamedImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(sexImg.mas_centerY);
+        make.left.equalTo(vipImg.mas_right).offset(7);
+        make.size.mas_equalTo(CGSizeMake(35, 20));
+    }];
+    
+    UILabel *name = [EBUtility labfrome:CGRectZero andText:@"昵称" andColor:[UIColor whiteColor] andView:headerView];
+    name.textAlignment = NSTextAlignmentLeft;
+    name.font = [UIFont systemFontOfSize:16.0];
+    [name mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(sexImg.mas_top).offset(-6);
+        make.left.equalTo(headerView.mas_left).offset(15);
+        make.size.mas_equalTo(CGSizeMake(170, 15));
+    }];
+    
+    UIImageView* photo = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"ico_head"] andView:headerView];
     photo.backgroundColor = [UIColor whiteColor];
     photo.layer.masksToBounds = YES;
-    photo.layer.cornerRadius = 5;
+    photo.layer.cornerRadius = 23.5;
     photo.layer.borderColor = [UIColor whiteColor].CGColor;
-    photo.layer.borderWidth = 3;
-    
-    UIButton* photoBtn = [EBUtility btnfrome:photo.frame andText:@"" andColor:nil andimg:nil andView: headerView];
-    [photoBtn addTarget:self action:@selector(changeInfo:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UILabel *name = [EBUtility labfrome:CGRectMake(85+15, CGRectGetMaxY(headerView.frame)-50, 200, 15) andText:@"昵称" andColor:[UIColor whiteColor] andView:headerView];
-    name.textAlignment = NSTextAlignmentLeft;
-    name.font = [UIFont systemFontOfSize:15];
-    
-    UILabel *sex = [EBUtility labfrome:CGRectMake(85+15, CGRectGetMaxY(headerView.frame)-25, 45, 15) andText:@" ♂24岁 " andColor:[UIColor whiteColor]  andView:headerView];
-    sex.font = [UIFont systemFontOfSize:10];
-    sex.backgroundColor = Nav_color;
-    sex.layer.cornerRadius = 4;
-    sex.layer.masksToBounds = YES;
-    [sex sizeToFit];
-    
-    UIButton* vipImg = [EBUtility btnfrome:CGRectZero andText:@"" andColor:nil andimg:[UIImage imageNamed:@"ico_vip1"] andView:headerView];
-    vipImg.tag = 1;
-    [vipImg setImage:[UIImage imageNamed:@"ico_vip"] forState:UIControlStateSelected];
-    [vipImg addTarget:self action:@selector(applyVip) forControlEvents:UIControlEventTouchUpInside];
+    photo.layer.borderWidth = 1;
+    [photo mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(name.mas_top).offset(-8);
+        make.left.equalTo(headerView.mas_left).offset(15);
+        make.size.mas_equalTo(CGSizeMake(47, 47));
+    }];
     
     UIImageView* changeImage = [EBUtility imgfrome:CGRectMake(SCREEN_WIDTH - 35, 25, 20, 20) andImg:[UIImage imageNamed:@"ico_xiugai"] andView:headerView];
     UIButton* change = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH - 40, 15, 40, 40) andText:@"" andColor:nil andimg:nil andView:headerView];
     [change addTarget:self action:@selector(changeInfo:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [vipImg mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(sex.mas_bottom);
-        make.left.equalTo(sex.mas_right).offset(10);
-        make.size.mas_equalTo(CGSizeMake(17, 15));
-    }];
-    [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
     
     if (userModel.is_anchor.integerValue == 1) {
         UILabel *fansLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"粉丝数:%@",userModel.follow_count] andColor:[UIColor whiteColor] andView:headerView];
@@ -150,19 +163,34 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         }];
     }
     
+    [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
     name.text = userModel.nickname;
-    if (userModel.sex.integerValue == 1){
-        sex.text = [NSString stringWithFormat:@" ♂%@岁 ",userModel.age];
-        sex.backgroundColor = Nav_color;
-    }else{
-        sex.text = [NSString stringWithFormat:@" ♀%@岁 ",userModel.age];
-        sex.backgroundColor = Pink_color;
+    if (userModel.sex.integerValue == 1) {
+        sexImg.image = [UIImage imageNamed:@"live_detail_male"];
     }
-    [sex sizeToFit];
-    if (userModel.is_vip.integerValue == 1){
-        vipImg.selected = YES;
-    }else{
-        vipImg.selected = NO;
+    else {
+        sexImg.image = [UIImage imageNamed:@"live_detail_female"];
+    }
+    age.text = [NSString stringWithFormat:@"%@岁\t",userModel.age];
+    if (userModel.vip_grade.integerValue == 0) {
+        [vipImg mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(sexImg.mas_centerY);
+            make.left.equalTo(age.mas_right);
+            make.size.mas_equalTo(CGSizeMake(0, 20));
+        }];
+    }
+    else {
+        vipImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"vip_grade_%@",userModel.vip_grade]];
+    }
+    if (userModel.is_realauth.integerValue == 1) {
+        realnamedImg.image = [UIImage imageNamed:@"live_detail_realnamed"];
+    }
+    else {
+        [realnamedImg mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(sexImg.mas_centerY);
+            make.left.equalTo(vipImg.mas_right);
+            make.size.mas_equalTo(CGSizeMake(0, 20));
+        }];
     }
     return headerView;
 }
@@ -313,7 +341,8 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1){
         VipWebViewController *con = [VipWebViewController new];
-        con.loadUrlString = adDataInfo[@"detail"];
+//        con.loadUrlString = adDataInfo[@"detail"];
+        con.loadUrlString = [NSString stringWithFormat:@"http://m.feirantech.cn/mobile/share/index#/member?phone=%@&token=%@",DataStore.sharedDataStore.mobile,DataStore.sharedDataStore.token];
         [self.navigationController pushViewController:con animated:YES];
     }
     else if (indexPath.section == 2) {

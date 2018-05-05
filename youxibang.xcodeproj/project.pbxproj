@@ -2513,6 +2513,7 @@
 			baseConfigurationReference = 2B04C51DE910F0844E69561C /* Pods-youxibang.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = youxibang/youxibang.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Yangyong Wang (XA4S9YT35F)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yangyong Wang (XA4S9YT35F)";
@@ -2612,7 +2613,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dykj.youxibang;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4b8941ec-0d3e-4549-9974-700e4d7d59e2";
+				PROVISIONING_PROFILE = "30704472-a754-40a3-9490-723cbac231db";
 				PROVISIONING_PROFILE_SPECIFIER = youxibangDevelopment;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
@@ -2624,6 +2625,7 @@
 			baseConfigurationReference = FE126813FDE77A1255E5556C /* Pods-youxibang.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = youxibang/youxibang.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: HANGZHOU FEIRAN TECHNOLOGY CO, LTD. (5BRKWNYUQK)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: HANGZHOU FEIRAN TECHNOLOGY CO, LTD. (5BRKWNYUQK)";
@@ -2723,7 +2725,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dykj.youxibang;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "68d19b11-02ae-4949-9687-2ed9f45dab17";
+				PROVISIONING_PROFILE = "19d9aa87-57ad-443f-a7c4-737c7f4339fb";
 				PROVISIONING_PROFILE_SPECIFIER = youxibangDistribution;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;

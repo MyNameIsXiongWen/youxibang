@@ -37,7 +37,7 @@
     
     //自定义tabbar
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:FIRST_INTO]) {
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:FIRST_INTO]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:FIRST_INTO];
         GuideViewController *guideController = [[GuideViewController alloc] init];
         MainNavigationController *nav = [[MainNavigationController alloc] initWithRootViewController:guideController];
