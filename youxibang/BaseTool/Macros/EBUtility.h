@@ -95,25 +95,25 @@
 //身份证号
 + (BOOL) validateIdentityCard: (NSString *)identityCard;
 
-+(void)prompt:(NSString *)string with:(UIViewController *)vc;
++ (void)prompt:(NSString *)string with:(UIViewController *)vc;
 //菊花体
-+(void)ahahwith:(UIImageView *)customActivityIndicator;
-+(void)miss:(UIImageView *)customActivityIndicator;
++ (void)ahahwith:(UIImageView *)customActivityIndicator;
++ (void)miss:(UIImageView *)customActivityIndicator;
 
 + (UIColor *)colorWithHexString:(NSString *)color alpha:(CGFloat)alpha;
-+(UIColor *)alphaColorWithHexString:(NSString *)colorString;
++ (UIColor *)alphaColorWithHexString:(NSString *)colorString;
 /**创建的是Label */
-+(UILabel *) labfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color  andView:(UIView *)vc;
++ (UILabel *) labfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color  andView:(UIView *)vc;
 /**创建的是btn */
-+(UIButton *) btnfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color andimg:(UIImage*)img andView:(UIView *)vc;
++ (UIButton *) btnfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color andimg:(UIImage*)img andView:(UIView *)vc;
 /**创建的是btn2 */
-+(UIButton *) greenBtnfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color andimg:(UIImage*)img andView:(UIView *)vc;
++ (UIButton *) greenBtnfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color andimg:(UIImage*)img andView:(UIView *)vc;
 /**创建的是view */
-+(UIView *) viewfrome:(CGRect)from  andColor:(UIColor *)color  andView:(UIView *)vc;
++ (UIView *) viewfrome:(CGRect)from  andColor:(UIColor *)color  andView:(UIView *)vc;
 /**创建的是img */
-+(UIImageView *) imgfrome:(CGRect)from  andImg:(UIImage *)img  andView:(UIView *)vc;
++ (UIImageView *) imgfrome:(CGRect)from  andImg:(UIImage *)img  andView:(UIView *)vc;
 /**创建的是textF */
-+(UITextField *) textFieldfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color  andView:(UIView *)vc;
++ (UITextField *) textFieldfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color  andView:(UIView *)vc;
 //lp --lab
 //+(LPLabel *) lplLabfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color  andView:(UIView *)vc;
 //+(SectionBtn *) sbtnfrome:(CGRect)from andText:(NSString *)text andColor:(UIColor *)color andimg:(UIImage*)img andView:(UIView *)vc;
@@ -121,26 +121,27 @@
 + (NSString *) NullString:(NSString *)string;
 //空字符判断
 + (BOOL) isBlankString:(NSString *)string;
-+(NSString*)md532BitLower:(NSString *)str;
++ (NSString*)md532BitLower:(NSString *)str;
 
 + (NSString *) isNullString:(NSString *)string;
 //MD5加密
-+(NSString*)createMd5Sign:(NSMutableDictionary*)dict;
++ (NSString*)createMd5Sign:(NSMutableDictionary*)dict;
 
-+(void)keyboardExtension:(UITextField *)textField vc:(UIViewController *)sl btn:(UIButton *)btn;
++ (void)keyboardExtension:(UITextField *)textField vc:(UIViewController *)sl btn:(UIButton *)btn;
 
 //切圆
-+(UIView *)viewCircle:(UIView *)myView withRadius:(int)radius;
++ (UIView *)viewCircle:(UIView *)myView withRadius:(int)radius;
 //lab自适应
-+(CGRect )fitLabFrom:(UILabel *)lab  withText:(NSString *)str withX:(CGFloat)xf withY:(CGFloat)yF withWidth:(CGFloat)widhtF withHeight:(CGFloat)heightF withL:(CGFloat)lx;
++ (CGRect )fitLabFrom:(UILabel *)lab  withText:(NSString *)str withX:(CGFloat)xf withY:(CGFloat)yF withWidth:(CGFloat)widhtF withHeight:(CGFloat)heightF withL:(CGFloat)lx;
 //时间转换
-+(NSString *)changeDate:(NSString *)dateString;
++ (NSString *)changeDate:(NSString *)dateString;
 
 //今天-昨天-前天--日期格式修改
-+(NSString *)compareDate:(NSDate *)date;
++ (NSString *)compareDate:(NSDate *)date;
 //删除字符串中的字符
-+(NSString *) stringDeleteString:(NSString *)str;
++ (NSString *) stringDeleteString:(NSString *)str;
 //设置不同字体颜色
-+(void)fuwenbenLabel:(UILabel *)labell FontNumber:(id)font AndRange:(NSRange)range AndColor:(UIColor *)vaColor;
-+(NSString *)getAstroWithMonth:(int)m day:(int)d;
++ (void)fuwenbenLabel:(UILabel *)labell FontNumber:(id)font AndRange:(NSRange)range AndColor:(UIColor *)vaColor;
++ (NSString *)getAstroWithMonth:(int)m day:(int)d;
+
 @end

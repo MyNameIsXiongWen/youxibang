@@ -8,5 +8,6 @@
 #import "BaseTableViewController.h"
 
 @interface PartTimeViewController : BaseTableViewController
-@property (nonatomic,assign)BOOL ptOrBaby; // N 兼职任务  Y 游戏宝贝
+@property (nonatomic, assign) BOOL ptOrBaby; // N 兼职任务  Y 游戏宝贝
+@property (nonatomic, copy) NSString *groupId;
 @end

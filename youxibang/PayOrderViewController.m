@@ -229,7 +229,6 @@
         }
         
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
         [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
@@ -237,11 +236,6 @@
 }
 
 - (void)completePay:(NSNotification *)notification{
-//    if ([self.type isEqualToString:@"OrderDetailViewController"]){
-//        NSNotification *notification = [NSNotification notificationWithName:@"payOrder" object:nil userInfo:nil];
-//        [[NSNotificationCenter defaultCenter] postNotification:notification];
-//        [self.navigationController popViewControllerAnimated:1];
-//    }else if ([self.type isEqualToString:@"OrderViewController"]){
     [UserNameTool reloadPersonalData:nil];
     CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"支付完成，即将跳转到个人页面。" AndType:0];
     alert.resultIndex = ^(NSInteger index) {
@@ -250,7 +244,6 @@
         [self.navigationController popToRootViewControllerAnimated:1];
     };
     [alert showAlertView];
-//    }
 }
 #pragma mark - tableViewDelegate/DataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{

@@ -34,7 +34,7 @@
     self.title = @"验证码登录";
     //切换密码登录
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 55, 25)];
-    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-20, 0, 85, 25) andText:@"密码登录" andColor:[UIColor whiteColor] andimg:nil andView:rv];
+    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-20, 0, 85, 25) andText:@"密码登录" andColor:[UIColor colorFromHexString:@"333333"] andimg:nil andView:rv];
     
     if (!self.codeOrPassword){
         self.title = @"密码登录";
@@ -67,7 +67,7 @@
 //    }
     //自定义返回键，因为要重写返回方法
     UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
-    img.image = [UIImage imageNamed:@"back"];
+    img.image = [UIImage imageNamed:@"back_black"];
     UIButton *leftBtn = [[UIButton alloc]initWithFrame:CGRectMake(-15, 0, 40, 40)];
     [leftBtn addSubview:img];
     [leftBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
@@ -239,7 +239,7 @@
                 //talkingdata注册
                 [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:[NSString stringWithFormat:@"%@",user[@"mobile"]]];
                 //云信登录
-                [[NIMSDK sharedSDK] registerWithAppID:@"d27ffe90d087aaeb5c579f7485a2dcb6" cerName:nil];
+                [[NIMSDK sharedSDK] registerWithAppID:NIM_APP_ID cerName:nil];
                 NIMServerSetting *setting = [[NIMServerSetting alloc] init];
                 setting.httpsEnabled = NO;
                 [[NIMSDK sharedSDK] setServerSetting:setting];
@@ -257,6 +257,7 @@
                 self.view.window.rootViewController = minTa;
             }else if (code == 8){//验证码首次登录，设置密码
                 SetPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spw"];
+                vc.inviteCode = object[@"data"];
                 vc.phoneNum = self.phoneNumber.text;
                 vc.type = @"1";
                 [self.navigationController pushViewController:vc animated:1];
@@ -279,27 +280,21 @@
     }];
 }
 
-#pragma mark - WXDelegate
-- (void)onResp:(BaseResp *)resp {
-    // 向微信请求授权后,得到响应结果
-    if ([resp isKindOfClass:[SendAuthResp class]]) {
-        SendAuthResp *temp = (SendAuthResp *)resp;
-        [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",WX_APP_ID,WX_APP_SECRET,temp.code] Paremeters:nil successOperation:^(id response) {
-            NSLog(@"绑定输出 %@",response);
-            
-//            [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%@&grant_type=refresh_token&refresh_token=%@",WX_APP_ID,response[@"refresh_token"]] Paremeters:nil successOperation:^(id response) {
-//                NSLog(@"绑定输出 %@",response);
-//            } failoperation:^(NSError *error) {
-//                NSLog(@"errr %@",error);
-//            }];
-            
-            NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"2",@"typeid",response[@"openid"],@"threetoken",response[@"unionid"],@"unionid", nil]];
-            [[NSNotificationCenter defaultCenter] postNotification:notification];
-        } failoperation:^(NSError *error) {
-            NSLog(@"errr %@",error);
-        }];
-    }
-}
+//#pragma mark - WXDelegate
+//- (void)onResp:(BaseResp *)resp {
+//    // 向微信请求授权后,得到响应结果
+//    if ([resp isKindOfClass:[SendAuthResp class]]) {
+//        SendAuthResp *temp = (SendAuthResp *)resp;
+//        [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",WX_APP_ID,WX_APP_SECRET,temp.code] Paremeters:nil successOperation:^(id response) {
+//            NSLog(@"绑定输出 %@",response);
+//
+//            NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"2",@"typeid",response[@"openid"],@"threetoken",response[@"unionid"],@"unionid", nil]];
+//            [[NSNotificationCenter defaultCenter] postNotification:notification];
+//        } failoperation:^(NSError *error) {
+//            NSLog(@"errr %@",error);
+//        }];
+//    }
+//}
 
 #pragma mark - TencentSessionDelegate
 //登录成功回调

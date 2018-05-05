@@ -42,11 +42,13 @@
 
 #import "UserModel.h"
 #import <MJExtension.h>
+#import <Colours.h>
 
 #define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
 #define HttpImageString @""
-#define HttpURLString @"http://jx.zimogame.com/index.php/api/"
-//#define HttpURLString @"http://192.168.2.108:8888/api/"
+//#define HttpURLString @"http://jx.zimogame.com/index.php/api/"
+//#define HttpURLString @"http://192.168.2.166:8888/api/"
+#define HttpURLString @"https://m.feirantech.cn/api/"
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
 #define ADAPTATIONRATIO SCREEN_HEIGHT / 667.0
@@ -62,9 +64,21 @@
 // 获取RGB颜色
 #define RGBA(r,g,b,a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
 #define RGB(r,g,b) RGBA(r,g,b,1.0f)
+
+static NSString *const FIRST_INTO = @"first_into";
 #define QQ_OPEN_ID @"1106746110"
 #define WX_APP_ID @"wx9409b172842c7d01"
 #define WX_APP_SECRET @"e4a47d8a0bc2ba61fa2adb0091788e35"
+#define AMAP_API_KEY @"5982a470da137fca97a2e41ac2a63160"
+#define SINA_APP_KEY @"3625368548"
+#define SINA_APP_SECRET @"2a5d7308173b1b5ca7eac4dc1ce3fa46"
+#define SINA_REDIRECT_URL @"https://api.weibo.com/oauth2/default.html"
+#define SHARE_TITLE @"小姐姐邀你来赚钱了哦，和我肩并肩冲吧"
+#define SHARE_DESCRIPTION @"爱上播，主播的资源之家。有技能，就挣钱，一起来挣钱吧。"
+#define SHARE_WEBURL @"https://open.weixin.qq.com"
+#define JPUSH_KEY @"fbd6c9a36808409ae6359ff9"
+#define NIM_APP_ID @"d27ffe90d087aaeb5c579f7485a2dcb6"
+
 #define Pink_color [EBUtility colorWithHexString:@"#E9A9EF" alpha:1]
 #define Nav_color [EBUtility colorWithHexString:@"#36a4df" alpha:1]
 #define DSOpen  @"switch://open"  //打开网页

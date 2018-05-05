@@ -22,5 +22,7 @@ target'youxibang'do
     pod 'Colours'
     pod 'VODUpload'
     pod 'AliyunPlayer_iOS/AliyunVodPlayerSDK'
+    pod 'IQKeyboardManager', '~> 3.3.7'
+    pod 'Weibo_SDK', :git => 'https://github.com/sinaweibosdk/weibo_ios_sdk.git'
     
 end

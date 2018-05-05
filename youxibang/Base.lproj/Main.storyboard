@@ -1646,7 +1646,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bEM-9K-6pO">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="80"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="昵称" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FWr-iD-UXT">
                                         <rect key="frame" x="81" y="21" width="31" height="21"/>
@@ -1702,7 +1702,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A4B-bE-wpp">
-                                <rect key="frame" x="0.0" y="80" width="375" height="240"/>
+                                <rect key="frame" x="0.0" y="100" width="375" height="240"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bZi-HZ-dAK">
                                         <rect key="frame" x="35" y="48" width="85" height="35"/>
@@ -1896,7 +1896,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IdT-rq-VtF">
-                                <rect key="frame" x="0.0" y="320" width="375" height="212"/>
+                                <rect key="frame" x="0.0" y="340" width="375" height="212"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="支付方式" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pHL-Gr-VTH">
                                         <rect key="frame" x="25" y="18" width="68" height="21"/>
@@ -2064,17 +2064,17 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="A4B-bE-wpp" firstAttribute="leading" secondItem="UMb-67-gLc" secondAttribute="leading" id="332-um-Lm7"/>
+                            <constraint firstItem="bEM-9K-6pO" firstAttribute="leading" secondItem="UMb-67-gLc" secondAttribute="leading" id="3nF-pw-sXY"/>
                             <constraint firstItem="BdI-rQ-uSK" firstAttribute="trailing" secondItem="UMb-67-gLc" secondAttribute="trailing" id="5gh-t7-OLZ"/>
-                            <constraint firstItem="bEM-9K-6pO" firstAttribute="trailing" secondItem="UMb-67-gLc" secondAttribute="trailing" id="6xZ-c6-jou"/>
                             <constraint firstItem="BdI-rQ-uSK" firstAttribute="bottom" secondItem="UMb-67-gLc" secondAttribute="bottom" id="7aQ-VP-LQF"/>
+                            <constraint firstItem="UMb-67-gLc" firstAttribute="top" secondItem="bEM-9K-6pO" secondAttribute="top" id="Kdi-Tl-fJe"/>
                             <constraint firstItem="IdT-rq-VtF" firstAttribute="leading" secondItem="UMb-67-gLc" secondAttribute="leading" id="Pz7-s1-Mq5"/>
                             <constraint firstItem="BdI-rQ-uSK" firstAttribute="leading" secondItem="UMb-67-gLc" secondAttribute="leading" id="VBW-ac-uKy"/>
-                            <constraint firstItem="bEM-9K-6pO" firstAttribute="leading" secondItem="UMb-67-gLc" secondAttribute="leading" id="Y8T-av-3Fn"/>
+                            <constraint firstItem="UMb-67-gLc" firstAttribute="trailing" secondItem="bEM-9K-6pO" secondAttribute="trailing" id="WZd-OQ-fH1"/>
                             <constraint firstItem="IdT-rq-VtF" firstAttribute="top" secondItem="A4B-bE-wpp" secondAttribute="bottom" id="dOh-3b-coa"/>
                             <constraint firstItem="A4B-bE-wpp" firstAttribute="trailing" secondItem="UMb-67-gLc" secondAttribute="trailing" id="nDJ-x8-3TA"/>
                             <constraint firstItem="A4B-bE-wpp" firstAttribute="top" secondItem="bEM-9K-6pO" secondAttribute="bottom" id="qO4-Qa-bHU"/>
                             <constraint firstItem="IdT-rq-VtF" firstAttribute="trailing" secondItem="UMb-67-gLc" secondAttribute="trailing" id="yDo-Im-qj5"/>
-                            <constraint firstItem="bEM-9K-6pO" firstAttribute="top" secondItem="Cqi-YW-qbt" secondAttribute="top" id="z6e-x2-5Ep"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="UMb-67-gLc"/>
                     </view>
@@ -2084,6 +2084,7 @@
                         <outlet property="commitBtn" destination="BdI-rQ-uSK" id="J35-Zv-nmY"/>
                         <outlet property="content" destination="laA-eC-cBq" id="uJ9-CK-6Ly"/>
                         <outlet property="name" destination="FWr-iD-UXT" id="Hmw-QQ-pCB"/>
+                        <outlet property="nameTopConstraint" destination="DdC-x3-bUJ" id="FHI-7I-UFp"/>
                         <outlet property="photo" destination="o0s-iD-nTM" id="WUT-hT-dUd"/>
                         <outlet property="tf" destination="oKy-6M-ivN" id="J0Y-f0-zD5"/>
                         <outlet property="wxBtn" destination="2d9-hZ-bJC" id="bYO-pq-q8t"/>

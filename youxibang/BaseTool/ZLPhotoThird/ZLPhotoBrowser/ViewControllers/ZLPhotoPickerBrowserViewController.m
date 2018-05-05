@@ -531,12 +531,24 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         [cell.contentView addSubview:scrollBoxView];
         
         ZLPhotoPickerBrowserPhotoScrollView *scrollView =  [[ZLPhotoPickerBrowserPhotoScrollView alloc] init];
+        if (self.charmPhotoArray) {
+            LiveCharmPhotoModel *model = self.charmPhotoArray[indexPath.item];
+            if (model.is_charge.intValue == 1) {
+                scrollView.visualEffectView.hidden = NO;
+                scrollView.placeholderLabel.hidden = NO;
+            }
+            else {
+                scrollView.visualEffectView.hidden = YES;
+                scrollView.placeholderLabel.hidden = YES;
+            }
+        }
         scrollView.sheet = self.sheet;
         // 为了监听单击photoView事件
         scrollView.frame = tempF;
         scrollView.tag = 101;
         if (self.isPush) {
-            scrollView.zl_y -= 32;
+//            scrollView.zl_y -= 32;
+            scrollView.zl_y -= 52;
         }
         scrollView.photoScrollViewDelegate = self;
         scrollView.photo = photo;

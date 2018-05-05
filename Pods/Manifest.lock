@@ -30,6 +30,7 @@ PODS:
   - Colours (5.13.0):
     - Colours/ObjC (= 5.13.0)
   - Colours/ObjC (5.13.0)
+  - IQKeyboardManager (3.3.7)
   - JCore (1.1.7)
   - JPush (3.0.8):
     - JCore (~> 1.1.7)
@@ -59,6 +60,7 @@ PODS:
     - AliyunOSSiOS
     - AliyunVideoCore (~> 1.0.0)
   - WechatOpenSDK (1.8.0)
+  - Weibo_SDK (3.2.3)
 
 DEPENDENCIES:
   - AFNetworking
@@ -68,6 +70,7 @@ DEPENDENCIES:
   - AMapSearch-NO-IDFA
   - Bugly
   - Colours
+  - IQKeyboardManager (~> 3.3.7)
   - JPush
   - Masonry
   - MJExtension (~> 3.0.10)
@@ -79,6 +82,16 @@ DEPENDENCIES:
   - SVProgressHUD
   - VODUpload
   - WechatOpenSDK
+  - Weibo_SDK (from `https://github.com/sinaweibosdk/weibo_ios_sdk.git`)
+
+EXTERNAL SOURCES:
+  Weibo_SDK:
+    :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
+
+CHECKOUT OPTIONS:
+  Weibo_SDK:
+    :commit: f5b138320aefe0ed20b76b8510521432f1a6c9ac
+    :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
@@ -91,6 +104,7 @@ SPEC CHECKSUMS:
   AMapSearch-NO-IDFA: 612a92f75ff20544f42d376dfcf3c034da4ad0b6
   Bugly: 3ca9f255c01025582df26f9222893b383c7e4b4e
   Colours: f24220c38f13deac88612667e9b4a7fb96b871d4
+  IQKeyboardManager: 249c3946acf61345c18b038eb50863fe2793e3a8
   JCore: f7459c81c135281a874a6beafdd321666adcc834
   JPush: 9574d072cc37e93fa293ba69b43ce763c440943a
   M80AttributedLabel: d06543195d3e451d2ea62ad76d04aa9cea7661d4
@@ -107,7 +121,8 @@ SPEC CHECKSUMS:
   TZImagePickerController: 3b9413ae5d049b1fdc5b0c720ad283f35b679a50
   VODUpload: e59dffe09707143bdcfc7d1ea38d7d898fb01a8c
   WechatOpenSDK: 0ee07a8d492299d3e47372a33da5af26524a7576
+  Weibo_SDK: 652ca78c2f7147a5de5e75e7cbea89838a81772a
 
-PODFILE CHECKSUM: 7796d803bfd0bd9f9ef80a1da8b0766d117292d5
+PODFILE CHECKSUM: bbb91b0a0c829defcbd1260fe06bdada5af2795a
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.4.0

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LiveShowViewController">
+            <connections>
+                <outlet property="ageButton" destination="C59-FF-vFA" id="Kvh-O4-LYF"/>
+                <outlet property="collectionView" destination="sOt-4P-Ccw" id="Tj7-X0-4UJ"/>
+                <outlet property="distanceButton" destination="0LD-3R-23g" id="XJd-Rb-jiS"/>
+                <outlet property="filtButton" destination="BFx-3o-BCA" id="rHi-jf-mUV"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mdm-IN-w46">
+                    <rect key="frame" x="0.0" y="20" width="375" height="40"/>
+                    <subviews>
+                        <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BFx-3o-BCA">
+                            <rect key="frame" x="250" y="0.0" width="125" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="WLS-oj-h7N"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <inset key="titleEdgeInsets" minX="-20" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            <inset key="imageEdgeInsets" minX="80" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            <state key="normal" title="筛选" image="live_filter_unselected">
+                                <color key="titleColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="clickTopConditionBtn:" destination="-1" eventType="touchUpInside" id="lf3-Dw-iWJ"/>
+                            </connections>
+                        </button>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HzI-zW-imi">
+                            <rect key="frame" x="0.0" y="39.5" width="375" height="0.5"/>
+                            <color key="backgroundColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="0.5" id="axP-cI-a6b"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0LD-3R-23g">
+                            <rect key="frame" x="0.0" y="0.0" width="125" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="08l-xh-OG5"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <inset key="titleEdgeInsets" minX="-20" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            <inset key="imageEdgeInsets" minX="80" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            <state key="normal" title="距离" image="live_triangle">
+                                <color key="titleColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="clickTopConditionBtn:" destination="-1" eventType="touchUpInside" id="UBs-6V-Vc3"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C59-FF-vFA">
+                            <rect key="frame" x="125" y="0.0" width="125" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="Dea-N3-NmX"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <inset key="titleEdgeInsets" minX="-20" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            <inset key="imageEdgeInsets" minX="80" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            <state key="normal" title="年龄" image="live_triangle">
+                                <color key="titleColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="clickTopConditionBtn:" destination="-1" eventType="touchUpInside" id="Ygh-q4-3a8"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="C59-FF-vFA" firstAttribute="centerX" secondItem="Mdm-IN-w46" secondAttribute="centerX" id="3ti-zB-SLb"/>
+                        <constraint firstItem="C59-FF-vFA" firstAttribute="top" secondItem="Mdm-IN-w46" secondAttribute="top" id="8wd-bL-sUi"/>
+                        <constraint firstItem="HzI-zW-imi" firstAttribute="leading" secondItem="Mdm-IN-w46" secondAttribute="leading" id="AyP-i0-DuN"/>
+                        <constraint firstItem="0LD-3R-23g" firstAttribute="leading" secondItem="Mdm-IN-w46" secondAttribute="leading" id="RyW-D3-Xgr"/>
+                        <constraint firstItem="0LD-3R-23g" firstAttribute="width" secondItem="C59-FF-vFA" secondAttribute="width" id="Zu6-Mv-VPJ"/>
+                        <constraint firstAttribute="height" constant="40" id="dgB-1F-fhn"/>
+                        <constraint firstItem="0LD-3R-23g" firstAttribute="top" secondItem="Mdm-IN-w46" secondAttribute="top" id="drm-D2-OR3"/>
+                        <constraint firstItem="BFx-3o-BCA" firstAttribute="leading" secondItem="C59-FF-vFA" secondAttribute="trailing" id="fJx-lU-t2M"/>
+                        <constraint firstItem="BFx-3o-BCA" firstAttribute="top" secondItem="Mdm-IN-w46" secondAttribute="top" id="gG0-pD-j9W"/>
+                        <constraint firstAttribute="trailing" secondItem="HzI-zW-imi" secondAttribute="trailing" id="onu-kQ-IxL"/>
+                        <constraint firstItem="BFx-3o-BCA" firstAttribute="width" secondItem="C59-FF-vFA" secondAttribute="width" id="r89-a7-Bz5"/>
+                        <constraint firstAttribute="bottom" secondItem="HzI-zW-imi" secondAttribute="bottom" id="uDe-Kk-0ws"/>
+                        <constraint firstItem="C59-FF-vFA" firstAttribute="leading" secondItem="0LD-3R-23g" secondAttribute="trailing" id="xxT-el-lNu"/>
+                        <constraint firstAttribute="trailing" secondItem="BFx-3o-BCA" secondAttribute="trailing" id="y5u-C1-i1N"/>
+                    </constraints>
+                </view>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="sOt-4P-Ccw">
+                    <rect key="frame" x="0.0" y="60" width="375" height="607"/>
+                    <color key="backgroundColor" red="0.90588235294117647" green="0.93725490196078431" blue="0.96470588235294119" alpha="1" colorSpace="calibratedRGB"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="mgL-hi-xEp">
+                        <size key="itemSize" width="50" height="50"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="zLY-xl-hVn"/>
+                        <outlet property="delegate" destination="-1" id="0lt-k1-4TX"/>
+                    </connections>
+                </collectionView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="Mdm-IN-w46" secondAttribute="trailing" id="24s-ec-xvD"/>
+                <constraint firstItem="sOt-4P-Ccw" firstAttribute="top" secondItem="Mdm-IN-w46" secondAttribute="bottom" id="EE8-do-0oo"/>
+                <constraint firstItem="Mdm-IN-w46" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="FVa-nx-CFP"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="sOt-4P-Ccw" secondAttribute="trailing" id="JJl-Io-dSq"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="sOt-4P-Ccw" secondAttribute="bottom" id="WaE-e7-IWR"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="top" secondItem="Mdm-IN-w46" secondAttribute="top" id="if4-6U-ZpZ"/>
+                <constraint firstItem="sOt-4P-Ccw" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="vLX-vE-JCB"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
+            <point key="canvasLocation" x="34.5" y="53.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="live_filter_unselected" width="12" height="13"/>
+        <image name="live_triangle" width="6" height="12"/>
+    </resources>
+</document>

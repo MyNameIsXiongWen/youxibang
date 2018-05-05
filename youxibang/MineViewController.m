@@ -19,11 +19,14 @@
 #import "MyOrderListViewController.h"
 #import "DiscountViewController.h"
 #import "MineTableViewCell.h"
-#import "HttpManager.h"
+#import "LiveCreateViewController.h"
+#import "LiveFansViewController.h"
+#import "VipWebViewController.h"
+#import "InviteViewController.h"
 
-@interface MineViewController ()<UITableViewDataSource,UITableViewDelegate,TopUpTableViewCellDelegate, SDCycleScrollViewDelegate>
-
-//@property (nonatomic,strong)NSMutableDictionary *dataInfo;
+@interface MineViewController ()<UITableViewDataSource,UITableViewDelegate,TopUpTableViewCellDelegate, SDCycleScrollViewDelegate> {
+    NSDictionary *adDataInfo;
+}
 
 @end
 
@@ -34,9 +37,9 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"我的";
-    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 44);
+    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 49);
     if ([[UIDevice currentDevice] systemVersion].floatValue <= 11.f){
-        self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 44);
+        self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 49);
     }
     self.tableView.showsVerticalScrollIndicator = NO;
     self.tableView.tableFooterView = [UIView new];
@@ -52,6 +55,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     self.tableView.tableHeaderView = [self configTableViewHeaderView];
     //收到推送后刷新此页面的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshHead) name:@"refreshMessage" object:nil];
+    [self getADRequest];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -59,7 +63,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     self.navigationController.navigationBar.hidden = YES;
     //刷新个人信息 
     [UserNameTool reloadPersonalData:^{
-//        self.dataInfo = [UserNameTool readPersonalData];
         self.tableView.tableHeaderView = [self configTableViewHeaderView];
         [self.tableView reloadData];
     }];
@@ -81,17 +84,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     else {
         bgImgAry = @[@"img_my111"];
     }
-//    if (self.dataInfo) {
-//        if ([self.dataInfo[@"bgimg"] count]>0) {
-//            bgImgAry = self.dataInfo[@"bgimg"];
-//        }
-//        else {
-//            bgImgAry = @[@"img_my111"];
-//        }
-//    }
-//    else {
-//        bgImgAry = @[@"img_my111"];
-//    }
     SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, CGRectGetHeight(headerView.frame)) imageNamesGroup:bgImgAry];
     cycleScrollView.infiniteLoop = YES;
     cycleScrollView.delegate = self;
@@ -134,24 +126,30 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         make.left.equalTo(sex.mas_right).offset(10);
         make.size.mas_equalTo(CGSizeMake(17, 15));
     }];
-//    if (self.dataInfo){
-//        [photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
-//        name.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
-//        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"sex"]].integerValue == 1){
-//            sex.text = [NSString stringWithFormat:@" ♂%@岁 ",self.dataInfo[@"age"]];
-//            sex.backgroundColor = Nav_color;
-//        }else{
-//            sex.text = [NSString stringWithFormat:@" ♀%@岁 ",self.dataInfo[@"age"]];
-//            sex.backgroundColor = Pink_color;
-//        }
-//        [sex sizeToFit];
-//        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_vip"]].integerValue == 1){
-//            vipImg.selected = YES;
-//        }else{
-//            vipImg.selected = NO;
-//        }
-//    }
     [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+    
+    if (userModel.is_anchor.integerValue == 1) {
+        UILabel *fansLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"粉丝数:%@",userModel.follow_count] andColor:[UIColor whiteColor] andView:headerView];
+        fansLabel.textAlignment = NSTextAlignmentRight;
+        fansLabel.font = [UIFont systemFontOfSize:13.0];
+        fansLabel.userInteractionEnabled = YES;
+        [fansLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(vipImg.mas_centerY);
+            make.right.equalTo(headerView.mas_right).offset(-15);
+            make.size.mas_equalTo(CGSizeMake(100, 13));
+        }];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFansSelector)];
+        [fansLabel addGestureRecognizer:tap];
+        UILabel *laudLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"点赞数:%@",userModel.laud_count] andColor:[UIColor whiteColor] andView:headerView];
+        laudLabel.textAlignment = NSTextAlignmentRight;
+        laudLabel.font = [UIFont systemFontOfSize:13.0];
+        [laudLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(name.mas_centerY);
+            make.right.equalTo(headerView.mas_right).offset(-15);
+            make.size.mas_equalTo(CGSizeMake(100, 13));
+        }];
+    }
+    
     name.text = userModel.nickname;
     if (userModel.sex.integerValue == 1){
         sex.text = [NSString stringWithFormat:@" ♂%@岁 ",userModel.age];
@@ -170,12 +168,36 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 }
 
 - (void)refreshHead {
+    [self getADRequest];
     [UserNameTool reloadPersonalData:^{
-//        self.dataInfo = [UserNameTool readPersonalData];
         self.tableView.tableHeaderView = [self configTableViewHeaderView];
         [self.tableView reloadData];
     }];
     [self.tableView.mj_header endRefreshing];
+}
+
+- (void)tapFansSelector {
+    LiveFansViewController* vc = [[LiveFansViewController alloc]init];
+    [self.navigationController pushViewController:vc animated:1];
+}
+
+- (void)getADRequest {
+    NSDictionary *dict = @{@"typeid":@"6"};
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/bannerlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {
+                adDataInfo = [object[@"data"] lastObject];
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
+            }else{
+            }
+        }
+        
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -215,12 +237,15 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 #pragma mark - tableViewDelegate/DataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (section == 1){
-        return 7;
+        return 1;
+    }
+    else if (section == 2) {
+        return 8;
     }
     return 2;
 }
@@ -237,6 +262,9 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     if (indexPath.section == 0 && indexPath.row == 1){
         return 50;
     }
+    else if (indexPath.section == 1) {
+        return 80;
+    }
     return 40;
 }
 
@@ -244,13 +272,13 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     if (indexPath.section == 0 && indexPath.row == 1){
         return 50;
     }
+    else if (indexPath.section == 1) {
+        return 60;
+    }
     return 40;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //写死的title和图片
-    NSArray* ary = @[@[@"我的钱包",@""],@[@"我的任务",@"我的技能",@"订单中心",@"提现账户管理",@"我的邀请码",@"联系客服",@"系统设置"]];
-    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@"ico_renwu",@"ico_gamebaby",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
     if (indexPath.section == 0 && indexPath.row == 1){
         //充值提现的cell
         TopUpTableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"TopUpTableViewCell"];
@@ -262,7 +290,41 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         [cell initCell];
         return cell;
     }
-    MineTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TABLEVIEW_IDENTIFIER];
+    else if (indexPath.section == 1) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"tableviewcell_id"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"tableviewcell_id"];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        NSArray *subviewArray = cell.contentView.subviews;
+        for (id subview in subviewArray) {
+            if ([subview isKindOfClass:UIImageView.class]) {
+                [subview removeFromSuperview];
+            }
+        }
+        UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 80)];
+        [imgView sd_setImageWithURL:[NSURL URLWithString:adDataInfo[@"adimg"]] placeholderImage:[UIImage imageNamed:@"img_my111"]];
+        [cell.contentView addSubview:imgView];
+        return cell;
+    }
+    return [self displayTableViewCell:indexPath];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 1){
+        VipWebViewController *con = [VipWebViewController new];
+        con.loadUrlString = adDataInfo[@"detail"];
+        [self.navigationController pushViewController:con animated:YES];
+    }
+    else if (indexPath.section == 2) {
+        [self pushToController:indexPath];
+    }
+}
+
+- (UITableViewCell *)displayTableViewCell:(NSIndexPath *)indexPath {
+    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的任务",@"我的技能",@"我是主播",@"订单中心",@"提现账户管理",@"有奖邀请",@"联系客服",@"系统设置"]];
+    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_renwu",@"ico_gamebaby",@"ico_gamebaby",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+    MineTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:TABLEVIEW_IDENTIFIER];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     if (indexPath.section == 0 && indexPath.row == 0){
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -272,11 +334,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         [mAttStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(2, mAttStr.length - 3)];
         cell.rightLabel.attributedText = mAttStr;
         cell.rightLabel.font = [UIFont systemFontOfSize:12];
-
-    }else if (indexPath.section == 1 && indexPath.row == 4){
-        //邀请码
-        cell.rightLabel.text = @"EE0F85D131C1";
-        cell.rightLabelTrailingConstraint.constant = 15;
+        
     }else{
         cell.rightLabel.text = @"";
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -286,54 +344,48 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.section == 1){
-        if (indexPath.row == 0){//任务列表
-            MyTaskViewController* vc = [[MyTaskViewController alloc]init];
+- (void)pushToController:(NSIndexPath *)indexPath {
+    if (indexPath.row == 0){//任务列表
+        MyTaskViewController* vc = [[MyTaskViewController alloc]init];
+        [self.navigationController pushViewController:vc animated:1];
+    }else if (indexPath.row == 1){//实名认证或者个人技能
+        if ([UserModel sharedUser].is_realauth.integerValue == 1){
+            MySkillViewController *vc = [[MySkillViewController alloc]init];
             [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 1){//实名认证或者个人技能
-//            if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_realauth"]].integerValue == 1){
-            if ([UserModel sharedUser].is_realauth.integerValue == 1){
-                MySkillViewController *vc = [[MySkillViewController alloc]init];
-                [self.navigationController pushViewController:vc animated:1];
-            }else{
-                UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
-                [self.navigationController pushViewController:vc animated:1];
-            }
-//        }else if (indexPath.row == 2){//优惠券
-//            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//            DiscountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"dvc"];
-//            [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 2){//订单列表
+        }else{
             UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            MyOrderListViewController* vc = [sb instantiateViewControllerWithIdentifier:@"mol"];
-            [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 3){//支付宝绑定
-            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            AlipayAccountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"aa"];
-            [self.navigationController pushViewController:vc animated:1];
-        }else if (indexPath.row == 4){//点击复制邀请码
-            UIPasteboard *pab = [UIPasteboard generalPasteboard];
-            [pab setString:@"EE0F85D131C1"];
-            [SVProgressHUD showInfoWithStatus:@"已将邀请码复制"];
-        }else if (indexPath.row == 5){//自定义alert显示客服电话
-            CustomAlertView* alert = [[CustomAlertView alloc]initWithAry:@[@"客服电话1：15306544612\n(微信同号)",@"客服电话2：15372402489\n(微信同号)",@"客服电话3：15372416943\n(微信同号)"]];
-            alert.resultDate = ^(NSString *date) {
-                if ([date isEqualToString:@"0"]){
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15306544612"]];
-                }else  if ([date isEqualToString:@"1"]){
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15372402489"]];
-                }else if ([date isEqualToString:@"2"]){
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15372416943"]];
-                }
-            };
-            [alert showAlertView];
-        }else if (indexPath.row == 6){//系统设置
-            SystemSettingViewController* vc = [[SystemSettingViewController alloc]init];
+            RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
             [self.navigationController pushViewController:vc animated:1];
         }
+    }else if (indexPath.row == 2){//我是主播
+        LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
+        [self.navigationController pushViewController:vc animated:1];
+    }else if (indexPath.row == 3){//订单列表
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        MyOrderListViewController* vc = [sb instantiateViewControllerWithIdentifier:@"mol"];
+        [self.navigationController pushViewController:vc animated:1];
+    }else if (indexPath.row == 4){//支付宝绑定
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        AlipayAccountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"aa"];
+        [self.navigationController pushViewController:vc animated:1];
+    }else if (indexPath.row == 5){//点击分享邀请码
+        InviteViewController *invite = [InviteViewController new];
+        [self.navigationController pushViewController:invite animated:YES];
+    }else if (indexPath.row == 6){//自定义alert显示客服电话
+        CustomAlertView* alert = [[CustomAlertView alloc]initWithAry:@[@"客服电话1：15306544612\n(微信同号)",@"客服电话2：15372402489\n(微信同号)",@"客服电话3：15372416943\n(微信同号)"]];
+        alert.resultDate = ^(NSString *date) {
+            if ([date isEqualToString:@"0"]){
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15306544612"]];
+            }else if ([date isEqualToString:@"1"]){
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15372402489"]];
+            }else if ([date isEqualToString:@"2"]){
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15372416943"]];
+            }
+        };
+        [alert showAlertView];
+    }else if (indexPath.row == 7){//系统设置
+        SystemSettingViewController* vc = [[SystemSettingViewController alloc]init];
+        [self.navigationController pushViewController:vc animated:1];
     }
 }
 

@@ -13,8 +13,31 @@
 #import "LoginViewController.h"
 #import "ZLPhotoPickerBrowserViewController.h"
 #import <AliyunVodPlayerSDK/AliyunVodPlayerSDK.h>
+#import "LiveCharmTableViewCell.h"
+#import "LiveInformationTableViewCell.h"
+#import "LiveBaseInformationTableViewCell.h"
+#import "LiveCharmPhotoModel.h"
+#import "LivePayView.h"
+#import "SetPayPasswordViewController.h"
+#import "RetrievePayPasswordViewController.h"
+#import "AwardViewController.h"
+#import "LiveCharmPhotoPayView.h"
+#import "ShareView.h"
 
-@interface EmployeeDetailViewController ()<UITableViewDelegate,UITableViewDataSource,UIScrollViewDelegate, SDCycleScrollViewDelegate, ZLPhotoPickerBrowserViewControllerDelegate,AliyunVodPlayerDelegate>
+static NSString *const LIVECHARM_TABLEVIEW_ID = @"livecharm_tableview_id";
+static NSString *const LIVEINFORMATION_TABLEVIEW_ID = @"liveinformation_tableview_id";
+static NSString *const EMPLOYEEDETAIL_ID = @"EmployeeDetailTableViewCell";
+static NSString *const PARTTIMETABLEVIEW_ID = @"PartTimeTableViewCell";
+static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
+
+@interface EmployeeDetailViewController ()<UITableViewDelegate,UITableViewDataSource,UIScrollViewDelegate, SDCycleScrollViewDelegate, ZLPhotoPickerBrowserViewControllerDelegate,AliyunVodPlayerDelegate> {
+    UILabel *fans;//粉丝数量，因为要修改数目
+    int fansCount;//粉丝数
+    int laudCount;//点赞数
+    BOOL isCanTalk;//是否能聊天
+    NSString *price;//查看资料或聊天的价格
+}
+
 @property (nonatomic,strong) UIView *nav;//渐显view
 @property (nonatomic,strong) NSMutableDictionary* dataInfo;
 
@@ -25,6 +48,10 @@
 @property (nonatomic, strong) NSTimer *timer;//计时器，时时获取currentTime
 @property (nonatomic, strong) UILabel *currentTimeLabel;//当前播放时间
 @property (nonatomic, strong) UILabel *totalTimeLabel;//视频总时长
+
+@property (nonatomic,strong) NSArray *charmPhotoArray;//主播魅力照片
+@property (strong, nonatomic) ShareView *shareView;
+
 @end
 
 @implementation EmployeeDetailViewController
@@ -45,36 +72,102 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.tableHeaderView = [self configTableViewHeaderView];
+    [self.tableView registerClass:EmployeeDetailTableViewCell.class forCellReuseIdentifier:EMPLOYEEDETAIL_ID];
+    [self.tableView registerClass:PartTimeTableViewCell.class forCellReuseIdentifier:PARTTIMETABLEVIEW_ID];
+    [self.tableView registerNib:[UINib nibWithNibName:@"LiveBaseInformationTableViewCell" bundle:nil] forCellReuseIdentifier:BASEINFORMATION_TABLEVIEW_ID];
+    [self.tableView registerNib:[UINib nibWithNibName:@"LiveCharmTableViewCell" bundle:nil] forCellReuseIdentifier:LIVECHARM_TABLEVIEW_ID];
+    [self.tableView registerNib:[UINib nibWithNibName:@"LiveInformationTableViewCell" bundle:nil] forCellReuseIdentifier:LIVEINFORMATION_TABLEVIEW_ID];
     //渐显view
-    UIView* nav = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:Nav_color andView:self.view];
-    UILabel* title = [EBUtility labfrome:CGRectMake(0, 0, 100, 30) andText:@"昵称" andColor:[UIColor whiteColor] andView:nav];
+    UIView *nav = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:UIColor.whiteColor andView:self.view];
+    UIView *lineView = [EBUtility viewfrome:CGRectMake(0, 63.5, SCREEN_WIDTH, 0.5) andColor:[UIColor colorFromHexString:@"b2b2b2"] andView:nav];
+    UILabel *title = [EBUtility labfrome:CGRectMake(0, 32, SCREEN_WIDTH, 20) andText:@"昵称" andColor:[UIColor colorFromHexString:@"333333"] andView:nav];
     title.font = [UIFont systemFontOfSize:18];
-    [title sizeToFit];
-    title.centerX = nav.centerX;
-    title.centerY = nav.height - 22;
+    title.textAlignment = NSTextAlignmentCenter;
     title.tag = 1000;
     nav.alpha = 0;
     self.nav = nav;
-    //头像backImage
-    UIButton* backImg = [EBUtility btnfrome:CGRectMake(15, 33, 10, 20) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"back"] andView:self.view];
-    UIButton* back = [EBUtility btnfrome:CGRectMake(0, 25, 40, 40) andText:@"" andColor:nil andimg:nil andView:self.view];
+    UIButton *back = [EBUtility btnfrome:CGRectMake(0, 25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"back"] andView:self.view];
+    back.tag = 1001;
     [back addTarget:self action:@selector(backBtn:) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *share = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-45, 25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"share_white"] andView:self.view];
+    share.tag = 1002;
+    [share addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
     
-    //当查看宝贝信息时，显示的bottomview
-    if (self.type == 0){
-        self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 20);
-        UIButton* phone = [EBUtility btnfrome:CGRectMake(0, SCREEN_HEIGHT - 44, SCREEN_WIDTH/2, 44) andText:@"电话" andColor:[UIColor whiteColor] andimg:nil andView:self.view];
-        phone.backgroundColor = [EBUtility colorWithHexString:@"#73CDFB" alpha:1];
-        [phone addTarget:self action:@selector(conBtn:) forControlEvents:UIControlEventTouchUpInside];
-        phone.tag = 100;
-        UIButton* confirm = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT - 44, SCREEN_WIDTH/2, 44) andText:@"下单" andColor:[UIColor whiteColor] andimg:nil andView:self.view];
-        confirm.backgroundColor = Nav_color;
-        confirm.tag = 101;
-        [confirm addTarget:self action:@selector(conBtn:) forControlEvents:UIControlEventTouchUpInside];
-    }
     [self downloadInfo];
+    [self detailBottomButton];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self queryJurisdictionRequestType:@"2" TargetId:self.employeeId Money:@"" Index:0];
+    });
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
+}
+
+- (void)notificationSelector:(NSNotification *)notification {
+    NSString *object = notification.object;
+    if ([object isEqualToString:@"success"]) {
+        [self.shareView dismiss];
+        [SVProgressHUD showSuccessWithStatus:@"分享成功"];
+    }
+    else {
+        [SVProgressHUD showErrorWithStatus:@"分享失败"];
+    }
+}
+
+- (void)detailBottomButton {
+    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 44+20);
+    UIButton* phone = [EBUtility btnfrome:CGRectMake(0, SCREEN_HEIGHT - 44, SCREEN_WIDTH/2, 44) andText:@"电话" andColor:[UIColor whiteColor] andimg:nil andView:self.view];
+    phone.backgroundColor = [EBUtility colorWithHexString:@"#73CDFB" alpha:1];
+    [phone addTarget:self action:@selector(conBtn:) forControlEvents:UIControlEventTouchUpInside];
+    phone.tag = 100;
+    UIButton* confirm = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT - 44, SCREEN_WIDTH/2, 44) andText:@"下单" andColor:[UIColor whiteColor] andimg:nil andView:self.view];
+    confirm.backgroundColor = Nav_color;
+    confirm.tag = 101;
+    [confirm addTarget:self action:@selector(conBtn:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)configBottomView {
+    if ([self.dataInfo[@"user_id"] integerValue] == DataStore.sharedDataStore.userid.integerValue) {
+        return;
+    }
+    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 48+20);
+    UIButton* imBtn = [EBUtility btnfrome:CGRectMake(0, SCREEN_HEIGHT - 48, SCREEN_WIDTH/3, 48) andText:@"聊天" andColor:[UIColor colorFromHexString:@"333333"] andimg:[UIImage imageNamed:@"live_detail_review"] andView:self.view];
+    imBtn.backgroundColor = UIColor.whiteColor;
+    imBtn.tag = 777;
+    imBtn.titleLabel.font = [UIFont systemFontOfSize:14.0];
+    [imBtn setImageEdgeInsets:UIEdgeInsetsMake(0, -4, 0, 4)];
+    [imBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 4, 0, -4)];
+    [imBtn addTarget:self action:@selector(clickLiveBottomBtn:) forControlEvents:UIControlEventTouchUpInside];
+    UIButton* likeBtn = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH/3, SCREEN_HEIGHT - 48, SCREEN_WIDTH/3, 48) andText:@"0" andColor:[UIColor colorFromHexString:@"333333"] andimg:[UIImage imageNamed:@"live_detail_like"] andView:self.view];
+    likeBtn.backgroundColor = UIColor.whiteColor;
+    likeBtn.tag = 888;
+    likeBtn.titleLabel.font = [UIFont systemFontOfSize:14.0];
+    [likeBtn setImageEdgeInsets:UIEdgeInsetsMake(0, -4, 0, 4)];
+    [likeBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 4, 0, -4)];
+    [likeBtn addTarget:self action:@selector(clickLiveBottomBtn:) forControlEvents:UIControlEventTouchUpInside];
+    UIButton* tipBtn = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH/3*2, SCREEN_HEIGHT - 48, SCREEN_WIDTH/3, 48) andText:@"打赏" andColor:[UIColor colorFromHexString:@"333333"] andimg:[UIImage imageNamed:@"live_detail_tip"] andView:self.view];
+    tipBtn.backgroundColor = UIColor.whiteColor;
+    tipBtn.tag = 999;
+    tipBtn.titleLabel.font = [UIFont systemFontOfSize:14.0];
+    [tipBtn setImageEdgeInsets:UIEdgeInsetsMake(0, -4, 0, 4)];
+    [tipBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 4, 0, -4)];
+    [tipBtn addTarget:self action:@selector(clickLiveBottomBtn:) forControlEvents:UIControlEventTouchUpInside];
+    UILabel *lineLabel = [EBUtility labfrome:CGRectMake(0, SCREEN_HEIGHT - 48, SCREEN_WIDTH, 0.5) andText:@"" andColor:nil andView:self.view];
+    lineLabel.backgroundColor = [UIColor colorFromHexString:@"b2b2b2"];
+    UILabel *sepLabel1 = [EBUtility labfrome:CGRectMake(SCREEN_WIDTH/3, SCREEN_HEIGHT - 48+9, 0.5, 30) andText:@"" andColor:nil andView:self.view];
+    sepLabel1.backgroundColor = [UIColor colorFromHexString:@"b2b2b2"];
+    UILabel *sepLabel2 = [EBUtility labfrome:CGRectMake(SCREEN_WIDTH/3*2, SCREEN_HEIGHT - 48+9, 0.5, 30) andText:@"" andColor:nil andView:self.view];
+    sepLabel2.backgroundColor = [UIColor colorFromHexString:@"b2b2b2"];
     
-    [self configMediaPlayer];
+    laudCount = [self.dataInfo[@"laud_count"] intValue];
+    [likeBtn setTitle:[NSString stringWithFormat:@"%d",laudCount] forState:0];
+    if ([self.dataInfo[@"is_laud"] integerValue] == 0) {
+        [likeBtn setImage:[UIImage imageNamed:@"live_detail_like"] forState:0];
+        likeBtn.selected = NO;
+    }
+    else {
+        [likeBtn setImage:[UIImage imageNamed:@"live_detail_liked"] forState:0];
+        likeBtn.selected = YES;
+    }
 }
 
 //配置播放器相关UI
@@ -113,23 +206,63 @@
     self.playerView.hidden = YES;
 }
 
+//查询权限  是否能查看微信/聊天/查看魅力图片
+- (void)queryJurisdictionRequestType:(NSString *)type TargetId:(NSString *)targetId Money:(NSString *)money Index:(NSInteger)index {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    if (DataStore.sharedDataStore.token) {
+        [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    }
+    [dict setObject:type forKey:@"type"];
+    [dict setObject:targetId forKey:@"target_id"];
+    NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:requestUrl Paremeters:dict successOperation:^(id object) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            LiveCharmPhotoModel *model = self.charmPhotoArray[index];
+            if (code == 1) {//有权限 聊天/查看微信和制定魅力照片
+                if (type.integerValue == 2) {//聊天/查看微信
+                    isCanTalk = YES;
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+                }
+                else if (type.integerValue == 1) {
+                    model.is_charge = @"0";//图片
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
+                    [self configZLPhotoPickerBrowserWithArray:self.charmPhotoArray Index:index];
+                }
+            }
+            else if (code == 0) {//没权限 聊天/查看微信和制定魅力照片
+                price = object[@"data"];
+                if (type.integerValue == 1) {//图片
+                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:targetId];
+                }
+            }
+        }
+    } failoperation:^(NSError *error) {
+    }];
+}
+
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = YES;
     [self.tableView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
 }
+
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
     [self.tableView removeObserver:self forKeyPath:@"contentOffset"];
 }
+
+//viewdidload查询详情
 - (void)downloadInfo{
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
     if (self.type == 0){//宝贝信息
-        [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
-        [SVProgressHUD show];
-        
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        
         [dict setObject:self.employeeId forKey:@"buserid"];
         if (![EBUtility isBlankString:[DataStore sharedDataStore].userid]){
             [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
@@ -145,25 +278,21 @@
                 
                 if (code == 1) {
                     self.dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
+                    self.tableView.tableHeaderView = [self configTableViewHeaderView];
                     [self.tableView reloadData];
                 }else{
                     [SVProgressHUD showErrorWithStatus:msg];
                 }
             }
         } failoperation:^(NSError *error) {
-            
             [SVProgressHUD dismiss];
             [SVProgressHUD setDefaultMaskType:1];
             [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
         }];
-    }else if (self.type == 1){//雇主信息
-        [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
-        [SVProgressHUD show];
-        
+    }
+    else if (self.type == 1){//雇主信息
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        
         [dict setObject:self.employeeId forKey:@"userid"];
-        
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/partindex.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
             [SVProgressHUD dismiss];
             [SVProgressHUD setDefaultMaskType:1];
@@ -171,32 +300,74 @@
                 NSInteger code = [object[@"errcode"] integerValue];
                 NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
                 NSLog(@"输出 %@--%@",object,msg);
-                
                 if (code == 1) {
                     self.dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
+                    self.tableView.tableHeaderView = [self configTableViewHeaderView];
                     [self.tableView reloadData];
                 }else{
                     [SVProgressHUD showErrorWithStatus:msg];
                 }
             }
-            
         } failoperation:^(NSError *error) {
-            
             [SVProgressHUD dismiss];
             [SVProgressHUD setDefaultMaskType:1];
             [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
         }];
     }
-    
+    else if (self.type == 2){//主播信息
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        [dict setObject:self.employeeId forKey:@"id"];
+        if ([DataStore sharedDataStore].token) {
+            [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        }
+        [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@anchor/detail",HttpURLString] Paremeters:dict successOperation:^(id object) {
+            [SVProgressHUD dismiss];
+            [SVProgressHUD setDefaultMaskType:1];
+            if (isKindOfNSDictionary(object)){
+                NSInteger code = [object[@"errcode"] integerValue];
+                NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+                NSLog(@"输出 %@--%@",object,msg);
+                if (code == 1) {
+                    self.dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
+                    self.tableView.tableHeaderView = [self configTableViewHeaderView];
+                    self.charmPhotoArray = [LiveCharmPhotoModel mj_objectArrayWithKeyValuesArray:self.dataInfo[@"img_arr"]];
+                    [self.tableView reloadData];
+                    [self configBottomView];
+                }else{
+                    [SVProgressHUD showErrorWithStatus:msg];
+                }
+            }
+        } failoperation:^(NSError *error) {
+            [SVProgressHUD dismiss];
+            [SVProgressHUD setDefaultMaskType:1];
+            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        }];
+    }
 }
 //渐显效果
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if ([keyPath isEqualToString:@"contentOffset"]) {
         self.nav.alpha = self.tableView.contentOffset.y / 115;
+        UIButton *back = [self.view viewWithTag:1001];
+        UIButton *share = [self.view viewWithTag:1002];
+        if (self.nav.alpha > 0.6) {
+            [back setImage:[UIImage imageNamed:@"back_black"] forState:0];
+            [share setImage:[UIImage imageNamed:@"share_black"] forState:0];
+        }
+        else {
+            [back setImage:[UIImage imageNamed:@"back"] forState:0];
+            [share setImage:[UIImage imageNamed:@"share_white"] forState:0];
+        }
     }
 }
-- (void)backBtn:(UIButton*)sender{
+- (void)backBtn:(UIButton*)sender {
     [self.navigationController popViewControllerAnimated:1];
+}
+
+#pragma mark - 分享
+- (void)shareBtn:(UIButton *)sender {
+    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:SHARE_WEBURL];
+    [self.shareView show];
 }
 
 //bottomview按键
@@ -208,7 +379,6 @@
         return;
     }
     if (sender.tag == 100){//电话
-        
         if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_strangercall"]].integerValue != 1){
             [SVProgressHUD showErrorWithStatus:@"对方已禁止陌生人通话"];
             return;
@@ -223,277 +393,460 @@
     }
     
 }
+
+//主播界面 bottomview按键
+- (void)clickLiveBottomBtn:(UIButton *)sender {
+    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
+    if (sender.tag == 777) {
+        if (isCanTalk){
+            NIMSession *session = [NIMSession session:[NSString stringWithFormat:@"%@",self.dataInfo[@"invitecode"]] type:NIMSessionTypeP2P];
+            ChatViewController *vc = [[ChatViewController alloc] initWithSession:session];
+            [self.navigationController pushViewController:vc animated:YES];
+        }else{
+            [self lookWechatSelector];
+        }
+    }
+    else if (sender.tag == 888) {
+        [self likeRequest:sender];
+    }
+    else if (sender.tag == 999) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        AwardViewController *vc = [sb instantiateViewControllerWithIdentifier:@"avc"];
+        vc.orderInfo = self.dataInfo;
+        vc.type = 2;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+}
+
+//点赞/取消点赞
+- (void)likeRequest:(UIButton *)sender {
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:self.employeeId forKey:@"target_id"];
+    [dict setObject:@"3" forKey:@"type"];
+    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    NSString *requestUrl = [NSString stringWithFormat:@"%@article/laud",HttpURLString];
+    if (sender.selected) {
+        requestUrl = [NSString stringWithFormat:@"%@article/cancel_laud",HttpURLString];
+    }
+    
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:requestUrl Paremeters:dict successOperation:^(id object) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {
+                sender.selected = !sender.selected;
+                if (sender.selected) {
+                    laudCount++;
+                    [sender setImage:[UIImage imageNamed:@"live_detail_liked"] forState:UIControlStateNormal];
+                }
+                else {
+                    laudCount--;
+                    [sender setImage:[UIImage imageNamed:@"live_detail_like"] forState:UIControlStateNormal];
+                }
+                [sender setTitle:[NSString stringWithFormat:@"%d",laudCount] forState:0];
+            }else{
+                [SVProgressHUD showErrorWithStatus:msg];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    }];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark - 配置tableview的headerview
+- (UIView *)configTableViewHeaderView {
+    UIView *headerView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 225 * ADAPTATIONRATIO) andColor:[UIColor whiteColor] andView:nil];
+    //轮播图
+    NSMutableArray *bgImgAry = [NSMutableArray array];
+    BOOL existBgimg = NO;
+    BOOL existVideo = NO;
+    if (self.dataInfo) {
+        if (self.dataInfo[@"bgimg"]) {
+            if ([self.dataInfo[@"bgimg"] count]>0) {
+                existBgimg = YES;
+            }
+        }
+        if (self.dataInfo[@"video"]) {
+            if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
+                if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
+                    if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] || self.dataInfo[@"video"][@"VideoMeta"][@"VideoId"]) {
+                        existVideo = YES;
+                    }
+                }
+            }
+        }
+    }
+    if (existBgimg) {
+        for (NSString *str in self.dataInfo[@"bgimg"]) {
+            [bgImgAry addObject:str];
+        }
+    }
+    else {
+        bgImgAry = @[@"img_my111"].mutableCopy;
+    }
+    if (existVideo) {
+        [bgImgAry insertObject:self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] atIndex:0];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self configMediaPlayer];
+        });
+    }
+    SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, CGRectGetHeight(headerView.frame)) imageNamesGroup:bgImgAry];
+    cycleScrollView.infiniteLoop = YES;
+    cycleScrollView.delegate = self;
+    cycleScrollView.hideBkgView = NO;
+    cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
+    cycleScrollView.pageControlAliment = SDCycleScrollViewPageContolAlimentCenter;
+    [headerView addSubview:cycleScrollView];
+    
+    UIImageView *sexImg = [EBUtility imgfrome:CGRectMake(15, CGRectGetMaxY(headerView.frame)-15-20, 20, 20) andImg:[UIImage imageNamed:@"live_detail_male"] andView:headerView];
+    
+    UILabel *age = [EBUtility labfrome:CGRectZero andText:@"24岁 " andColor:[UIColor whiteColor]  andView:headerView];
+    age.textAlignment = NSTextAlignmentLeft;
+    age.font = [UIFont systemFontOfSize:13.0];
+    [age mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(sexImg.mas_centerY);
+        make.left.equalTo(sexImg.mas_right).offset(7);
+        make.size.mas_equalTo(CGSizeMake(30, 15));
+    }];
+    
+    UIImageView* vipImg = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"vip_grade_1"] andView:headerView];
+    [vipImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(sexImg.mas_centerY);
+        make.left.equalTo(age.mas_right).offset(7);
+        make.size.mas_equalTo(CGSizeMake(17, 20));
+    }];
+    
+    UIImageView *realnamedImg = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"live_detail_realnamed"] andView:headerView];
+    [realnamedImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(sexImg.mas_centerY);
+        make.left.equalTo(vipImg.mas_right).offset(7);
+        make.size.mas_equalTo(CGSizeMake(35, 20));
+    }];
+    
+//    UIImageView *statusImg = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"live_detail_online"] andView:headerView];
+//    [statusImg mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.centerY.equalTo(sexImg.mas_centerY);
+//        make.left.equalTo(realnamedImg.mas_right).offset(7);
+//        make.size.mas_equalTo(CGSizeMake(29, 18));
+//    }];
+    
+    UILabel *name = [EBUtility labfrome:CGRectZero andText:@"昵称" andColor:[UIColor whiteColor] andView:headerView];
+    name.textAlignment = NSTextAlignmentLeft;
+    name.font = [UIFont systemFontOfSize:16.0];
+    [name mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(sexImg.mas_top).offset(-6);
+        make.left.equalTo(headerView.mas_left).offset(15);
+        make.size.mas_equalTo(CGSizeMake(170, 15));
+    }];
+    
+    UIImageView* photo = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"ico_head"] andView:headerView];
+    photo.backgroundColor = [UIColor whiteColor];
+    photo.layer.masksToBounds = YES;
+    photo.layer.cornerRadius = 23.5;
+    photo.layer.borderColor = [UIColor whiteColor].CGColor;
+    photo.layer.borderWidth = 1;
+    [photo mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(name.mas_top).offset(-8);
+        make.left.equalTo(headerView.mas_left).offset(15);
+        make.size.mas_equalTo(CGSizeMake(47, 47));
+    }];
+    
+    fans = [EBUtility labfrome:CGRectZero andText:@"粉丝数量" andColor:[UIColor whiteColor] andView:headerView];
+    fans.textAlignment = NSTextAlignmentRight;
+    fans.font = [UIFont systemFontOfSize:13.0];
+    [fans mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(sexImg.mas_centerY);
+        make.right.equalTo(headerView.mas_right).offset(-15);
+        make.size.mas_equalTo(CGSizeMake(100, 13));
+    }];
+    
+    UIButton *attentionBtn = [EBUtility btnfrome:CGRectZero andText:@"" andColor:nil andimg:[UIImage imageNamed:@"live_detail_attention"] andView:headerView];
+    [attentionBtn addTarget:self action:@selector(payAttentionTo:) forControlEvents:UIControlEventTouchUpInside];
+    [attentionBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(fans.mas_top).offset(-6);
+        make.right.equalTo(headerView.mas_right).offset(-15);
+        make.size.mas_equalTo(CGSizeMake(65, 22));
+    }];
+    if (self.type != 2) {
+        fans.hidden = YES;
+        attentionBtn.hidden = YES;
+    }
+    else {
+        fans.hidden = NO;
+        attentionBtn.hidden = NO;
+    }
+    
+    if (self.dataInfo.count > 0){
+        [photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_head"]];
+        name.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
+        
+        UILabel* title = [self.nav viewWithTag:1000];
+        title.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
+        
+        if ([self.dataInfo[@"sex"] integerValue] == 1) {
+            sexImg.image = [UIImage imageNamed:@"live_detail_male"];
+        }
+        else {
+            sexImg.image = [UIImage imageNamed:@"live_detail_female"];
+        }
+        if (self.type == 0){
+            age.text = [NSString stringWithFormat:@"%@岁\t",self.dataInfo[@"birthday"]];
+        }
+        else {
+            age.text = [NSString stringWithFormat:@"%@岁\t",self.dataInfo[@"age"]];
+        }
+        if ([self.dataInfo[@"vip_grade"] integerValue] == 0) {
+            [vipImg mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.centerY.equalTo(sexImg.mas_centerY);
+                make.left.equalTo(age.mas_right);
+                make.size.mas_equalTo(CGSizeMake(0, 20));
+            }];
+        }
+        else {
+            vipImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"vip_grade_%@",self.dataInfo[@"vip_grade"]]];
+        }
+        if ([self.dataInfo[@"is_realauth"] integerValue] == 1) {
+            realnamedImg.image = [UIImage imageNamed:@"live_detail_realnamed"];
+        }
+        else {
+            [realnamedImg mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.centerY.equalTo(sexImg.mas_centerY);
+                make.left.equalTo(vipImg.mas_right);
+                make.size.mas_equalTo(CGSizeMake(0, 20));
+            }];
+        }
+        fansCount = [self.dataInfo[@"follow_count"] intValue];
+        fans.text = [NSString stringWithFormat:@"%d粉丝",fansCount];
+        if ([self.dataInfo[@"is_follow"] integerValue] == 0) {
+            [attentionBtn setImage:[UIImage imageNamed:@"live_detail_attention"] forState:0];
+            attentionBtn.selected = NO;
+        }
+        else if ([self.dataInfo[@"is_follow"] integerValue] == 1) {
+            [attentionBtn setImage:[UIImage imageNamed:@"live_detail_attentioned"] forState:0];
+            attentionBtn.selected = YES;
+        }
+        
+        if ([NSString stringWithFormat:@"%@",self.dataInfo[@"isable"]].integerValue == 2) {
+            UIButton* phone = [self.view viewWithTag:100];
+            phone.hidden = YES;
+            UIButton* com = [self.view viewWithTag:101];
+            com.hidden = YES;
+            self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT + 20);
+        }
+        else {
+            if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_strangercall"]].integerValue != 1) {
+                UIButton* phone = [self.view viewWithTag:100];
+                phone.hidden = YES;
+                UIButton* com = [self.view viewWithTag:101];
+                com.width = SCREEN_WIDTH;
+                com.x = 0;
+            }
+        }
+    }
+    return headerView;
+}
+
+#pragma mark - 关注/取消关注
+- (void)payAttentionTo:(UIButton *)sender {
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:self.employeeId forKey:@"target_id"];
+    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    NSString *requestUrl = [NSString stringWithFormat:@"%@member/follow",HttpURLString];
+    if (sender.selected) {
+        requestUrl = [NSString stringWithFormat:@"%@member/cancel_follow",HttpURLString];
+    }
+    
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:requestUrl Paremeters:dict successOperation:^(id object) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {
+                sender.selected = !sender.selected;
+                if (sender.selected) {
+                    fansCount++;
+                    [sender setImage:[UIImage imageNamed:@"live_detail_attentioned"] forState:UIControlStateNormal];
+                }
+                else {
+                    fansCount--;
+                    [sender setImage:[UIImage imageNamed:@"live_detail_attention"] forState:UIControlStateNormal];
+                }
+                fans.text = [NSString stringWithFormat:@"%d粉丝",fansCount];
+            }else{
+                [SVProgressHUD showErrorWithStatus:msg];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    }];
+}
+
 #pragma mark - tableViewDelegate/DataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 3;
+    if (self.type == 2) {
+        return 3;
+    }
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if (section == 1){
+    if (section == 0){
         if (self.type == 0){//技能列表
             return ((NSDictionary*)self.dataInfo[@"skilllist"]).count;
         }else if (self.type == 1){//最近发布列表
             return ((NSDictionary*)self.dataInfo[@"list"]).count;
         }
-    }else if (section == 2){
-        return 2;
     }
-    return 0;
+    return 1;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0) {
+        if (self.type == 2) {
+            return 189;
+        }
+    }
+    else if (indexPath.section == 1) {
+        if (self.type == 2) {
+            NSInteger count = self.charmPhotoArray.count;
+            if (count%4 == 0) {
+                count = (count/4);
+            }
+            else {
+                count = (count/4 + 1);
+            }
+            return count*((SCREEN_WIDTH-30-30)/4 + 10);
+        }
+        return 125;
+    }
+    else if (indexPath.section == 2) {
+        return 125;
+    }
     return UITableViewAutomaticDimension;
 }
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath{
-    
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     return UITableViewAutomaticDimension;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    if (section > 0){
-        return 45;
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (section == 0) {
+        if (self.type == 2) {
+            return 64;
+        }
     }
-    return 225 * ADAPTATIONRATIO;
+    return 60;
 }
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView* hv = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 45) andColor:[UIColor whiteColor] andView:nil];
-    if (section > 0){
-        UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, SCREEN_WIDTH, 10) andText:@"" andColor:nil andView:hv];
-        lab.backgroundColor = [UIColor groupTableViewBackgroundColor];
-        UILabel* blue = [EBUtility labfrome:CGRectMake(10, 20, 5, 15) andText:@"" andColor:nil andView:hv];
-        blue.backgroundColor = Nav_color;
-        UILabel* name = [EBUtility labfrome:CGRectMake(20, 20, 5, 15) andText:@"技能" andColor:[UIColor blackColor] andView:hv];
-        if (self.type == 1){
-            name.text = @"最近发布";
-        }
-        if (section == 2){
-            name.text = @"资料";
-        }
-        [name sizeToFit];
-    }else{
-        hv.frame = CGRectMake(0, 0, SCREEN_WIDTH, 225 * ADAPTATIONRATIO);
-        //轮播图
-        NSMutableArray *bgImgAry = [NSMutableArray array];
-        BOOL existBgimg = NO;
-        BOOL existVideo = NO;
-        if (self.dataInfo) {
-            if (self.dataInfo[@"bgimg"]) {
-                if ([self.dataInfo[@"bgimg"] count]>0) {
-                    existBgimg = YES;
-                }
-            }
-            if (self.dataInfo[@"video"]) {
-                if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
-                    if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
-                        if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] || self.dataInfo[@"video"][@"VideoMeta"][@"VideoId"]) {
-                            existVideo = YES;
-                        }
-                    }
-                }
-            }
-        }
-        if (existBgimg) {
-            for (NSString *str in self.dataInfo[@"bgimg"]) {
-                [bgImgAry addObject:str];
-            }
-        }
-        else {
-            bgImgAry = @[@"img_my111"].mutableCopy;
-        }
-        if (existVideo) {
-            [bgImgAry insertObject:self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] atIndex:0];
-        }
-        SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, CGRectGetHeight(hv.frame)) imageNamesGroup:bgImgAry];
-        cycleScrollView.infiniteLoop = YES;
-        cycleScrollView.delegate = self;
-        cycleScrollView.hideBkgView = NO;
-        cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
-        [hv addSubview:cycleScrollView];
-        
-        UIImageView* photo = [EBUtility imgfrome:CGRectMake(15, CGRectGetMaxY(hv.frame)-80, 70, 70) andImg:[UIImage imageNamed:@"ico_head"] andView:hv];
-        photo.backgroundColor = [UIColor whiteColor];
-        photo.layer.masksToBounds = YES;
-        photo.layer.cornerRadius = 5;
-        photo.layer.borderColor = [UIColor whiteColor].CGColor;
-        photo.layer.borderWidth = 3;
-        
-        UILabel* signLab = [EBUtility labfrome:CGRectMake(0, 0, SCREEN_WIDTH, 20) andText:@"" andColor:[UIColor whiteColor] andView:hv];
-        signLab.textAlignment = NSTextAlignmentLeft;
-        signLab.font = [UIFont systemFontOfSize:13];
-        signLab.numberOfLines = 0;
-        [signLab mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.bottom.equalTo(hv.mas_bottom).offset(-10);
-            make.left.equalTo(hv.mas_left).offset(100);
-            make.width.mas_equalTo(SCREEN_WIDTH-100-50);
-        }];
-        
-        UILabel *age = [EBUtility labfrome:CGRectZero andText:@" ♂24岁 " andColor:[UIColor whiteColor]  andView:hv];
-        age.font = [UIFont systemFontOfSize:10];
-        age.backgroundColor = Nav_color;
-        age.layer.cornerRadius = 4;
-        age.layer.masksToBounds = YES;
-        [age sizeToFit];
-        [age mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.bottom.equalTo(signLab.mas_top).offset(-10);
-            make.left.equalTo(hv.mas_left).offset(100);
-            make.size.mas_equalTo(CGSizeMake(45, 15));
-        }];
-        UIButton* vipImg = [EBUtility btnfrome:CGRectZero andText:@"" andColor:nil andimg:[UIImage imageNamed:@"ico_vip1"] andView:hv];
-        vipImg.tag = 1;
-        [vipImg setImage:[UIImage imageNamed:@"ico_vip"] forState:UIControlStateSelected];
-        [vipImg mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.bottom.equalTo(age.mas_bottom);
-            make.left.equalTo(age.mas_right).offset(10);
-            make.size.mas_equalTo(CGSizeMake(17, 15));
-        }];
-        UILabel* time = [EBUtility labfrome:CGRectZero andText:@"" andColor:[UIColor whiteColor] andView:hv];
-        time.font = [UIFont systemFontOfSize:13];
-        time.textAlignment = 0;
-        [time sizeToFit];
-        [time mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.bottom.equalTo(age.mas_bottom);
-            make.left.equalTo(vipImg.mas_right).offset(10);
-            make.size.mas_equalTo(CGSizeMake(50, 15));
-        }];
-        
-        UILabel *name = [EBUtility labfrome:CGRectZero andText:@"昵称" andColor:[UIColor whiteColor] andView:hv];
-        name.textAlignment = NSTextAlignmentLeft;
-        name.font = [UIFont systemFontOfSize:15];
-        [name mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.bottom.equalTo(age.mas_top).offset(-10);
-            make.left.equalTo(hv.mas_left).offset(100);
-            make.size.mas_equalTo(CGSizeMake(200, 15));
-        }];
-        
-        if (self.dataInfo.count > 0){
-            if (self.type == 0){
-                if ([NSString stringWithFormat:@"%@",self.dataInfo[@"sex"]].integerValue == 1){
-                    age.text = [NSString stringWithFormat:@" ♂%@岁\t",self.dataInfo[@"birthday"]];
-                    age.backgroundColor = Nav_color;
-                }else{
-                    age.text = [NSString stringWithFormat:@" ♀%@岁\t",self.dataInfo[@"birthday"]];
-                    age.backgroundColor = Pink_color;
-                }
-            }else if (self.type == 1){
-                if ([NSString stringWithFormat:@"%@",self.dataInfo[@"sex"]].integerValue == 1){
-                    age.text = [NSString stringWithFormat:@" ♂%@岁\t",self.dataInfo[@"age"]];
-                    age.backgroundColor = Nav_color;
-                }else{
-                    age.text = [NSString stringWithFormat:@" ♀%@岁\t",self.dataInfo[@"age"]];
-                    age.backgroundColor = Pink_color;
-                }
-            }
-            
-            [photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_head"]];
-            
-            UILabel* title = [self.nav viewWithTag:1000];
-            title.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
-            [title sizeToFit];
-            
-            name.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
-            time.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"last_login"]];
-            if ([EBUtility isBlankString:self.dataInfo[@"mysign"]]){
-                signLab.text = @"";
-            }else{
-                signLab.text = [NSString stringWithFormat:@"%@",(self.dataInfo[@"mysign"]) ? (self.dataInfo[@"mysign"]): @""];
-            }
-            
-            if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_vip"]].integerValue == 1){
-                vipImg.selected = YES;
-            }else{
-                vipImg.selected = NO;
-            }
-            if ([NSString stringWithFormat:@"%@",self.dataInfo[@"isable"]].integerValue == 2){
-                UIButton* phone = [self.view viewWithTag:100];
-                phone.hidden = YES;
-                UIButton* com = [self.view viewWithTag:101];
-                com.hidden = YES;
-                self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT + 20);
-            }else {
-                if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_strangercall"]].integerValue != 1){
-                    UIButton* phone = [self.view viewWithTag:100];
-                    phone.hidden = YES;
-                    UIButton* com = [self.view viewWithTag:101];
-                    com.width = SCREEN_WIDTH;
-                    com.x = 0;
-                }
-            }
-            
-        }
+    UIView *headerView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 65) andColor:[UIColor whiteColor] andView:nil];
+    UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, SCREEN_WIDTH, 15) andText:@"" andColor:nil andView:headerView];
+    lab.backgroundColor = [UIColor colorFromHexString:@"f0f4f8"];
+    UILabel* name = [EBUtility labfrome:CGRectMake(15, 30, 5, 15) andText:@"技能" andColor:[UIColor colorFromHexString:@"333333"] andView:headerView];
+    name.font = [UIFont systemFontOfSize:14.0];
+    if (self.type == 1) {
+        name.text = @"最近发布";
     }
-    return hv;
+    else if (self.type == 2) {
+        name.text = @"主播资料";
+    }
+    if (section == 1) {
+        name.text = @"资料";
+    }
+    else if (section == 2) {
+        name.text = @"主播魅力";
+    }
+    [name sizeToFit];
+    return headerView;
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == 1){
+    if (indexPath.section == 0) {
         if (self.type == 1){
-            PartTimeTableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-            if (!cell) {
-                cell = [[PartTimeTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            }
+            PartTimeTableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:PARTTIMETABLEVIEW_ID];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             [cell setViewWithDic:self.dataInfo[@"list"][indexPath.row]];
             return cell;
-        }else{
-            EmployeeDetailTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"EmployeeDetailTableViewCell"];
-            if (!cell) {
-                cell = [[EmployeeDetailTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"EmployeeDetailTableViewCell"];
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            }
+        }
+        else if (self.type == 0) {
+            EmployeeDetailTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:EMPLOYEEDETAIL_ID];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             [cell setViewWithDic:self.dataInfo[@"skilllist"][indexPath.row]];
             return cell;
         }
-        
-    }
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"cell%ld %ld",indexPath.section,indexPath.row]];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:[NSString stringWithFormat:@"cell%ld %ld",indexPath.section,indexPath.row]];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    }
-    if (indexPath.section == 2){
-        if (indexPath.row == 0){
-            cell.textLabel.text = @"星座";
-            for (UILabel* i in cell.viewForLastBaselineLayout.subviews){
-                if (i.tag == 1){
-                    [i removeFromSuperview];
-                }
-            }
-            if (self.dataInfo.count > 0){
-                
-                if (self.type == 1){
-                    UILabel* constellation = [EBUtility labfrome:CGRectMake(60, 13, 300, 20) andText:[NSString stringWithFormat:@"%@",self.dataInfo[@"constellation"]] andColor:[UIColor blackColor] andView:cell.viewForLastBaselineLayout];
-                    constellation.tag = 1;
-                    constellation.textAlignment = 0;
-                }else{
-                    UILabel* starsign = [EBUtility labfrome:CGRectMake(60, 13, 300, 20) andText:[NSString stringWithFormat:@"%@",self.dataInfo[@"starsign"]] andColor:[UIColor blackColor] andView:cell.viewForLastBaselineLayout];
-                    starsign.tag = 1;
-                    starsign.textAlignment = 0;
-                }
-                
-            }
-        }else if (indexPath.row == 1){
-            for (UILabel* i in cell.viewForLastBaselineLayout.subviews){
-                if (i.tag == 1){
-                    [i removeFromSuperview];
-                }
-            }
-            cell.textLabel.text = @"兴趣爱好";
-            if (self.dataInfo.count > 0){
-                UILabel* interest = [EBUtility labfrome:CGRectMake(90, 13, 300, 20) andText:[NSString stringWithFormat:@"%@",self.dataInfo[@"interest"]] andColor:[UIColor blackColor] andView:cell.viewForLastBaselineLayout];
-                interest.tag = 1;
-                interest.textAlignment = 0;
-            }
+        else {
+            LiveInformationTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:LIVEINFORMATION_TABLEVIEW_ID];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            [cell setContentWithDic:self.dataInfo IsTalk:isCanTalk];
+            [cell.lookButton addTarget:self action:@selector(lookWechatSelector) forControlEvents:UIControlEventTouchUpInside];
+            return cell;
         }
-        cell.textLabel.textColor = [UIColor lightGrayColor];
-        cell.detailTextLabel.textColor = [UIColor blackColor];
     }
-    return cell;
+    else if (indexPath.section == 1) {
+        if (self.type == 2) {
+            LiveCharmTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:LIVECHARM_TABLEVIEW_ID];
+            cell.liveCharmArray = self.charmPhotoArray;
+            WEAKSELF
+            cell.didSelectItemBlock = ^(NSInteger index) {
+                LiveCharmPhotoModel *model = weakSelf.charmPhotoArray[index];
+                //如果这张照片时收费照片，需要再去请求一下自己能否看，因为照片是针对所有人的，请求是只针对自己
+                if (model.is_charge.intValue == 1) {
+                    [self queryJurisdictionRequestType:@"1" TargetId:model.id Money:model.fee Index:index];
+                }
+                else {
+                    [weakSelf configZLPhotoPickerBrowserWithArray:weakSelf.charmPhotoArray Index:index];
+                }
+            };
+            return cell;
+        }
+        else {
+            LiveBaseInformationTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:BASEINFORMATION_TABLEVIEW_ID];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            [cell setContentWithDic:self.dataInfo Type:self.type];
+            return cell;
+        }
+    }
+    else if (indexPath.section == 2) {
+        LiveBaseInformationTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:BASEINFORMATION_TABLEVIEW_ID];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        [cell setContentWithDic:self.dataInfo Type:2];
+        return cell;
+    }
+    return UITableViewCell.new;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (self.type == 0){
         if (indexPath.section == 1){//跳转技能详情
             UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -504,9 +857,115 @@
     }
 }
 
+//查看微信号/聊天
+- (void)lookWechatSelector {
+    [self showPayViewWithPrice:price Type:@"3" TargetId:self.dataInfo[@"id"]];
+}
+
+//付款。微信/聊天
+- (void)showPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
+    LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284) Price:money];
+    WEAKSELF
+    typeof(freeView) __weak weakFreeView = freeView;
+    freeView.confirmSelecrBlock = ^(NSInteger index) {
+        [weakFreeView dismiss];
+        if (index == 0) {
+            UserModel *user = UserModel.sharedUser;
+            if ([user.is_paypwd isEqualToString:@"0"]){
+                SetPayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"spp"];
+                [weakSelf.navigationController pushViewController:vc animated:1];
+                return;
+            }
+            //弹起支付密码alert
+            CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
+            alert.resultDate = ^(NSString *date) {
+                [weakSelf payRequestWithPwd:date Price:money Type:type TargetId:targetId];
+            };
+            alert.resultIndex = ^(NSInteger index) {
+                RetrievePayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"rpp"];
+                [weakSelf.navigationController pushViewController:vc animated:1];
+            };
+            [alert showAlertView];
+        }
+    };
+    [freeView show];
+}
+
+//付款。魅力图片
+- (void)showCharmPhotoPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
+    LiveCharmPhotoPayView *payView = [[LiveCharmPhotoPayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-171)/2, (SCREEN_HEIGHT-177)/2, 171, 177) Price:money];
+    WEAKSELF
+    typeof(payView) __weak weakPayView = payView;
+    payView.confirmPayBlock = ^(void) {
+        [weakPayView dismiss];
+        UserModel *user = UserModel.sharedUser;
+        if ([user.is_paypwd isEqualToString:@"0"]){
+            SetPayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"spp"];
+            [weakSelf.navigationController pushViewController:vc animated:1];
+            return;
+        }
+        //弹起支付密码alert
+        CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
+        alert.resultDate = ^(NSString *date) {
+            [weakSelf payRequestWithPwd:date Price:money Type:type TargetId:targetId];
+        };
+        alert.resultIndex = ^(NSInteger index) {
+            RetrievePayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"rpp"];
+            [weakSelf.navigationController pushViewController:vc animated:1];
+        };
+        [alert showAlertView];
+    };
+    [payView show];
+}
+
+//提交支付
+- (void)payRequestWithPwd:(NSString *)pwd Price:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
+    NSDictionary *dic = @{@"token":DataStore.sharedDataStore.token,
+                           @"type":type,
+                           @"pwd":pwd,
+                           @"paytype":@"3",
+                           @"target_id":targetId,
+                           @"account":money
+                           };
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Payment/buy",HttpURLString] Paremeters:dic successOperation:^(id object) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {
+                [SVProgressHUD showSuccessWithStatus:@"支付成功"];
+                if (type.intValue == 3) {
+                    isCanTalk = YES;
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+                }
+                else if (type.intValue == 2) {
+                    for (int i=0; i<self.charmPhotoArray.count; i++) {
+                        LiveCharmPhotoModel *model = self.charmPhotoArray[i];
+                        if ([model.id isEqualToString:targetId]) {
+                            model.is_charge = @"0";
+                            [self configZLPhotoPickerBrowserWithArray:self.charmPhotoArray Index:i];
+                            break;
+                        }
+                    }
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
+                }
+            }else{
+                [SVProgressHUD showErrorWithStatus:msg];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    }];
+}
 
 #pragma mark - otherDelegate/DataSource
-
+//点击顶部轮播图
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index {
     BOOL existVideo = NO;
     if (self.dataInfo) {
@@ -522,47 +981,48 @@
     }
     if (existVideo) {
         if (index == 0) {
-//            播放视频
-            [self startVideoPlay];
+            [self startVideoPlay];// 播放视频
         }
         else {
-            [self clickPhotoWithIndex:index-1];
+            [self configZLPhotoPickerBrowserWithArray:self.dataInfo[@"bgimg"] Index:index-1];
         }
     }
     else {
-        [self clickPhotoWithIndex:index];
+        [self configZLPhotoPickerBrowserWithArray:self.dataInfo[@"bgimg"] Index:index];
     }
 }
 
-- (void)clickPhotoWithIndex:(NSInteger)index {
-    ZLPhotoPickerBrowserViewController *pickerBrowser = [[ZLPhotoPickerBrowserViewController alloc] init];
-    // 淡入淡出效果
-    pickerBrowser.status = UIViewAnimationAnimationStatusFade;
-    // 数据源/delegate
-    pickerBrowser.delegate = self;
-    // 是否可以删除照片
-    pickerBrowser.editing = NO;
-    // 当前选中的值
-    // 展示控制器
+//配置图片浏览器
+- (void)configZLPhotoPickerBrowserWithArray:(NSArray *)targetArray Index:(NSInteger )index {
     NSArray *bgImgAry = [NSArray array];
-    if (self.dataInfo) {
-        if ([self.dataInfo[@"bgimg"] count]>0) {
-            bgImgAry = self.dataInfo[@"bgimg"];
-            NSMutableArray *zlPhotoArray = [NSMutableArray arrayWithCapacity:0];
-            for (NSString *url in bgImgAry) {
-                ZLPhotoPickerBrowserPhoto *photo = [ZLPhotoPickerBrowserPhoto photoAnyImageObjWith:url];
-                [zlPhotoArray addObject:photo];
+    if (targetArray.count>0) {
+        ZLPhotoPickerBrowserViewController *pickerBrowser = [[ZLPhotoPickerBrowserViewController alloc] init];
+        // 淡入淡出效果
+        pickerBrowser.status = UIViewAnimationAnimationStatusFade;
+        // 数据源/delegate
+        pickerBrowser.delegate = self;
+        // 是否可以删除照片
+        pickerBrowser.editing = NO;
+        // 当前选中的值
+        // 展示控制器
+        bgImgAry = targetArray;
+        NSMutableArray *zlPhotoArray = [NSMutableArray arrayWithCapacity:0];
+        for (id object in bgImgAry) {
+            NSString *url = @"";
+            if ([object isKindOfClass:LiveCharmPhotoModel.class]) {
+                LiveCharmPhotoModel *model = (LiveCharmPhotoModel *)object;
+                url = model.url;
+                pickerBrowser.charmPhotoArray = targetArray;
             }
-            pickerBrowser.photos = zlPhotoArray;
-            pickerBrowser.currentIndex = index;
-            [pickerBrowser showPushPickerVc:self];
+            else {
+                url = (NSString *)object;
+            }
+            ZLPhotoPickerBrowserPhoto *photo = [ZLPhotoPickerBrowserPhoto photoAnyImageObjWith:url];
+            [zlPhotoArray addObject:photo];
         }
-        else {
-            bgImgAry = @[@"img_my111"];
-        }
-    }
-    else {
-        bgImgAry = @[@"img_my111"];
+        pickerBrowser.photos = zlPhotoArray;
+        pickerBrowser.currentIndex = index;
+        [pickerBrowser showPushPickerVc:self];
     }
 }
 

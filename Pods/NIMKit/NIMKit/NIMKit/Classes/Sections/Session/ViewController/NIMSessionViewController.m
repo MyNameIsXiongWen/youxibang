@@ -789,7 +789,7 @@
     }
     titleView.titleLabel.text = self.sessionTitle;
     titleView.subtitleLabel.text = self.sessionSubTitle;
-    titleView.titleLabel.textColor = [UIColor whiteColor];
+    titleView.titleLabel.textColor = [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
     [titleView sizeToFit];
 }
 
