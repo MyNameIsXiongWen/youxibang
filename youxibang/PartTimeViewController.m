@@ -90,9 +90,6 @@
         [dict setObject:@"3" forKey:@"typeid"];
     }else {
         [dict setObject:@"2" forKey:@"typeid"];
-        if (self.groupId) {
-            [dict setObject:self.groupId forKey:@"group_id"];
-        }
     }
     
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/bannerlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -150,6 +147,9 @@
         [dict setObject:[NSString stringWithFormat:@"%d",self.sex] forKey:@"sex"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"p"];
         [dict setObject:@"20" forKey:@"psize"];
+        if (self.groupId) {
+            [dict setObject:self.groupId forKey:@"group_id"];
+        }
         if ([DataStore sharedDataStore].latitude) {
             [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
         }
