@@ -11,6 +11,10 @@
 #import "UIImage+ZLPhotoLib.h"
 #import "ZLPhotoRect.h"
 
+#import "SetPayPasswordViewController.h"
+#import "RetrievePayPasswordViewController.h"
+#import "LiveCharmPhotoPayView.h"
+
 static NSString *_cellIdentifier = @"collectionViewCell";
 
 @interface ZLPhotoPickerBrowserViewController () <UIScrollViewDelegate,ZLPhotoPickerPhotoScrollViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
@@ -535,11 +539,12 @@ static NSString *_cellIdentifier = @"collectionViewCell";
             LiveCharmPhotoModel *model = self.charmPhotoArray[indexPath.item];
             if (model.is_charge.intValue == 1) {
                 scrollView.visualEffectView.hidden = NO;
-                scrollView.placeholderLabel.hidden = NO;
+//                scrollView.placeholderLabel.hidden = NO;
+                [self queryJurisdictionRequestType:@"1" Index:indexPath.item SuperView:scrollView];
             }
             else {
                 scrollView.visualEffectView.hidden = YES;
-                scrollView.placeholderLabel.hidden = YES;
+//                scrollView.placeholderLabel.hidden = YES;
             }
         }
         scrollView.sheet = self.sheet;
@@ -547,7 +552,6 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         scrollView.frame = tempF;
         scrollView.tag = 101;
         if (self.isPush) {
-//            scrollView.zl_y -= 32;
             scrollView.zl_y -= 52;
         }
         scrollView.photoScrollViewDelegate = self;
@@ -557,10 +561,12 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         if ([self.delegate respondsToSelector:@selector(photoBrowser:photoDidSelectView:atIndex:)]) {
             [[scrollBoxView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             scrollView.callback = ^(id obj){
-                if (!obj) {
-                    [self.navigationController popViewControllerAnimated:NO];
-                } else
+                if (weakSelf.delegate) {
                     [weakSelf.delegate photoBrowser:weakSelf photoDidSelectView:weakScrollBoxView atIndex:indexPath.row];
+                }
+                else {
+                    [self.navigationController popViewControllerAnimated:NO];
+                }
             };
         }
         
@@ -580,6 +586,124 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     }
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
 }
+
+//查询权限  是否能查看微信/聊天/查看魅力图片
+- (void)queryJurisdictionRequestType:(NSString *)type Index:(NSInteger)index SuperView:(ZLPhotoPickerBrowserPhotoScrollView *)superView {
+    LiveCharmPhotoModel *model = self.charmPhotoArray[index];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    if (DataStore.sharedDataStore.token) {
+        [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    }
+    [dict setObject:type forKey:@"type"];
+    [dict setObject:model.id forKey:@"target_id"];
+    NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:requestUrl Paremeters:dict successOperation:^(id object) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {//有权限查看指定魅力照片
+                if (type.integerValue == 1) {
+                    model.is_charge = @"0";
+                    if (self.paySuccessedBlock) {
+                        self.paySuccessedBlock();
+                    }
+                    [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]];
+                }
+            }
+            else if (code == 0) {//没权限 查看指定魅力照片
+                if (type.integerValue == 1) {//图片
+                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:model.id SuperView:superView Index:index];
+                }
+            }
+        }
+    } failoperation:^(NSError *error) {
+    }];
+}
+
+#pragma mark - 付款/魅力图片
+- (void)showCharmPhotoPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId SuperView:(ZLPhotoPickerBrowserPhotoScrollView *)superView Index:(NSInteger)index {
+    LiveCharmPhotoPayView *payView = [[LiveCharmPhotoPayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-171)/2, (SCREEN_HEIGHT-177)/2, 171, 177) Price:money Index:index];
+    WEAKSELF
+    typeof(payView) __weak weakPayView = payView;
+    payView.confirmPayBlock = ^(NSInteger indexTag) {
+        [weakPayView dismiss];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选取支付方式" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDestructive handler:nil];
+        UIAlertAction *pay = [UIAlertAction actionWithTitle:@"余额支付" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            UserModel *user = UserModel.sharedUser;
+            if ([user.is_paypwd isEqualToString:@"0"]){
+                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                SetPayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"spp"];
+                [weakSelf.navigationController pushViewController:vc animated:1];
+                return;
+            }
+            //弹起支付密码alert
+            CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
+            alert.resultDate = ^(NSString *date) {
+                [weakSelf payRequestWithPwd:date Price:money Type:type TargetId:targetId Index:index];
+            };
+            alert.resultIndex = ^(NSInteger index) {
+                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                RetrievePayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rpp"];
+                [weakSelf.navigationController pushViewController:vc animated:1];
+            };
+            [alert showAlertView];
+        }];
+        [alert addAction:pay];
+        [alert addAction:cancel];
+        [self presentViewController:alert animated:YES completion:nil];
+    };
+    payView.dismissBlock = ^{
+        [self.navigationController popViewControllerAnimated:NO];
+    };
+    [payView showInSuperView:superView];
+}
+
+//提交支付
+- (void)payRequestWithPwd:(NSString *)pwd Price:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId Index:(NSInteger)index {
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
+    NSDictionary *dic = @{@"token":DataStore.sharedDataStore.token,
+                          @"type":type,
+                          @"pwd":pwd,
+                          @"paytype":@"3",
+                          @"target_id":targetId,
+                          @"account":money
+                          };
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Payment/buy",HttpURLString] Paremeters:dic successOperation:^(id object) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {
+                [SVProgressHUD showSuccessWithStatus:@"支付成功"];
+                for (int i=0; i<self.charmPhotoArray.count; i++) {
+                    LiveCharmPhotoModel *model = self.charmPhotoArray[i];
+                    if ([model.id isEqualToString:targetId]) {
+                        model.is_charge = @"0";
+                        [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]];
+                        if (self.paySuccessedBlock) {
+                            self.paySuccessedBlock();
+                        }
+                        break;
+                    }
+                }
+            }else{
+                [SVProgressHUD showErrorWithStatus:msg];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    }];
+}
+
 - (NSUInteger)getRealPhotosCount{
     return self.photos.count;
 }

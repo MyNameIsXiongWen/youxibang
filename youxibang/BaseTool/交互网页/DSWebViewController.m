@@ -137,7 +137,7 @@
         
         UITabBarController *tabViewController = (UITabBarController *) appDelegate.window.rootViewController;
         
-        [tabViewController setSelectedIndex:2];
+        [tabViewController setSelectedIndex:3];
         return NO;
     }
     if ([urlString hasPrefix:@"switch://order"]) {

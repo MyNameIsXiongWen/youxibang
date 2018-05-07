@@ -21,11 +21,13 @@
 }
 */
 
-- (instancetype)initWithFrame:(CGRect)frame WithShareUrl:(NSString *)url {
+- (instancetype)initWithFrame:(CGRect)frame WithShareUrl:(NSString *)url ShareTitle:(NSString *)title WithShareDescription:(NSString *)description {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor colorFromHexString:@"f6f6f6"];
         shareurl = url;
+        sharetitle = title;
+        shareDescription = description;
         [self configUI];
     }
     return self;
@@ -95,16 +97,14 @@
     authorize.scope = @"all";
     authorize.userInfo = nil;
     
-//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//    [formatter setDateFormat:@"YYYYMMDDHHMMSS"];
+    WBMessageObject *message = [WBMessageObject message];
+    message.text = [NSString stringWithFormat:@"%@ %@",sharetitle,shareurl];
+    
 //    WBWebpageObject *object = [WBWebpageObject object];
 //    object.title = SHARE_TITLE;
-//    object.objectID = [formatter stringFromDate:NSDate.date];
+//    object.objectID = @"object_id";
 //    object.description = SHARE_DESCRIPTION;
 //    object.webpageUrl = shareurl;
-    
-    WBMessageObject *message = [WBMessageObject message];
-    message.text = [NSString stringWithFormat:@"%@ %@",SHARE_TITLE,shareurl];
 //    message.mediaObject = object;//链接无效，所以还是拼接在text里面
     
     WBSendMessageToWeiboRequest *req = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authorize access_token:nil];
@@ -115,15 +115,15 @@
 
 - (void)QQShare:(NSString *)type {
     NSURL *url = [NSURL URLWithString:shareurl];
-    QQApiURLObject *object = [QQApiURLObject objectWithURL:url title:SHARE_TITLE description:SHARE_DESCRIPTION previewImageURL:[NSURL URLWithString:@"share_logo"] targetContentType:QQApiURLTargetTypeNews];
+    QQApiURLObject *object = [QQApiURLObject objectWithURL:url title:sharetitle description:shareDescription previewImageURL:[NSURL URLWithString:@"share_logo"] targetContentType:QQApiURLTargetTypeNews];
     SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:object];
     [QQApiInterface sendReq:req];
 }
 
 - (void)WXShare:(NSString *)type {
     WXMediaMessage *message = [WXMediaMessage message];
-    message.title = SHARE_TITLE;
-    message.description = SHARE_DESCRIPTION;
+    message.title = sharetitle;
+    message.description = shareDescription;
     [message setThumbImage:[UIImage imageNamed:@"share_logo"]];
     WXWebpageObject *webObject = [WXWebpageObject object];
     webObject.webpageUrl = shareurl;

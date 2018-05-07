@@ -11,6 +11,7 @@
 #import "RealNameViewController.h"
 #import "SetAliAccountViewController.h"
 #import "SetPayPasswordViewController.h"
+#import "AlipayAccountViewController.h"
 
 @interface TopUpAndWithdrawViewController ()<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *balanceLab;
@@ -50,8 +51,21 @@
         if ([NSString stringWithFormat:@"%@",dic[@"user_money"]].intValue <= 0){
             [_commitBtn setTitle:@"预支工资" forState:0];
         }
+        UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [rightBtn setTitle:@"账户管理" forState:UIControlStateNormal];
+        rightBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
+        [rightBtn setTitleColor:[UIColor colorFromHexString:@"437fed"] forState:UIControlStateNormal];
+        rightBtn.bounds = CGRectMake(0, 0, 60, 30);
+        [rightBtn addTarget:self action:@selector(withdrawAccountManage) forControlEvents:UIControlEventTouchUpInside];
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(completePay:) name:@"completePay" object:nil];
+}
+
+- (void)withdrawAccountManage {
+    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    AlipayAccountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"aa"];
+    [self.navigationController pushViewController:vc animated:1];
 }
 
 - (void)didReceiveMemoryWarning {

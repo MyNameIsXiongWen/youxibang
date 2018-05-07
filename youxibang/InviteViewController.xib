@@ -66,6 +66,7 @@
                     <rect key="frame" x="90" y="280" width="195" height="69"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="69" id="DnL-P6-g3O"/>
+                        <constraint firstAttribute="width" constant="195" id="hwU-b3-OwZ"/>
                     </constraints>
                 </imageView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SFR-45-gAR">
@@ -189,7 +190,6 @@
                 <constraint firstItem="Tzi-JR-1Gr" firstAttribute="bottom" secondItem="iTu-Ni-rIj" secondAttribute="bottom" constant="33" id="Cs5-Ic-7SQ"/>
                 <constraint firstItem="Tzi-JR-1Gr" firstAttribute="top" secondItem="spJ-B7-7mP" secondAttribute="top" id="HEv-eu-oiv"/>
                 <constraint firstItem="TnR-2g-m2j" firstAttribute="leading" secondItem="14U-yr-fCe" secondAttribute="trailing" constant="28" id="JDI-G6-vnP"/>
-                <constraint firstItem="Tzi-JR-1Gr" firstAttribute="trailing" secondItem="572-6l-nhZ" secondAttribute="trailing" constant="90" id="Ot3-e8-Y32"/>
                 <constraint firstItem="xyC-CQ-YLR" firstAttribute="leading" secondItem="TnR-2g-m2j" secondAttribute="trailing" constant="27" id="Pjx-li-R65"/>
                 <constraint firstItem="Tzi-JR-1Gr" firstAttribute="trailing" secondItem="iTu-Ni-rIj" secondAttribute="trailing" constant="27" id="SUF-hw-AZ5"/>
                 <constraint firstItem="Tzi-JR-1Gr" firstAttribute="trailing" secondItem="spJ-B7-7mP" secondAttribute="trailing" id="SiR-Xf-s3l"/>
@@ -197,10 +197,10 @@
                 <constraint firstItem="14U-yr-fCe" firstAttribute="centerY" secondItem="TnR-2g-m2j" secondAttribute="centerY" id="Y2R-dp-oPi"/>
                 <constraint firstItem="572-6l-nhZ" firstAttribute="top" secondItem="Tzi-JR-1Gr" secondAttribute="top" constant="260" id="abT-V9-Ih7"/>
                 <constraint firstItem="TnR-2g-m2j" firstAttribute="top" secondItem="Xf0-iE-v0L" secondAttribute="bottom" constant="23" id="bid-aQ-DbI"/>
+                <constraint firstItem="572-6l-nhZ" firstAttribute="centerX" secondItem="Tzi-JR-1Gr" secondAttribute="centerX" id="gtV-4F-8H1"/>
                 <constraint firstItem="SFR-45-gAR" firstAttribute="centerX" secondItem="Tzi-JR-1Gr" secondAttribute="centerX" id="k38-jk-CZW"/>
                 <constraint firstItem="spJ-B7-7mP" firstAttribute="leading" secondItem="Tzi-JR-1Gr" secondAttribute="leading" id="oKE-5l-yDb"/>
                 <constraint firstItem="n3m-mR-5Oz" firstAttribute="centerX" secondItem="Tzi-JR-1Gr" secondAttribute="centerX" id="s4C-7t-Rem"/>
-                <constraint firstItem="572-6l-nhZ" firstAttribute="leading" secondItem="Tzi-JR-1Gr" secondAttribute="leading" constant="90" id="smE-eJ-GRL"/>
                 <constraint firstItem="n3m-mR-5Oz" firstAttribute="top" secondItem="572-6l-nhZ" secondAttribute="bottom" constant="-44" id="ub4-aJ-Kr0"/>
                 <constraint firstItem="Xf0-iE-v0L" firstAttribute="top" secondItem="Tzi-JR-1Gr" secondAttribute="top" constant="81" id="y00-EW-hmc"/>
             </constraints>

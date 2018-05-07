@@ -249,7 +249,7 @@
 
     }else {//杀死状态下，直接跳转到跳转页面。
         MainTabBarController* tabbar = self.window.rootViewController;
-        [tabbar setIndex:1];
+        [tabbar setIndex:2];
     }
 }
 

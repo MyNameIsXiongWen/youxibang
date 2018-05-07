@@ -105,7 +105,7 @@
 }
 //通知触发方法
 - (void)pushMineView:(NSNotification *)notification{
-    [self.tabBarController setSelectedIndex:2];
+    [self.tabBarController setSelectedIndex:3];
 }
 - (void)refreshMessage:(NSNotification *)notification{
     [self downloadData];

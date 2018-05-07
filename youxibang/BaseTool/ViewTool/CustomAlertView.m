@@ -158,7 +158,7 @@
             [b2 addTarget:self action:@selector(touchBtn:) forControlEvents:UIControlEventTouchUpInside];
             b2.centerX = self.alertView.width/2 + 45;
         }else if (type == 6){
-            self.alertView.frame = CGRectMake(0, 225 , SCREEN_WIDTH, SCREEN_HEIGHT-225);
+            self.alertView.frame = CGRectMake(0, SCREEN_HEIGHT-440 , SCREEN_WIDTH, 440);
             self.alertView.backgroundColor = [UIColor whiteColor];
             
             UIButton *cancleBtn = [EBUtility btnfrome:CGRectMake(13, 17, 20, 20) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"ico_close"] andView:self.alertView];
@@ -173,12 +173,15 @@
             UILabel* grayLine = [EBUtility labfrome:CGRectMake(0, 50, SCREEN_WIDTH, 1) andText:@"" andColor:[UIColor blackColor] andView:self.alertView];
             grayLine.backgroundColor = [UIColor lightGrayColor];
             
-            UIView* tfView = [EBUtility viewfrome:CGRectMake(15, 80, SCREEN_WIDTH - 30, 45) andColor:[UIColor whiteColor] andView:self.alertView];
+            UIView* tfView = [EBUtility viewfrome:CGRectMake(15*ADAPTATIONRATIO, 80, (SCREEN_WIDTH - 30)*ADAPTATIONRATIO, 45) andColor:[UIColor whiteColor] andView:self.alertView];
             tfView.layer.cornerRadius = 5;
             tfView.layer.borderColor = [UIColor lightGrayColor].CGColor;
             tfView.layer.borderWidth = 1;
             tfView.layer.masksToBounds = 1;
-            UITextField* tf = [EBUtility textFieldfrome:CGRectMake(-10, -10, 1, 1) andText:@"" andColor:[UIColor blackColor] andView:self.alertView];
+            UITextField* tf = [EBUtility textFieldfrome:CGRectMake(25*ADAPTATIONRATIO, 0, (SCREEN_WIDTH - 30)*ADAPTATIONRATIO, 45) andText:@"" andColor:[UIColor clearColor] andView:tfView];
+            tf.textColor = UIColor.clearColor;
+            tf.font = [UIFont systemFontOfSize:130*ADAPTATIONRATIO];
+            tf.clearButtonMode = UITextFieldViewModeNever;
             tf.keyboardType = UIKeyboardTypePhonePad;
             [tf becomeFirstResponder];
             tf.delegate = self;
@@ -194,6 +197,7 @@
                 }
             }
             UIButton* forget = [EBUtility btnfrome:CGRectMake(self.alertView.width - 100, 140, 90, 15) andText:@"忘记密码？" andColor:Nav_color andimg:nil andView:self.alertView];
+            forget.tag = 111;
             [forget addTarget:self action:@selector(touchBtn:) forControlEvents:UIControlEventTouchUpInside];
             forget.titleLabel.font = [UIFont systemFontOfSize:15];
         }else if (type == 7){
@@ -962,12 +966,10 @@
         self.requirement = [NSMutableArray arrayWithObjects:@"0",@"0",@"0", nil];
     }
 }
-- (void)touchBtn:(UIButton*)sender{
-
+- (void)touchBtn:(UIButton*)sender {
     if (self.resultIndex) {
         self.resultIndex(sender.tag);
     }
-    
     [self removeFromSuperview];
 }
 
@@ -980,6 +982,7 @@
     }
     [self removeFromSuperview];
 }
+
 #pragma mark - scrollViewDelegate
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
     if (scrollView.tag > 0){
@@ -988,9 +991,7 @@
     return nil;
 }
 
-
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
-    
     if (scrollView.tag == 0){
         for (UIScrollView * i in self.scroll.subviews){
             [UIView animateWithDuration:0.2 animations:^{
@@ -1082,9 +1083,13 @@
             NSLog(@"%@",textField.text);
             self.resultDate(textField.text);
         }
-        
     }
 }
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [textField becomeFirstResponder];
+}
+
 //- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
 //    for (int i = 0; i < 6; i++){
 //        UILabel* bot = [self.alertView viewWithTag:1000 + i];

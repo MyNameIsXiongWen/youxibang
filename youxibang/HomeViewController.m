@@ -179,7 +179,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     arrowImgView.contentMode = UIViewContentModeCenter;
     arrowImgView.backgroundColor = UIColor.whiteColor;
     
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 50)];
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 30)];
     footerView.backgroundColor = UIColor.clearColor;
     UILabel *footerLabel = [EBUtility labfrome:footerView.bounds andText:@"然后，就没有然后了～" andColor:[UIColor colorFromHexString:@"444444"] andView:footerView];
     footerLabel.font = [UIFont systemFontOfSize:11.0];
@@ -574,7 +574,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 
 //跳转个人页面的通知方法
 - (void)pushMineView:(NSNotification *)notification{
-    [self.tabBarController setSelectedIndex:2];
+    [self.tabBarController setSelectedIndex:3];
 }
 - (void)refreshMessage:(NSNotification *)notification{
     for (UIView* i in [UIApplication sharedApplication].keyWindow.subviews){
@@ -582,7 +582,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
             [i removeFromSuperview];
         }
     }
-    [self.tabBarController setSelectedIndex:1];
+    [self.tabBarController setSelectedIndex:2];
 }
 
 #pragma mark - tableviewDelegate/DataSource

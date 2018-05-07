@@ -147,6 +147,10 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     [pickerVc showPickerVc:self];
 }
 
+- (void)photoBrowser:(ZLPhotoPickerBrowserViewController *)pickerBrowser photoDidSelectView:(UIView *)scrollBoxView atIndex:(NSInteger)index {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (UIImage *)scaleImage:(UIImage *)image toScale:(float)scaleSize {
     UIGraphicsBeginImageContext(CGSizeMake(image.size.width * scaleSize, image.size.height * scaleSize));
     [image drawInRect:CGRectMake(0, 0, image.size.width * scaleSize, image.size.height * scaleSize)];

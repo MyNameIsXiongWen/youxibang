@@ -14,7 +14,11 @@
 static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 @interface NewsDetailViewController () <UIWebViewDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource> {
 }
+@property (strong, nonatomic) IBOutlet UIView *headerView;
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (assign, nonatomic) int currentPage;
+@property (weak, nonatomic) IBOutlet UILabel *countLabel;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UITextField *reviewTextField;
@@ -40,6 +44,12 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     self.reviewTextField.layer.borderWidth = 0.5;
     self.reviewTextField.layer.cornerRadius = 16;
     self.reviewTextField.layer.masksToBounds = YES;
+    self.titleLabel.text = self.newsModel.title;
+    [self.titleLabel sizeToFit];
+    self.countLabel.text = [NSString stringWithFormat:@"阅读数 %@",self.newsModel.comment_count];
+    [self.countLabel sizeToFit];
+    self.timeLabel.text = self.newsModel.publish_time;
+    [self.timeLabel sizeToFit];
     
     UIView *leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 8, 40, 16)];
     leftView.backgroundColor = UIColor.clearColor;
@@ -52,8 +62,8 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     
     [self.webView sizeToFit];
     [self.webView scalesPageToFit];
-//    self.webView.scrollView.scrollEnabled = NO;
-    self.tableview.tableHeaderView = self.webView;
+    self.webView.scrollView.scrollEnabled = NO;
+    self.tableview.tableHeaderView = self.headerView;
     [self.tableview registerNib:[UINib nibWithNibName:@"NewsReviewTableViewCell" bundle:nil] forCellReuseIdentifier:REVIEW_TABLEVIEW_ID];
     [self getNewsDetailRequest];
     self.tableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
@@ -80,7 +90,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 
 #pragma mark - 分享
 - (void)shareBtn:(UIButton *)sender {
-    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:self.newsModel.content];
+    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:self.newsModel.content ShareTitle:@"资讯" WithShareDescription:@"你的好友邀你一起共赏行业资讯，公会招聘"];
     [self.shareView show];
 }
 
@@ -92,11 +102,24 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     [self getNewsDetailReviewListRequest];
     self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+    CGSize labelSize = [self.title boundingRectWithSize:CGSizeMake(SCREEN_WIDTH-30, 1000)
+                                                options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesFontLeading  |NSStringDrawingUsesLineFragmentOrigin//采用换行模式
+                                             attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:21]}//传人的字体字典
+                                                context:nil].size;
+    if (labelSize.height < 25) {
+        labelSize.height = 25;
+    }
     CGSize actualSize = [webView sizeThatFits:CGSizeZero];
     CGRect newFrame = webView.frame;
     newFrame.size.height = actualSize.height;
+    newFrame.origin.y = 70 + (labelSize.height-25);
     webView.frame = newFrame;
-    self.tableview.tableHeaderView = self.webView;
+    
+    CGRect newHeaderViewFrame = self.headerView.frame;
+    newHeaderViewFrame.size.height = CGRectGetMaxY(newFrame);
+    self.headerView.frame = newHeaderViewFrame;
+    
+    self.tableview.tableHeaderView = self.headerView;
 }
 
 -(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {

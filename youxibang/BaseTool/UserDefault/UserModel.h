@@ -34,6 +34,7 @@
 @property (copy, nonatomic) NSString *follow_count;
 @property (copy, nonatomic) NSString *laud_count;
 @property (copy, nonatomic) NSString *is_anchor;
+@property (copy, nonatomic) NSString *isbaby;
 @property (copy, nonatomic) NSString *vip_grade;
 @property (copy, nonatomic) NSArray *bgimg;
 @property (copy, nonatomic) NSArray *interest;

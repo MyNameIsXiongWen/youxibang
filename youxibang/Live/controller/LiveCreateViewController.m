@@ -48,11 +48,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 @property (strong, nonatomic) NSMutableArray *filterArray;
 
 //收费分开，因为一次只能上传一种收费的
-@property (strong, nonatomic) NSMutableArray *picArray;//所有的照片，方便显示
-@property (strong, nonatomic) NSMutableArray *oneArray;
-@property (strong, nonatomic) NSMutableArray *twoArray;
-@property (strong, nonatomic) NSMutableArray *threeArray;
-@property (strong, nonatomic) NSMutableArray *freeArray;
+@property (strong, nonatomic) NSMutableArray <LiveCharmPhotoModel *>*picArray;//所有的照片
 
 @end
 
@@ -92,10 +88,6 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     self.tableview.tableFooterView = UIView.new;
     
     self.picArray = [[NSMutableArray alloc] init];
-    self.freeArray = [[NSMutableArray alloc] init];
-    self.oneArray = [[NSMutableArray alloc] init];
-    self.twoArray = [[NSMutableArray alloc] init];
-    self.threeArray = [[NSMutableArray alloc] init];
     
     UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [rightBtn setTitle:@"保存" forState:UIControlStateNormal];
@@ -183,19 +175,8 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
                     LiveCharmPhotoModel *model = [LiveCharmPhotoModel mj_objectWithKeyValues:imgdic];
                     model.type = 2;
                     model.url = imgdic[@"url"];
-                    if ([imgdic[@"fee"] integerValue] == 1) {
-                        [self.oneArray addObject:model];
-                    }
-                    if ([imgdic[@"fee"] integerValue] == 2) {
-                        [self.twoArray addObject:model];
-                    }
-                    if ([imgdic[@"fee"] integerValue] == 3) {
-                        [self.threeArray addObject:model];
-                    }
-                    if ([imgdic[@"fee"] integerValue] == 0) {
-                        [self.freeArray addObject:model];
-                    }
-                    [self.picArray addObject:imgdic[@"url"]];
+                    model.fee = imgdic[@"fee"];
+                    [self.picArray addObject:model];
                 }
                 [self.tableview reloadData];
             }else{
@@ -277,18 +258,36 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {
                 [self.navigationController popViewControllerAnimated:YES];
+                NSMutableArray *oneArray = NSMutableArray.array;
+                NSMutableArray *twoArray = NSMutableArray.array;
+                NSMutableArray *threeArray = NSMutableArray.array;
+                NSMutableArray *freeArray = NSMutableArray.array;
+                for (LiveCharmPhotoModel *model in self.picArray) {
+                    if (model.fee.integerValue == 0) {
+                        [freeArray addObject:model];
+                    }
+                    else if (model.fee.integerValue == 1) {
+                        [oneArray addObject:model];
+                    }
+                    else if (model.fee.integerValue == 2) {
+                        [twoArray addObject:model];
+                    }
+                    else if (model.fee.integerValue == 3) {
+                        [threeArray addObject:model];
+                    }
+                }
                 WEAKSELF
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakSelf updataCharmImageWithImgArray:self.oneArray Fee:@"1" IsCharge:@"1"];
+                    [weakSelf updataCharmImageWithImgArray:oneArray Fee:@"1" IsCharge:@"1"];
                 });
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakSelf updataCharmImageWithImgArray:self.twoArray Fee:@"2" IsCharge:@"1"];
+                    [weakSelf updataCharmImageWithImgArray:twoArray Fee:@"2" IsCharge:@"1"];
                 });
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakSelf updataCharmImageWithImgArray:self.threeArray Fee:@"3" IsCharge:@"1"];
+                    [weakSelf updataCharmImageWithImgArray:threeArray Fee:@"3" IsCharge:@"1"];
                 });
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [weakSelf updataCharmImageWithImgArray:self.freeArray Fee:@"0" IsCharge:@"0"];
+                    [weakSelf updataCharmImageWithImgArray:freeArray Fee:@"0" IsCharge:@"0"];
                 });
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
@@ -367,6 +366,9 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         if (indexPath.row ==0) {
             cell.rightTextField.inputView = self.areaPickerView;
         }
+        else {
+            cell.rightArrowImg.hidden = YES;
+        }
         cell.rightLabel.hidden = YES;
         cell.rightTextField.hidden = NO;
         cell.rightTextField.delegate = self;
@@ -374,6 +376,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         [cell.rightTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     }
     else {
+        cell.rightArrowImg.hidden = NO;
         cell.rightLabel.hidden = NO;
         cell.rightTextField.hidden = YES;
     }
@@ -519,12 +522,15 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 - (void)configPhotoImageViewWithCell:(UITableViewCell *)cell {
     for (int i = 0; i < self.picArray.count+1; i++) {
         CGFloat perWidth = (SCREEN_WIDTH-30-30)/4;
-        UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(15+(perWidth+10)*(i%4), 25+10+(perWidth+10)*(i/4), perWidth, perWidth)];
-        [cell addSubview:imgView];
+        UIImageView *imgView = [EBUtility imgfrome:CGRectMake(15+(perWidth+10)*(i%4), 25+10+(perWidth+10)*(i/4), perWidth, perWidth) andImg:nil andView:cell];
+        imgView.contentMode = UIViewContentModeScaleAspectFill;
+        imgView.layer.masksToBounds = YES;
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
         btn.frame = imgView.frame;
         [cell addSubview:btn];
+        UIImageView *tagImgView = [EBUtility imgfrome:CGRectMake(imgView.frame.origin.x-5, imgView.frame.origin.y+6, 45, 22) andImg:[UIImage imageNamed:@"live_tag"] andView:cell];
         if (i == self.picArray.count) {
+            tagImgView.hidden = YES;
             imgView.image = [UIImage imageNamed:@"add_photo"];
             [btn addTarget:self action:@selector(isPhotoFree) forControlEvents:UIControlEventTouchUpInside];
             if (i == MAXPHOTOCOUNT) {
@@ -537,15 +543,10 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
             }
         }
         else {
-            // 如果是本地ZLPhotoAssets就从本地取，否则从网络取
-            if ([[self.picArray objectAtIndex:i] isKindOfClass:[ZLPhotoAssets class]]
-                || [[self.picArray objectAtIndex:i] isKindOfClass:[ZLCamera class]]) {
-                imgView.image = [self.picArray[i] thumbImage];
-            }else if([[self.picArray objectAtIndex:i] isKindOfClass:[UIImage class]]){
-                imgView.image = self.picArray[i];
-                
-            }else{
-                [imgView sd_setImageWithURL:[NSURL URLWithString:self.picArray[i % (self.picArray.count)]] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+            LiveCharmPhotoModel *model = self.picArray[i];
+            [imgView sd_setImageWithURL:[NSURL URLWithString:model.url] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+            if (model.fee.integerValue == 0) {
+                tagImgView.hidden = YES;
             }
             btn.tag = i;
             [btn addTarget:self action:@selector(tapBrowser:) forControlEvents:UIControlEventTouchUpInside];
@@ -666,7 +667,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     UIAlertAction * actionConfirm = [UIAlertAction actionWithTitle:@"确定"
                                                              style:0
                                                            handler:^(UIAlertAction * action) {
-                                                               LiveCharmPhotoModel *model = [self urlArrayRemoveObjectAtIndex:button.tag];
+                                                               LiveCharmPhotoModel *model = self.picArray[button.tag];
                                                                if (model.type == 2) {
                                                                    [self deleteLiveCharmRequest:model];
                                                                }
@@ -676,39 +677,6 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     [alertVC addAction:actionCancel];
     [alertVC addAction:actionConfirm];
     [self presentViewController:alertVC animated:YES completion:nil];
-}
-
-- (LiveCharmPhotoModel *)urlArrayRemoveObjectAtIndex:(NSInteger)index {
-    LiveCharmPhotoModel *photoModel = LiveCharmPhotoModel.new;
-    for (LiveCharmPhotoModel *model in self.oneArray) {
-        if ([model.url isEqualToString:self.picArray[index]]) {
-            photoModel = model;
-            [self.oneArray removeObject:model];
-            break;
-        }
-    }
-    for (LiveCharmPhotoModel *model in self.twoArray) {
-        if ([model.url isEqualToString:self.picArray[index]]) {
-            photoModel = model;
-            [self.twoArray removeObject:model];
-            break;
-        }
-    }
-    for (LiveCharmPhotoModel *model in self.threeArray) {
-        if ([model.url isEqualToString:self.picArray[index]]) {
-            photoModel = model;
-            [self.threeArray removeObject:model];
-            break;
-        }
-    }
-    for (LiveCharmPhotoModel *model in self.freeArray) {
-        if ([model.url isEqualToString:self.picArray[index]]) {
-            photoModel = model;
-            [self.freeArray removeObject:model];
-            break;
-        }
-    }
-    return photoModel;
 }
 
 //上传图片
@@ -727,19 +695,8 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
                     LiveCharmPhotoModel *model = LiveCharmPhotoModel.new;
                     model.url = str;
                     model.type = 1;
-                    if ([moneyString isEqualToString:@"1元"]) {
-                        [weakSelf.oneArray addObject:model];
-                    }
-                    else if ([moneyString isEqualToString:@"2元"]) {
-                        [weakSelf.twoArray addObject:model];
-                    }
-                    else if ([moneyString isEqualToString:@"3元"]) {
-                        [weakSelf.threeArray addObject:model];
-                    }
-                    else if ([moneyString isEqualToString:@"0元"]) {
-                        [weakSelf.freeArray addObject:model];
-                    }
-                    [weakSelf.picArray addObject:str];
+                    model.fee = [moneyString substringToIndex:1];
+                    [weakSelf.picArray addObject:model];
                 }
                 [weakSelf.tableview reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
             }

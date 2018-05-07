@@ -71,6 +71,7 @@
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
             <connections>
                 <outlet property="leftLabel" destination="AEY-7x-cUH" id="VPk-Qi-OPo"/>
+                <outlet property="rightArrowImg" destination="VUN-JA-xPX" id="OJe-ia-oBc"/>
                 <outlet property="rightLabel" destination="Y4G-j4-C04" id="qlX-yH-zgh"/>
                 <outlet property="rightTextField" destination="edW-F5-OHy" id="gnR-s5-n6L"/>
             </connections>

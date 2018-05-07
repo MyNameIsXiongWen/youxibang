@@ -17,11 +17,12 @@
 }
 */
 
-- (instancetype)initWithFrame:(CGRect)frame Price:(NSString *)price {
+- (instancetype)initWithFrame:(CGRect)frame Price:(NSString *)price Index:(NSInteger)index {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = UIColor.clearColor;
         payPrice = price;
+        indexTag = index;
     }
     return self;
 }
@@ -30,11 +31,11 @@
     [self dismiss];
 }
 
-- (void)configUI {
+- (void)configUIWithSuperView:(UIView *)superView {
     self.blackView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     self.blackView.backgroundColor = [UIColor blackColor];
     self.blackView.alpha = 0;
-    [[UIApplication sharedApplication].keyWindow addSubview:self.blackView];
+    [superView addSubview:self.blackView];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapBlackView)];
     self.blackView.userInteractionEnabled = YES;
     [self.blackView addGestureRecognizer:tap];
@@ -52,12 +53,12 @@
 
 - (void)paySelector {
     if (self.confirmPayBlock) {
-        self.confirmPayBlock();
+        self.confirmPayBlock(indexTag);
     }
 }
 
 - (void)show {
-    [self configUI];
+    [self configUIWithSuperView:[UIApplication sharedApplication].keyWindow];
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     dispatch_async(dispatch_get_main_queue(), ^{
         [UIView animateWithDuration:0.25f animations:^{
@@ -78,6 +79,22 @@
             self.blackView.hidden = YES;
             [self removeFromSuperview];
             [self.blackView removeFromSuperview];
+        }];
+    });
+    if (self.dismissBlock) {
+        self.dismissBlock();
+    }
+}
+
+- (void)showInSuperView:(UIView *)superView {
+    [self configUIWithSuperView:superView];
+    [superView addSubview:self];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:0.25f animations:^{
+            self.blackView.alpha = 0.5;
+            self.alpha = 1;
+        }completion:^(BOOL finished) {
+            self.blackView.hidden = NO;
         }];
     });
 }

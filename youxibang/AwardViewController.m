@@ -8,8 +8,11 @@
 #import "AwardViewController.h"
 #import "SetPayPasswordViewController.h"
 #import "RetrievePayPasswordViewController.h"
+#import "WXApi.h"
+#import "WXApiObject.h"
+#import <AlipaySDK/AlipaySDK.h>
 
-@interface AwardViewController ()
+@interface AwardViewController () <WXApiDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *awardLab;
 @property (weak, nonatomic) IBOutlet UIImageView *photo;
 @property (weak, nonatomic) IBOutlet UILabel *name;
@@ -99,38 +102,42 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@payment/buy",HttpURLString] Paremeters:dic successOperation:^(id object) {
-        [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        if (isKindOfNSDictionary(object)){
-            NSInteger code = [object[@"errcode"] integerValue];
-            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
-            NSLog(@"输出 %@--%@",object,msg);
-            if (code == 1) {
-                if (self.wxBtn.selected){
-                    PayReq *request = [[PayReq alloc] init];
-                    request.partnerId = [NSString stringWithFormat:@"%@",object[@"data"][@"partnerid"]];
-                    request.prepayId = [NSString stringWithFormat:@"%@",object[@"data"][@"prepayid"]];
-                    request.package = [NSString stringWithFormat:@"%@",object[@"data"][@"package"]];
-                    request.nonceStr = [NSString stringWithFormat:@"%@",object[@"data"][@"noncestr"]];
-                    request.timeStamp = [NSString stringWithFormat:@"%@",object[@"data"][@"timestamp"]].intValue;
-                    request.sign= [NSString stringWithFormat:@"%@",object[@"data"][@"sign"]];
-                    [WXApi sendReq:request];
-                }else if (self.zfbBtn.selected){
-                    [[AlipaySDK defaultService] payOrder:[NSString stringWithFormat:@"%@",object[@"data"]] fromScheme:@"alipayYouxibang" callback:^(NSDictionary *resultDic) {
-                        
-                    }];
-                }else if (self.y_eBtn.selected){
-                    [self completePay:nil];
-                }
-            }else{
-                [SVProgressHUD showErrorWithStatus:msg];
-            }
-        }
+        [self paymentParameters:object];
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
         [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
     }];
+}
+
+- (void)paymentParameters:(id)object {
+    [SVProgressHUD dismiss];
+    [SVProgressHUD setDefaultMaskType:1];
+    if (isKindOfNSDictionary(object)){
+        NSInteger code = [object[@"errcode"] integerValue];
+        NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+        NSLog(@"输出 %@--%@",object,msg);
+        if (code == 1) {
+            if (self.wxBtn.selected){
+                PayReq *request = [[PayReq alloc] init];
+                request.partnerId = [NSString stringWithFormat:@"%@",object[@"data"][@"partnerid"]];
+                request.prepayId = [NSString stringWithFormat:@"%@",object[@"data"][@"prepayid"]];
+                request.package = [NSString stringWithFormat:@"%@",object[@"data"][@"package"]];
+                request.nonceStr = [NSString stringWithFormat:@"%@",object[@"data"][@"noncestr"]];
+                request.timeStamp = [NSString stringWithFormat:@"%@",object[@"data"][@"timestamp"]].intValue;
+                request.sign= [NSString stringWithFormat:@"%@",object[@"data"][@"sign"]];
+                [WXApi sendReq:request];
+            }else if (self.zfbBtn.selected){
+                [[AlipaySDK defaultService] payOrder:[NSString stringWithFormat:@"%@",object[@"data"]] fromScheme:@"alipayYouxibang" callback:^(NSDictionary *resultDic) {
+                    
+                }];
+            }else if (self.y_eBtn.selected){
+                [self completePay:nil];
+            }
+        }else{
+            [SVProgressHUD showErrorWithStatus:msg];
+        }
+    }
 }
 
 //提交
@@ -236,34 +243,7 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Payment/rewardpay.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
-        [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        if (isKindOfNSDictionary(object)){
-            NSInteger code = [object[@"errcode"] integerValue];
-            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
-            NSLog(@"输出 %@--%@",object,msg);
-            if (code == 1) {
-                if (self.wxBtn.selected){
-                    PayReq *request = [[PayReq alloc] init];
-                    request.partnerId = [NSString stringWithFormat:@"%@",object[@"data"][@"partnerid"]];
-                    request.prepayId = [NSString stringWithFormat:@"%@",object[@"data"][@"prepayid"]];
-                    request.package = [NSString stringWithFormat:@"%@",object[@"data"][@"package"]];
-                    request.nonceStr = [NSString stringWithFormat:@"%@",object[@"data"][@"noncestr"]];
-                    request.timeStamp = [NSString stringWithFormat:@"%@",object[@"data"][@"timestamp"]].intValue;
-                    request.sign= [NSString stringWithFormat:@"%@",object[@"data"][@"sign"]];
-                    [WXApi sendReq:request];
-                }else if (self.zfbBtn.selected){
-                    [[AlipaySDK defaultService] payOrder:[NSString stringWithFormat:@"%@",object[@"data"]] fromScheme:@"alipayYouxibang" callback:^(NSDictionary *resultDic) {
-                        
-                    }];
-                }else if (self.y_eBtn.selected){
-                    [self completePay:nil];
-                }
-            }else{
-                [SVProgressHUD showErrorWithStatus:msg];
-            }
-        }
-        
+        [self paymentParameters:object];
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];

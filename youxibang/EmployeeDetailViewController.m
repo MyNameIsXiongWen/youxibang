@@ -90,14 +90,18 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     UIButton *back = [EBUtility btnfrome:CGRectMake(0, 25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"back"] andView:self.view];
     back.tag = 1001;
     [back addTarget:self action:@selector(backBtn:) forControlEvents:UIControlEventTouchUpInside];
-    UIButton *share = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-45, 25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"share_white"] andView:self.view];
-    share.tag = 1002;
-    [share addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
     
     [self downloadInfo];
-    [self detailBottomButton];
+    if (self.type != 2) {
+        [self detailBottomButton];
+    }
+    else {
+        UIButton *share = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-45, 25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"share_white"] andView:self.view];
+        share.tag = 1002;
+        [share addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self queryJurisdictionRequestType:@"2" TargetId:self.employeeId Money:@"" Index:0];
+        [self queryJurisdictionRequestType:@"2" TargetId:self.employeeId Index:0];
     });
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
 }
@@ -207,7 +211,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 }
 
 //查询权限  是否能查看微信/聊天/查看魅力图片
-- (void)queryJurisdictionRequestType:(NSString *)type TargetId:(NSString *)targetId Money:(NSString *)money Index:(NSInteger)index {
+- (void)queryJurisdictionRequestType:(NSString *)type TargetId:(NSString *)targetId Index:(NSInteger)index {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     if (DataStore.sharedDataStore.token) {
         [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
@@ -223,7 +227,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
             LiveCharmPhotoModel *model = self.charmPhotoArray[index];
-            if (code == 1) {//有权限 聊天/查看微信和制定魅力照片
+            if (code == 1) {//有权限 聊天/查看微信和指定魅力照片
                 if (type.integerValue == 2) {//聊天/查看微信
                     isCanTalk = YES;
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
@@ -234,10 +238,10 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                     [self configZLPhotoPickerBrowserWithArray:self.charmPhotoArray Index:index];
                 }
             }
-            else if (code == 0) {//没权限 聊天/查看微信和制定魅力照片
+            else if (code == 0) {//没权限 聊天/查看微信和指定魅力照片
                 price = object[@"data"];
                 if (type.integerValue == 1) {//图片
-                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:targetId];
+                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:targetId Index:index];
                 }
             }
         }
@@ -366,7 +370,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 #pragma mark - 分享
 - (void)shareBtn:(UIButton *)sender {
-    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:SHARE_WEBURL];
+    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:SHARE_WEBURL ShareTitle:@"我是主播" WithShareDescription:@"这是我的主播魅力名片，我为自己代言，欢迎来围观"];
     [self.shareView show];
 }
 
@@ -822,7 +826,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 LiveCharmPhotoModel *model = weakSelf.charmPhotoArray[index];
                 //如果这张照片时收费照片，需要再去请求一下自己能否看，因为照片是针对所有人的，请求是只针对自己
                 if (model.is_charge.intValue == 1) {
-                    [self queryJurisdictionRequestType:@"1" TargetId:model.id Money:model.fee Index:index];
+                    [self queryJurisdictionRequestType:@"1" TargetId:model.id Index:index];
                 }
                 else {
                     [weakSelf configZLPhotoPickerBrowserWithArray:weakSelf.charmPhotoArray Index:index];
@@ -862,7 +866,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [self showPayViewWithPrice:price Type:@"3" TargetId:self.dataInfo[@"id"]];
 }
 
-//付款。微信/聊天
+#pragma mark - 付款/微信/聊天
 - (void)showPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
     LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284) Price:money];
     WEAKSELF
@@ -872,7 +876,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         if (index == 0) {
             UserModel *user = UserModel.sharedUser;
             if ([user.is_paypwd isEqualToString:@"0"]){
-                SetPayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"spp"];
+                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                SetPayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"spp"];
                 [weakSelf.navigationController pushViewController:vc animated:1];
                 return;
             }
@@ -882,7 +887,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 [weakSelf payRequestWithPwd:date Price:money Type:type TargetId:targetId];
             };
             alert.resultIndex = ^(NSInteger index) {
-                RetrievePayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"rpp"];
+                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                RetrievePayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rpp"];
                 [weakSelf.navigationController pushViewController:vc animated:1];
             };
             [alert showAlertView];
@@ -891,29 +897,39 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [freeView show];
 }
 
-//付款。魅力图片
-- (void)showCharmPhotoPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
-    LiveCharmPhotoPayView *payView = [[LiveCharmPhotoPayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-171)/2, (SCREEN_HEIGHT-177)/2, 171, 177) Price:money];
+#pragma mark - 付款/魅力图片
+- (void)showCharmPhotoPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId Index:(NSInteger)index {
+    LiveCharmPhotoPayView *payView = [[LiveCharmPhotoPayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-171)/2, (SCREEN_HEIGHT-177)/2, 171, 177) Price:money Index:index];
     WEAKSELF
     typeof(payView) __weak weakPayView = payView;
-    payView.confirmPayBlock = ^(void) {
+    payView.confirmPayBlock = ^(NSInteger indexTag) {
         [weakPayView dismiss];
-        UserModel *user = UserModel.sharedUser;
-        if ([user.is_paypwd isEqualToString:@"0"]){
-            SetPayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"spp"];
-            [weakSelf.navigationController pushViewController:vc animated:1];
-            return;
-        }
-        //弹起支付密码alert
-        CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
-        alert.resultDate = ^(NSString *date) {
-            [weakSelf payRequestWithPwd:date Price:money Type:type TargetId:targetId];
-        };
-        alert.resultIndex = ^(NSInteger index) {
-            RetrievePayPasswordViewController* vc = [weakSelf.storyboard instantiateViewControllerWithIdentifier:@"rpp"];
-            [weakSelf.navigationController pushViewController:vc animated:1];
-        };
-        [alert showAlertView];
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选取支付方式" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDestructive handler:nil];
+        UIAlertAction *pay = [UIAlertAction actionWithTitle:@"余额支付" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            UserModel *user = UserModel.sharedUser;
+            if ([user.is_paypwd isEqualToString:@"0"]){
+                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                SetPayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"spp"];
+                [weakSelf.navigationController pushViewController:vc animated:1];
+                return;
+            }
+            //弹起支付密码alert
+            CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
+            alert.resultDate = ^(NSString *date) {
+                [weakSelf payRequestWithPwd:date Price:money Type:type TargetId:targetId];
+            };
+            alert.resultIndex = ^(NSInteger index) {
+                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                RetrievePayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rpp"];
+                [weakSelf.navigationController pushViewController:vc animated:1];
+            };
+            [alert showAlertView];
+        }];
+        [alert addAction:pay];
+        [alert addAction:cancel];
+        [self presentViewController:alert animated:YES completion:nil];
     };
     [payView show];
 }
@@ -1020,6 +1036,10 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             ZLPhotoPickerBrowserPhoto *photo = [ZLPhotoPickerBrowserPhoto photoAnyImageObjWith:url];
             [zlPhotoArray addObject:photo];
         }
+        WEAKSELF
+        pickerBrowser.paySuccessedBlock = ^{
+            [weakSelf.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
+        };
         pickerBrowser.photos = zlPhotoArray;
         pickerBrowser.currentIndex = index;
         [pickerBrowser showPushPickerVc:self];
@@ -1027,7 +1047,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 }
 
 - (void)photoBrowser:(ZLPhotoPickerBrowserViewController *)pickerBrowser photoDidSelectView:(UIView *)scrollBoxView atIndex:(NSInteger)index {
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:NO];
 }
 
 - (void)vodPlayer:(AliyunVodPlayer *)vodPlayer onEventCallback:(AliyunVodPlayerEvent)event{

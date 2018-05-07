@@ -47,6 +47,8 @@
     }
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 55, 25)];
     UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(0, 0, 65, 25) andText:@"完成" andColor:[UIColor whiteColor] andimg:nil andView:rv];
+    btn.titleLabel.font = [UIFont systemFontOfSize:15];
+    [btn setTitleColor:[UIColor colorFromHexString:@"333333"] forState:UIControlStateNormal];
     
     [btn addTarget:self action:@selector(commitInfo:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];

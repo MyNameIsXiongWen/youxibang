@@ -10,7 +10,6 @@
 #import "SystemSettingViewController.h"
 #import "TopUpAndWithdrawViewController.h"
 #import "BalanceDetailViewController.h"
-#import "AlipayAccountViewController.h"
 #import "PersonalInfoViewController.h"
 #import "ApplyForVipViewController.h"
 #import "RealNameViewController.h"
@@ -23,6 +22,7 @@
 #import "LiveFansViewController.h"
 #import "VipWebViewController.h"
 #import "InviteViewController.h"
+#import "SigninViewController.h"
 
 @interface MineViewController ()<UITableViewDataSource,UITableViewDelegate,TopUpTableViewCellDelegate, SDCycleScrollViewDelegate> {
     NSDictionary *adDataInfo;
@@ -251,7 +251,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 - (void)changeInfo:(id)sender {
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PersonalInfoViewController* vc = [sb instantiateViewControllerWithIdentifier:@"pi"];
-//    vc.dataInfo = self.dataInfo;
     [self.navigationController pushViewController:vc animated:1];
     
 }
@@ -273,7 +272,10 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         return 1;
     }
     else if (section == 2) {
-        return 8;
+        if (UserModel.sharedUser.is_anchor.integerValue == 0 && UserModel.sharedUser.isbaby.integerValue == 0) {
+            return 8;
+        }
+        return 7;
     }
     return 2;
 }
@@ -341,8 +343,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1){
         VipWebViewController *con = [VipWebViewController new];
-//        con.loadUrlString = adDataInfo[@"detail"];
-        con.loadUrlString = [NSString stringWithFormat:@"http://m.feirantech.cn/mobile/share/index#/member?phone=%@&token=%@",DataStore.sharedDataStore.mobile,DataStore.sharedDataStore.token];
+        con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
         [self.navigationController pushViewController:con animated:YES];
     }
     else if (indexPath.section == 2) {
@@ -351,8 +352,17 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 }
 
 - (UITableViewCell *)displayTableViewCell:(NSIndexPath *)indexPath {
-    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的任务",@"我的技能",@"我是主播",@"订单中心",@"提现账户管理",@"有奖邀请",@"联系客服",@"系统设置"]];
-    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_renwu",@"ico_gamebaby",@"ico_gamebaby",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+    UserModel *usermodel = UserModel.sharedUser;
+    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我的技能(和我是主播只能二选一)",@"我是主播(和我的技能只能二选一)",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
+    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_gamebaby",@"ico_anchor",@"ico_order_center",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+    if (usermodel.is_anchor.integerValue == 1) {
+        ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我是主播",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
+        imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_anchor",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+    }
+    else if (usermodel.isbaby.integerValue == 1) {
+        ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我的技能",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
+        imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_gamebaby",@"ico_order_center",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+    }
     MineTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:TABLEVIEW_IDENTIFIER];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     if (indexPath.section == 0 && indexPath.row == 0){
@@ -374,48 +384,102 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 }
 
 - (void)pushToController:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0){//任务列表
+    if (indexPath.row == 0){//我的金币
+        SigninViewController *con = [SigninViewController new];
+        [self.navigationController pushViewController:con animated:YES];
+    }
+    else if (indexPath.row == 1){//任务列表
         MyTaskViewController* vc = [[MyTaskViewController alloc]init];
         [self.navigationController pushViewController:vc animated:1];
-    }else if (indexPath.row == 1){//实名认证或者个人技能
-        if ([UserModel sharedUser].is_realauth.integerValue == 1){
-            MySkillViewController *vc = [[MySkillViewController alloc]init];
-            [self.navigationController pushViewController:vc animated:1];
-        }else{
-            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
-            [self.navigationController pushViewController:vc animated:1];
-        }
-    }else if (indexPath.row == 2){//我是主播
-        LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
-        [self.navigationController pushViewController:vc animated:1];
-    }else if (indexPath.row == 3){//订单列表
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        MyOrderListViewController* vc = [sb instantiateViewControllerWithIdentifier:@"mol"];
-        [self.navigationController pushViewController:vc animated:1];
-    }else if (indexPath.row == 4){//支付宝绑定
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        AlipayAccountViewController* vc = [sb instantiateViewControllerWithIdentifier:@"aa"];
-        [self.navigationController pushViewController:vc animated:1];
-    }else if (indexPath.row == 5){//点击分享邀请码
-        InviteViewController *invite = [InviteViewController new];
-        [self.navigationController pushViewController:invite animated:YES];
-    }else if (indexPath.row == 6){//自定义alert显示客服电话
-        CustomAlertView* alert = [[CustomAlertView alloc]initWithAry:@[@"客服电话1：15306544612\n(微信同号)",@"客服电话2：15372402489\n(微信同号)",@"客服电话3：15372416943\n(微信同号)"]];
-        alert.resultDate = ^(NSString *date) {
-            if ([date isEqualToString:@"0"]){
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15306544612"]];
-            }else if ([date isEqualToString:@"1"]){
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15372402489"]];
-            }else if ([date isEqualToString:@"2"]){
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15372416943"]];
+    }
+    else {
+        if (UserModel.sharedUser.is_anchor.integerValue == 0 && UserModel.sharedUser.isbaby.integerValue == 0) {
+            if (indexPath.row == 2){//实名认证或者个人技能
+                [self pushToMySkill];
+            }else if (indexPath.row == 3){//我是主播
+                [self pushToAnchor];
+            }else if (indexPath.row == 4){//订单列表
+                [self pushToOrder];
+            }else if (indexPath.row == 5){//点击分享邀请码
+                [self pushToInvite];
+            }else if (indexPath.row == 6){//自定义alert显示客服电话
+                [self pushToAlertView];
+            }else if (indexPath.row == 7){//系统设置
+                [self pushToSystemSetting];
             }
-        };
-        [alert showAlertView];
-    }else if (indexPath.row == 7){//系统设置
-        SystemSettingViewController* vc = [[SystemSettingViewController alloc]init];
+        }
+        else {
+            if (indexPath.row == 2) {//我是主播或者个人技能
+                UserModel *usermodel = UserModel.sharedUser;
+                if (usermodel.is_anchor.integerValue == 1) {
+                    [self pushToAnchor];
+                }
+                else if (usermodel.isbaby.integerValue == 1) {
+                    [self pushToMySkill];
+                }
+            }else if (indexPath.row == 3){//订单列表
+                [self pushToOrder];
+            }else if (indexPath.row == 4){//点击分享邀请码
+                [self pushToInvite];
+            }else if (indexPath.row == 5){//自定义alert显示客服电话
+                [self pushToAlertView];
+            }else if (indexPath.row == 6){//系统设置
+                [self pushToSystemSetting];
+            }
+        }
+    }
+}
+
+- (void)pushToMySkill {
+    if ([UserModel sharedUser].is_realauth.integerValue == 1) {
+        MySkillViewController *vc = [[MySkillViewController alloc]init];
+        [self.navigationController pushViewController:vc animated:1];
+    }else{
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
         [self.navigationController pushViewController:vc animated:1];
     }
+}
+
+- (void)pushToAnchor {
+    if ([UserModel sharedUser].is_realauth.integerValue == 1) {
+        LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
+        [self.navigationController pushViewController:vc animated:1];
+    }else{
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
+        [self.navigationController pushViewController:vc animated:1];
+    }
+}
+
+- (void)pushToOrder {
+    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    MyOrderListViewController* vc = [sb instantiateViewControllerWithIdentifier:@"mol"];
+    [self.navigationController pushViewController:vc animated:1];
+}
+
+- (void)pushToInvite {
+    InviteViewController *invite = [InviteViewController new];
+    [self.navigationController pushViewController:invite animated:YES];
+}
+
+- (void)pushToAlertView {
+    CustomAlertView* alert = [[CustomAlertView alloc]initWithAry:@[@"客服电话1：15306544612\n(微信同号)",@"客服电话2：15372402489\n(微信同号)",@"客服电话3：15372416943\n(微信同号)"]];
+    alert.resultDate = ^(NSString *date) {
+        if ([date isEqualToString:@"0"]){
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15306544612"]];
+        }else if ([date isEqualToString:@"1"]){
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15372402489"]];
+        }else if ([date isEqualToString:@"2"]){
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"telprompt://15372416943"]];
+        }
+    };
+    [alert showAlertView];
+}
+
+- (void)pushToSystemSetting {
+    SystemSettingViewController* vc = [[SystemSettingViewController alloc]init];
+    [self.navigationController pushViewController:vc animated:1];
 }
 
 #pragma mark - otherDelegate/DataSource

@@ -11,12 +11,14 @@
 typedef void(^ConfirmShareBlock)(NSString *type);
 @interface ShareView : UIView <QQApiInterfaceDelegate> {
     NSString *shareurl;
+    NSString *sharetitle;
+    NSString *shareDescription;
 }
 
 //@property (nonatomic, copy) ConfirmShareBlock confirmShareBlock;
 @property (nonatomic, strong) UIView *blackView;
 - (void)show;
 - (void)dismiss;
-- (instancetype)initWithFrame:(CGRect)frame WithShareUrl:(NSString *)url;
+- (instancetype)initWithFrame:(CGRect)frame WithShareUrl:(NSString *)url ShareTitle:(NSString *)title WithShareDescription:(NSString *)description;
 
 @end

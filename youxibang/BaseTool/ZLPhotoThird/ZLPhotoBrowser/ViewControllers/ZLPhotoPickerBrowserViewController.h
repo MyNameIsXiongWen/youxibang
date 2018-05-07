@@ -56,8 +56,12 @@
 
 @end
 
+typedef void(^PaySuccessedBlock)(void);
+
 @interface ZLPhotoPickerBrowserViewController : UIViewController
 
+// 刷新superController的collectionview
+@property (nonatomic , copy) PaySuccessedBlock paySuccessedBlock;
 // 数据源/代理
 @property (nonatomic , weak) id<ZLPhotoPickerBrowserViewControllerDelegate> delegate;
 

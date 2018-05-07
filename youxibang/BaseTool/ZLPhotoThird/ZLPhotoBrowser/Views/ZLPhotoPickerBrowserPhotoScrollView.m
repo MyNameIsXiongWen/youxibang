@@ -51,9 +51,9 @@
         _visualEffectView.hidden = YES;
         [_photoImageView addSubview:_visualEffectView];
         
-        _placeholderLabel = [EBUtility labfrome:CGRectMake(0, (SCREEN_HEIGHT-30)/2, SCREEN_WIDTH, 30) andText:@"红包照片" andColor:UIColor.whiteColor andView:self];
-        _placeholderLabel.hidden = YES;
-        _placeholderLabel.font = [UIFont systemFontOfSize:20.0];
+//        _placeholderLabel = [EBUtility labfrome:CGRectMake(0, (SCREEN_HEIGHT-30)/2, SCREEN_WIDTH, 30) andText:@"红包照片" andColor:UIColor.whiteColor andView:self];
+//        _placeholderLabel.hidden = YES;
+//        _placeholderLabel.font = [UIFont systemFontOfSize:20.0];
         
         // Setup
         self.backgroundColor = [UIColor blackColor];

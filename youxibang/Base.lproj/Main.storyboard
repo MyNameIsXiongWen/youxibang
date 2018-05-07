@@ -637,7 +637,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="余额0元" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zgs-Me-dB5">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="45"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="45"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="QNB-Wi-3Zn"/>
@@ -647,7 +647,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ntb-mC-puv">
-                                <rect key="frame" x="0.0" y="45" width="375" height="200"/>
+                                <rect key="frame" x="0.0" y="65" width="375" height="200"/>
                                 <subviews>
                                     <button opaque="NO" tag="30" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FXd-Az-xOn">
                                         <rect key="frame" x="35" y="48" width="85" height="35"/>
@@ -852,8 +852,8 @@
                                     <constraint firstItem="uGm-vb-A0n" firstAttribute="leading" secondItem="FXd-Az-xOn" secondAttribute="trailing" constant="25" id="uMn-vN-Gtf"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pp6-np-16C">
-                                <rect key="frame" x="0.0" y="245" width="375" height="130"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pp6-np-16C">
+                                <rect key="frame" x="0.0" y="265" width="375" height="145"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="支付方式" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5sd-yY-Oav">
                                         <rect key="frame" x="25" y="10" width="68" height="21"/>
@@ -970,8 +970,8 @@
                             <constraint firstItem="Pp6-np-16C" firstAttribute="top" secondItem="ntb-mC-puv" secondAttribute="bottom" id="2jX-8j-5kF"/>
                             <constraint firstItem="ntb-mC-puv" firstAttribute="leading" secondItem="159-eu-45K" secondAttribute="leading" id="CDm-hM-iwz"/>
                             <constraint firstItem="ntb-mC-puv" firstAttribute="top" secondItem="Zgs-Me-dB5" secondAttribute="bottom" id="CPI-tp-Scw"/>
-                            <constraint firstItem="Zgs-Me-dB5" firstAttribute="top" secondItem="gqb-hM-cw0" secondAttribute="top" id="H2a-1j-cvr"/>
                             <constraint firstItem="ntb-mC-puv" firstAttribute="trailing" secondItem="159-eu-45K" secondAttribute="trailing" id="JBb-EA-LTA"/>
+                            <constraint firstItem="159-eu-45K" firstAttribute="top" secondItem="Zgs-Me-dB5" secondAttribute="top" id="Jby-Nx-Doc"/>
                             <constraint firstItem="Zgs-Me-dB5" firstAttribute="trailing" secondItem="159-eu-45K" secondAttribute="trailing" id="NmP-P5-IWw"/>
                             <constraint firstItem="Pp6-np-16C" firstAttribute="trailing" secondItem="159-eu-45K" secondAttribute="trailing" id="YF3-cS-X1b"/>
                             <constraint firstItem="Pp6-np-16C" firstAttribute="leading" secondItem="159-eu-45K" secondAttribute="leading" id="a9l-p2-OtY"/>
@@ -4872,7 +4872,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="SQJ-sH-XvO">
-                                <rect key="frame" x="0.0" y="55" width="375" height="612"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="cell" rowHeight="105" id="SrY-En-8Yy">
@@ -4961,10 +4961,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="SQJ-sH-XvO" firstAttribute="top" secondItem="Q75-08-Tmn" secondAttribute="top" constant="35" id="AlG-oR-gua"/>
-                            <constraint firstItem="SQJ-sH-XvO" firstAttribute="trailing" secondItem="Q75-08-Tmn" secondAttribute="trailing" id="NYE-z2-hpL"/>
-                            <constraint firstItem="SQJ-sH-XvO" firstAttribute="leading" secondItem="Q75-08-Tmn" secondAttribute="leading" id="PCR-Sz-1Hd"/>
-                            <constraint firstItem="SQJ-sH-XvO" firstAttribute="bottom" secondItem="Q75-08-Tmn" secondAttribute="bottom" id="fbn-b8-5vZ"/>
+                            <constraint firstItem="SQJ-sH-XvO" firstAttribute="top" secondItem="Q75-08-Tmn" secondAttribute="top" id="30I-oF-6sW"/>
+                            <constraint firstItem="SQJ-sH-XvO" firstAttribute="leading" secondItem="Q75-08-Tmn" secondAttribute="leading" id="TSr-AW-5wi"/>
+                            <constraint firstItem="Q75-08-Tmn" firstAttribute="trailing" secondItem="SQJ-sH-XvO" secondAttribute="trailing" id="Ydk-8k-uBT"/>
+                            <constraint firstItem="Q75-08-Tmn" firstAttribute="bottom" secondItem="SQJ-sH-XvO" secondAttribute="bottom" id="svb-db-VeF"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Q75-08-Tmn"/>
                     </view>
@@ -9212,7 +9212,7 @@
         <image name="ico_yuyin" width="39" height="52"/>
         <image name="ico_yy_null" width="322" height="76"/>
         <image name="ico_yzm" width="23" height="28"/>
-        <image name="ico_zfb" width="84" height="84"/>
+        <image name="ico_zfb" width="53" height="53"/>
         <image name="ico_zheng" width="336" height="215"/>
         <image name="img_geren" width="750" height="300"/>
         <image name="img_geren111" width="750" height="250"/>
