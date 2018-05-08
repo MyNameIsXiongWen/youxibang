@@ -12,8 +12,9 @@
 #import "SignViewController.h"
 #import "TalkingData.h"
 #import "SetPasswordViewController.h"
-#import "BaseTool/QQFramework/TencentOpenAPI.framework/Headers/TencentOAuth.h"
+#import <TencentOpenAPI/TencentOAuth.h>
 #import "HomeViewController.h"
+#import "AppDelegate.h"
 
 @interface LoginViewController ()<UITextFieldDelegate,TencentSessionDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *phoneNumber;//电话号码
@@ -52,9 +53,12 @@
 //返回首页
 - (void)back {
     [self.view endEditing:1];
-    MainTabBarController *minTa = [[MainTabBarController alloc] init];
-    [minTa setupChildVcs];
-    self.view.window.rootViewController = minTa;
+//    MainTabBarController *minTa = [[MainTabBarController alloc] init];
+//    [minTa setupChildVcs];
+//    self.view.window.rootViewController = minTa;
+    MainTabBarController *mainTab = [[MainTabBarController alloc] init];
+    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    delegate.window.rootViewController = mainTab;
 }
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -101,7 +105,7 @@
 }
 //第三方登录通知触发方法
 - (void)InfoNotificationAction:(NSNotification *)notification {
-    NSMutableDictionary* userInfo = [[notification userInfo] mutableCopy];
+    NSMutableDictionary* userInfo = notification.userInfo.mutableCopy;
     self.threeToken = userInfo[@"threetoken"];
     [self lg:userInfo];
 }
@@ -213,8 +217,7 @@
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/login.html",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
-        if (isKindOfNSDictionary(object))
-        {
+        if (isKindOfNSDictionary(object)) {
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]];
             NSLog(@"登录输出 %@--%@",object,msg);
@@ -253,8 +256,9 @@
                         
                     }
                 }];
-                MainTabBarController *minTa = [[MainTabBarController alloc] init];
-                self.view.window.rootViewController = minTa;
+                MainTabBarController *mainTab = [[MainTabBarController alloc] init];
+                AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                delegate.window.rootViewController = mainTab;
             }else if (code == 8){//验证码首次登录，设置密码
                 SetPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spw"];
                 vc.inviteCode = object[@"data"];
@@ -280,29 +284,12 @@
     }];
 }
 
-//#pragma mark - WXDelegate
-//- (void)onResp:(BaseResp *)resp {
-//    // 向微信请求授权后,得到响应结果
-//    if ([resp isKindOfClass:[SendAuthResp class]]) {
-//        SendAuthResp *temp = (SendAuthResp *)resp;
-//        [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",WX_APP_ID,WX_APP_SECRET,temp.code] Paremeters:nil successOperation:^(id response) {
-//            NSLog(@"绑定输出 %@",response);
-//
-//            NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"2",@"typeid",response[@"openid"],@"threetoken",response[@"unionid"],@"unionid", nil]];
-//            [[NSNotificationCenter defaultCenter] postNotification:notification];
-//        } failoperation:^(NSError *error) {
-//            NSLog(@"errr %@",error);
-//        }];
-//    }
-//}
-
-#pragma mark - TencentSessionDelegate
+#pragma mark - TencentS，。essionDelegate
 //登录成功回调
 - (void)tencentDidLogin {
     if (_tencentOAuth.accessToken && 0 != [_tencentOAuth.accessToken length]){
-        NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"3",@"typeid",[_tencentOAuth getUserOpenID],@"threetoken", nil]];
+        NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:@{@"typeid":@"3",@"threetoken":[_tencentOAuth getUserOpenID]}];
         [[NSNotificationCenter defaultCenter] postNotification:notification];
-        
     }
 }
 //登录失败回调

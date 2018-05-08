@@ -1707,7 +1707,7 @@
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bZi-HZ-dAK">
                                         <rect key="frame" x="35" y="48" width="85" height="35"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="30元">
+                                        <state key="normal" title="1元">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                         <state key="selected" backgroundImage="navi_bg">
@@ -1733,7 +1733,7 @@
                                             <constraint firstAttribute="width" constant="85" id="Jma-eR-Bj4"/>
                                             <constraint firstAttribute="height" constant="35" id="YAk-BN-WVL"/>
                                         </constraints>
-                                        <state key="normal" title="50元">
+                                        <state key="normal" title="5元">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                         <state key="selected" backgroundImage="navi_bg">
@@ -1755,7 +1755,7 @@
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rUz-AY-an7">
                                         <rect key="frame" x="255" y="48" width="85" height="35"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="100元">
+                                        <state key="normal" title="10元">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                         <state key="selected" backgroundImage="navi_bg">
@@ -1777,7 +1777,7 @@
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uQa-4C-K1v">
                                         <rect key="frame" x="35" y="108" width="85" height="35"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="200元">
+                                        <state key="normal" title="30元">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                         <state key="selected" backgroundImage="navi_bg">
@@ -1799,7 +1799,7 @@
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RH6-HA-MCY">
                                         <rect key="frame" x="145" y="108" width="85" height="35"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="500元">
+                                        <state key="normal" title="50元">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                         <state key="selected" backgroundImage="navi_bg">
@@ -1821,7 +1821,7 @@
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tAD-ye-VBH">
                                         <rect key="frame" x="255" y="108" width="85" height="35"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="1000元">
+                                        <state key="normal" title="100元">
                                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                         </state>
                                         <state key="selected" backgroundImage="navi_bg">
@@ -4985,7 +4985,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jBR-pe-EHB">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="65"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="65"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="添加提现账户" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wRT-Jq-1yy">
                                         <rect key="frame" x="135" y="22" width="104" height="21"/>
@@ -5026,7 +5026,7 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B5v-7c-ITy">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="65"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="65"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2U1-25-MNa">
                                         <rect key="frame" x="324" y="10" width="43" height="14"/>
@@ -5081,10 +5081,10 @@
                         <constraints>
                             <constraint firstItem="B5v-7c-ITy" firstAttribute="trailing" secondItem="9uw-0f-Zh7" secondAttribute="trailing" id="4AD-oB-5CF"/>
                             <constraint firstItem="jBR-pe-EHB" firstAttribute="leading" secondItem="9uw-0f-Zh7" secondAttribute="leading" id="4Sg-dS-JlW"/>
+                            <constraint firstItem="9uw-0f-Zh7" firstAttribute="top" secondItem="jBR-pe-EHB" secondAttribute="top" id="KDf-Hk-IYq"/>
                             <constraint firstItem="jBR-pe-EHB" firstAttribute="trailing" secondItem="9uw-0f-Zh7" secondAttribute="trailing" id="KOm-kw-hC0"/>
-                            <constraint firstItem="jBR-pe-EHB" firstAttribute="top" secondItem="VzV-fQ-qAq" secondAttribute="top" id="i69-Ve-9GM"/>
                             <constraint firstItem="B5v-7c-ITy" firstAttribute="leading" secondItem="9uw-0f-Zh7" secondAttribute="leading" id="ln8-23-yzW"/>
-                            <constraint firstItem="B5v-7c-ITy" firstAttribute="top" secondItem="VzV-fQ-qAq" secondAttribute="top" id="y8Z-tZ-hMm"/>
+                            <constraint firstItem="B5v-7c-ITy" firstAttribute="top" secondItem="jBR-pe-EHB" secondAttribute="top" id="prR-yk-W5z"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="9uw-0f-Zh7"/>
                     </view>
@@ -9212,7 +9212,7 @@
         <image name="ico_yuyin" width="39" height="52"/>
         <image name="ico_yy_null" width="322" height="76"/>
         <image name="ico_yzm" width="23" height="28"/>
-        <image name="ico_zfb" width="53" height="53"/>
+        <image name="ico_zfb" width="84" height="84"/>
         <image name="ico_zheng" width="336" height="215"/>
         <image name="img_geren" width="750" height="300"/>
         <image name="img_geren111" width="750" height="250"/>

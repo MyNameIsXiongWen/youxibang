@@ -39,8 +39,8 @@
     //完成付款的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(completePay:) name:@"completePay" object:nil];
     
-    NSMutableDictionary* dic = [UserNameTool readPersonalData];
-    NSString* balance = [NSString stringWithFormat:@"%@",(dic[@"user_money"]) ? (dic[@"user_money"]) : @"0"];
+    UserModel *userModel = UserModel.sharedUser;
+    NSString* balance = [NSString stringWithFormat:@"%@",userModel.user_money ? : @"0"];
     self.balance.text = [NSString stringWithFormat:@"¥%@",balance];
     
     if (self.orderInfo){//info结构不一样
@@ -73,7 +73,7 @@
 //    };
 //    [alert showAlertView];
     [self.navigationController popViewControllerAnimated:YES];
-    [SVProgressHUD showSuccessWithStatus:@"支付成功"];
+    [SVProgressHUD showSuccessWithStatus:@"打赏成功"];
     
 }
 //选择数额
@@ -239,7 +239,7 @@
     }
 }
 
-- (void)payAwardingMoney:(NSMutableDictionary*)dict{
+- (void)payAwardingMoney:(NSMutableDictionary*)dict {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Payment/rewardpay.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -253,7 +253,7 @@
 }
 
 #pragma mark - otherDelegate/DataSource
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
     for (UIButton* i in self.moneyBtnAry){
         i.selected = NO;
     }
@@ -261,14 +261,13 @@
 }
 //当用户按下return去键盘
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     
     return YES;
     
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.tf resignFirstResponder];
 }
 /*

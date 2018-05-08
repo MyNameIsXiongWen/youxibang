@@ -30,6 +30,7 @@
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
     self.tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
     self.tableView.tableFooterView = [UIView new];
+    ScrollViewContentInsetAdjustmentNever(self, self.tableView);
     [self downloadData];
 }
 

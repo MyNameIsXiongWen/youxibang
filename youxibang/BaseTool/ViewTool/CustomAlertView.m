@@ -173,14 +173,15 @@
             UILabel* grayLine = [EBUtility labfrome:CGRectMake(0, 50, SCREEN_WIDTH, 1) andText:@"" andColor:[UIColor blackColor] andView:self.alertView];
             grayLine.backgroundColor = [UIColor lightGrayColor];
             
-            UIView* tfView = [EBUtility viewfrome:CGRectMake(15*ADAPTATIONRATIO, 80, (SCREEN_WIDTH - 30)*ADAPTATIONRATIO, 45) andColor:[UIColor whiteColor] andView:self.alertView];
+            UIView* tfView = [EBUtility viewfrome:CGRectMake(15, 80, SCREEN_WIDTH - 30, 45) andColor:[UIColor whiteColor] andView:self.alertView];
             tfView.layer.cornerRadius = 5;
             tfView.layer.borderColor = [UIColor lightGrayColor].CGColor;
             tfView.layer.borderWidth = 1;
             tfView.layer.masksToBounds = 1;
-            UITextField* tf = [EBUtility textFieldfrome:CGRectMake(25*ADAPTATIONRATIO, 0, (SCREEN_WIDTH - 30)*ADAPTATIONRATIO, 45) andText:@"" andColor:[UIColor clearColor] andView:tfView];
+            UITextField* tf = [EBUtility textFieldfrome:CGRectMake(25, 0, SCREEN_WIDTH - 30, 45) andText:@"" andColor:[UIColor clearColor] andView:tfView];
             tf.textColor = UIColor.clearColor;
-            tf.font = [UIFont systemFontOfSize:130*ADAPTATIONRATIO];
+            tf.tintColor = UIColor.clearColor;
+            tf.font = [UIFont systemFontOfSize:130];
             tf.clearButtonMode = UITextFieldViewModeNever;
             tf.keyboardType = UIKeyboardTypePhonePad;
             [tf becomeFirstResponder];

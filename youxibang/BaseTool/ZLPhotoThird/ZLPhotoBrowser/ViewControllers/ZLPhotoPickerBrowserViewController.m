@@ -14,6 +14,7 @@
 #import "SetPayPasswordViewController.h"
 #import "RetrievePayPasswordViewController.h"
 #import "LiveCharmPhotoPayView.h"
+#import "LoginViewController.h"
 
 static NSString *_cellIdentifier = @"collectionViewCell";
 
@@ -589,11 +590,15 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 //查询权限  是否能查看微信/聊天/查看魅力图片
 - (void)queryJurisdictionRequestType:(NSString *)type Index:(NSInteger)index SuperView:(ZLPhotoPickerBrowserPhotoScrollView *)superView {
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
     LiveCharmPhotoModel *model = self.charmPhotoArray[index];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    if (DataStore.sharedDataStore.token) {
-        [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
-    }
+    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     [dict setObject:type forKey:@"type"];
     [dict setObject:model.id forKey:@"target_id"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];

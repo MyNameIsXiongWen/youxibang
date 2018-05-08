@@ -16,6 +16,7 @@
                 <outlet property="collectionView" destination="sOt-4P-Ccw" id="Tj7-X0-4UJ"/>
                 <outlet property="distanceButton" destination="0LD-3R-23g" id="XJd-Rb-jiS"/>
                 <outlet property="filtButton" destination="BFx-3o-BCA" id="rHi-jf-mUV"/>
+                <outlet property="topViewTopConstraint" destination="if4-6U-ZpZ" id="JXr-xi-mAU"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -85,15 +86,15 @@
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
+                        <constraint firstItem="C59-FF-vFA" firstAttribute="centerY" secondItem="Mdm-IN-w46" secondAttribute="centerY" id="1hf-UA-CWp"/>
                         <constraint firstItem="C59-FF-vFA" firstAttribute="centerX" secondItem="Mdm-IN-w46" secondAttribute="centerX" id="3ti-zB-SLb"/>
-                        <constraint firstItem="C59-FF-vFA" firstAttribute="top" secondItem="Mdm-IN-w46" secondAttribute="top" id="8wd-bL-sUi"/>
+                        <constraint firstItem="BFx-3o-BCA" firstAttribute="centerY" secondItem="Mdm-IN-w46" secondAttribute="centerY" id="8mg-lu-Ttm"/>
                         <constraint firstItem="HzI-zW-imi" firstAttribute="leading" secondItem="Mdm-IN-w46" secondAttribute="leading" id="AyP-i0-DuN"/>
+                        <constraint firstItem="0LD-3R-23g" firstAttribute="centerY" secondItem="Mdm-IN-w46" secondAttribute="centerY" id="Hbr-uc-4kQ"/>
                         <constraint firstItem="0LD-3R-23g" firstAttribute="leading" secondItem="Mdm-IN-w46" secondAttribute="leading" id="RyW-D3-Xgr"/>
                         <constraint firstItem="0LD-3R-23g" firstAttribute="width" secondItem="C59-FF-vFA" secondAttribute="width" id="Zu6-Mv-VPJ"/>
                         <constraint firstAttribute="height" constant="40" id="dgB-1F-fhn"/>
-                        <constraint firstItem="0LD-3R-23g" firstAttribute="top" secondItem="Mdm-IN-w46" secondAttribute="top" id="drm-D2-OR3"/>
                         <constraint firstItem="BFx-3o-BCA" firstAttribute="leading" secondItem="C59-FF-vFA" secondAttribute="trailing" id="fJx-lU-t2M"/>
-                        <constraint firstItem="BFx-3o-BCA" firstAttribute="top" secondItem="Mdm-IN-w46" secondAttribute="top" id="gG0-pD-j9W"/>
                         <constraint firstAttribute="trailing" secondItem="HzI-zW-imi" secondAttribute="trailing" id="onu-kQ-IxL"/>
                         <constraint firstItem="BFx-3o-BCA" firstAttribute="width" secondItem="C59-FF-vFA" secondAttribute="width" id="r89-a7-Bz5"/>
                         <constraint firstAttribute="bottom" secondItem="HzI-zW-imi" secondAttribute="bottom" id="uDe-Kk-0ws"/>

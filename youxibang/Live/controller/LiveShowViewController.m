@@ -22,6 +22,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
     NSString *anchor_type;//0.全部 主播类型
 }
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topViewTopConstraint;
 @property (weak, nonatomic) IBOutlet UIButton *distanceButton;
 @property (weak, nonatomic) IBOutlet UIButton *ageButton;
 @property (weak, nonatomic) IBOutlet UIButton *filtButton;
@@ -59,6 +60,11 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
     return _selectedIndexArray;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+//    self.navigationController.navigationBarHidden = NO;
+}
+
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     if (self.filterView) {
@@ -87,6 +93,12 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
     [self.collectionView registerNib:[UINib nibWithNibName:@"LiveCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:COLLECTIONVIEW_IDENTIFIER];
     self.collectionView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
     self.collectionView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
+    if (@available(iOS 11.0, *)) {
+        self.topViewTopConstraint.constant = 0;
+    }
+    else {
+        self.topViewTopConstraint.constant = -64;
+    }
 }
 
 - (void)getLiveListRequest {

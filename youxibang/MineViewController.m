@@ -37,10 +37,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"我的";
-    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 49);
-    if ([[UIDevice currentDevice] systemVersion].floatValue <= 11.f){
-        self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 49);
-    }
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 49);
     self.tableView.showsVerticalScrollIndicator = NO;
     self.tableView.tableFooterView = [UIView new];
     self.tableView.delegate = self;
@@ -49,10 +46,11 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.tableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
-    
     self.tableView.layer.masksToBounds = NO;
     [self.tableView registerNib:[UINib nibWithNibName:@"MineTableViewCell" bundle:nil] forCellReuseIdentifier:TABLEVIEW_IDENTIFIER];
     self.tableView.tableHeaderView = [self configTableViewHeaderView];
+    ScrollViewContentInsetAdjustmentNever(self, self.tableView);
+    
     //收到推送后刷新此页面的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshHead) name:@"refreshMessage" object:nil];
     [self getADRequest];

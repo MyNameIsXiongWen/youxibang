@@ -55,7 +55,7 @@
         [rightBtn setTitle:@"账户管理" forState:UIControlStateNormal];
         rightBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
         [rightBtn setTitleColor:[UIColor colorFromHexString:@"437fed"] forState:UIControlStateNormal];
-        rightBtn.bounds = CGRectMake(0, 0, 60, 30);
+        rightBtn.bounds = CGRectMake(0, 0, 70, 30);
         [rightBtn addTarget:self action:@selector(withdrawAccountManage) forControlEvents:UIControlEventTouchUpInside];
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
     }

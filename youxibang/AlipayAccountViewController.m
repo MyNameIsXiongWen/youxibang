@@ -31,11 +31,10 @@
 }
 - (void)viewWillAppear:(BOOL)animated{
     //获取绑定支付宝信息
-    NSMutableDictionary* dic = [UserNameTool readPersonalData];
-    NSString* i = [NSString stringWithFormat:@"%@",[dic objectForKey:@"is_alipay"]];
-    if (i.intValue == 1){
+    UserModel *userModel = UserModel.sharedUser;
+    if (userModel.is_alipay.integerValue == 1){
         self.accountView.hidden = NO;
-        self.accountLab.text =[NSString stringWithFormat:@"%@",[dic objectForKey:@"alipay"]];
+        self.accountLab.text =[NSString stringWithFormat:@"%@",userModel.alipay];
     }
 }
 

@@ -9,6 +9,7 @@
 #import "SigninTableViewCell.h"
 #import "SigninCoinHistoryViewController.h"
 #import "InviteViewController.h"
+#import "LoginViewController.h"
 
 static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 @interface SigninViewController () <UITableViewDelegate ,UITableViewDataSource> {
@@ -34,12 +35,16 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 }
 
 - (void)getDataInfoRequest {
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = NSDictionary.dictionary;
-    if (DataStore.sharedDataStore.token) {
-        dic = @{@"token":DataStore.sharedDataStore.token};
-    }
+    dic = @{@"token":DataStore.sharedDataStore.token};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/get_my_gold",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -101,12 +106,16 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 }
 
 - (void)signSelector:(UIButton *)sender {
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = NSDictionary.dictionary;
-    if (DataStore.sharedDataStore.token) {
-        dic = @{@"token":DataStore.sharedDataStore.token};
-    }
+    dic = @{@"token":DataStore.sharedDataStore.token};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/sign_in",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];

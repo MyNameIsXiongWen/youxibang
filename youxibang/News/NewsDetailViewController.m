@@ -111,6 +111,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     }
     CGSize actualSize = [webView sizeThatFits:CGSizeZero];
     CGRect newFrame = webView.frame;
+    newFrame.size.width = SCREEN_WIDTH;
     newFrame.size.height = actualSize.height;
     newFrame.origin.y = 70 + (labelSize.height-25);
     webView.frame = newFrame;

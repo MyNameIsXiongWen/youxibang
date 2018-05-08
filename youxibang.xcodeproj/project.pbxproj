@@ -852,6 +852,7 @@
 		187362872010312C0045EF9E /* BaseTool */ = {
 			isa = PBXGroup;
 			children = (
+				877E526020A14059005A53E5 /* iOS 11 */,
 				8D6038F52081CABD00336B65 /* ZLPhotoThird */,
 				874E3350207DBAAE006F0AAD /* NetWorking */,
 				878323BD207CB2EB0048E4E9 /* SDCityPicker */,
@@ -1612,6 +1613,13 @@
 				875936A02092E37A00591D33 /* LiveCharmPhotoModel.m */,
 			);
 			path = model;
+			sourceTree = "<group>";
+		};
+		877E526020A14059005A53E5 /* iOS 11 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "iOS 11";
 			sourceTree = "<group>";
 		};
 		878323BD207CB2EB0048E4E9 /* SDCityPicker */ = {

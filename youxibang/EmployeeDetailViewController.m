@@ -64,7 +64,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT + 20);
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     self.tableView.showsVerticalScrollIndicator = NO;
     self.edgesForExtendedLayout = UIRectEdgeNone;
 
@@ -78,6 +78,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [self.tableView registerNib:[UINib nibWithNibName:@"LiveBaseInformationTableViewCell" bundle:nil] forCellReuseIdentifier:BASEINFORMATION_TABLEVIEW_ID];
     [self.tableView registerNib:[UINib nibWithNibName:@"LiveCharmTableViewCell" bundle:nil] forCellReuseIdentifier:LIVECHARM_TABLEVIEW_ID];
     [self.tableView registerNib:[UINib nibWithNibName:@"LiveInformationTableViewCell" bundle:nil] forCellReuseIdentifier:LIVEINFORMATION_TABLEVIEW_ID];
+    ScrollViewContentInsetAdjustmentNever(self, self.tableView);
     //渐显view
     UIView *nav = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:UIColor.whiteColor andView:self.view];
     UIView *lineView = [EBUtility viewfrome:CGRectMake(0, 63.5, SCREEN_WIDTH, 0.5) andColor:[UIColor colorFromHexString:@"b2b2b2"] andView:nav];
@@ -118,7 +119,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 }
 
 - (void)detailBottomButton {
-    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 44+20);
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 44);
     UIButton* phone = [EBUtility btnfrome:CGRectMake(0, SCREEN_HEIGHT - 44, SCREEN_WIDTH/2, 44) andText:@"电话" andColor:[UIColor whiteColor] andimg:nil andView:self.view];
     phone.backgroundColor = [EBUtility colorWithHexString:@"#73CDFB" alpha:1];
     [phone addTarget:self action:@selector(conBtn:) forControlEvents:UIControlEventTouchUpInside];
@@ -133,7 +134,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     if ([self.dataInfo[@"user_id"] integerValue] == DataStore.sharedDataStore.userid.integerValue) {
         return;
     }
-    self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT - 48+20);
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 48);
     UIButton* imBtn = [EBUtility btnfrome:CGRectMake(0, SCREEN_HEIGHT - 48, SCREEN_WIDTH/3, 48) andText:@"聊天" andColor:[UIColor colorFromHexString:@"333333"] andimg:[UIImage imageNamed:@"live_detail_review"] andView:self.view];
     imBtn.backgroundColor = UIColor.whiteColor;
     imBtn.tag = 777;
@@ -212,10 +213,15 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 //查询权限  是否能查看微信/聊天/查看魅力图片
 - (void)queryJurisdictionRequestType:(NSString *)type TargetId:(NSString *)targetId Index:(NSInteger)index {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    if (DataStore.sharedDataStore.token) {
-        [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+        
     }
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     [dict setObject:type forKey:@"type"];
     [dict setObject:targetId forKey:@"target_id"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
@@ -658,7 +664,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             phone.hidden = YES;
             UIButton* com = [self.view viewWithTag:101];
             com.hidden = YES;
-            self.tableView.frame = CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT + 20);
+            self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         }
         else {
             if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_strangercall"]].integerValue != 1) {
