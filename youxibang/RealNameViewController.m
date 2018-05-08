@@ -17,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UIView *sucView;
 @property (nonatomic,strong)UIImage* photoZ;
 @property (weak, nonatomic) IBOutlet JKCountDownButton *codeBtn;
+@property (weak, nonatomic) IBOutlet UIView *backgroundContainerView;
 @property (nonatomic,strong)UIImage* photoF;
 @end
 
@@ -125,7 +126,6 @@
             NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
             NSString *str = [response objectForKey:@"message"];
             if (msg == 1) {
-//                [SVProgressHUD showSuccessWithStatus:str];
                 [UserNameTool reloadPersonalData:^{
                     self.sucView.hidden = NO;
                 }];
@@ -215,7 +215,7 @@
 
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        UIButton* btn = [self.view viewWithTag:self.editingphotoNum];
+        UIButton* btn = [self.backgroundContainerView viewWithTag:self.editingphotoNum];
         [btn setImage:newImage forState:0];//设置头像
         
     });
@@ -224,50 +224,47 @@
 
 //当用户按下return去键盘
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:1];
-
+    [self.backgroundContainerView endEditing:1];
 }
--(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    if (textField == self.idCard){
-        [UIView animateWithDuration:0.3 animations:^{
-            
-            CGRect frame = self.view.frame;
-            
-            frame.origin.y = - 40;
-            
-            self.view.frame = frame;
-            
-        }];
-    }
-
-    return YES;
-}
+//-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+//    if (textField == self.idCard){
+//        [UIView animateWithDuration:0.3 animations:^{
+//
+//            CGRect frame = self.view.frame;
+//
+//            frame.origin.y = - 40;
+//
+//            self.view.frame = frame;
+//
+//        }];
+//    }
+//
+//    return YES;
+//}
 
 //结束编辑时键盘下去 视图下移动画
 
--(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
-    if (textField == self.idCard){
-        [UIView animateWithDuration:0.3 animations:^{
-            
-            CGRect frame = self.view.frame;
-            
-            frame.origin.y = 64;
-            
-            self.view.frame = frame;
-            
-        }];
-    }
-
-    return YES;
-}
+//-(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
+//    if (textField == self.idCard){
+//        [UIView animateWithDuration:0.3 animations:^{
+//
+//            CGRect frame = self.view.frame;
+//
+//            frame.origin.y = 64;
+//
+//            self.view.frame = frame;
+//
+//        }];
+//    }
+//
+//    return YES;
+//}
 /*
 #pragma mark - Navigation
 

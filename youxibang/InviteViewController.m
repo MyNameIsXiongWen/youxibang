@@ -28,9 +28,18 @@
     // Do any additional setup after loading the view from its nib.
     self.title = @"邀好友获金币/彩妆/直播设备";
     self.inviteCodeLabel.text = UserModel.sharedUser.invitecode;
+    self.inviteCodeLabel.userInteractionEnabled = YES;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pastboardSelector)];
+    [self.inviteCodeLabel addGestureRecognizer:tap];
     self.tableview.tableHeaderView = self.headerView;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
     [self getDataInfoRequest];
+}
+
+- (void)pastboardSelector {
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    [pasteboard setString:self.inviteCodeLabel.text];
+    [SVProgressHUD showSuccessWithStatus:@"邀请码已复制到粘贴板"];
 }
 
 - (void)getDataInfoRequest {

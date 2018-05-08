@@ -14,13 +14,13 @@
 static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 @interface NewsDetailViewController () <UIWebViewDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource> {
 }
+@property (weak, nonatomic) IBOutlet UILabel *reviewCountLabel;
 @property (strong, nonatomic) IBOutlet UIView *headerView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (assign, nonatomic) int currentPage;
 @property (weak, nonatomic) IBOutlet UILabel *countLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 
-@property (weak, nonatomic) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UITextField *reviewTextField;
 - (IBAction)clickReviewBtn:(id)sender;
 - (IBAction)clickLaudBtn:(id)sender;
@@ -28,6 +28,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 @property (weak, nonatomic) IBOutlet UITableView *tableview;
 @property (strong, nonatomic) NSMutableArray *reviewArray;
 @property (strong, nonatomic) ShareView *shareView;
+@property (strong, nonatomic) UIWebView *webView;
 
 @end
 
@@ -36,6 +37,31 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self configBottomView];
+    self.currentPage = 1;
+    
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 70, SCREEN_WIDTH, 100)];
+    self.webView.delegate = self;
+    [self.webView sizeToFit];
+    [self.webView scalesPageToFit];
+    self.webView.scrollView.scrollEnabled = NO;
+    [self.headerView addSubview:self.webView];
+    self.tableview.tableHeaderView = self.headerView;
+    [self.tableview registerNib:[UINib nibWithNibName:@"NewsReviewTableViewCell" bundle:nil] forCellReuseIdentifier:REVIEW_TABLEVIEW_ID];
+    [self getNewsDetailRequest];
+    self.tableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
+    self.tableview.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(shareNotificationSelector:) name:@"SHARENOTIFICATION" object:nil];
+    
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn setImage:[UIImage imageNamed:@"share_black"] forState:UIControlStateNormal];
+    rightBtn.bounds = CGRectMake(0, 0, 40, 30);
+    [rightBtn addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
+}
+
+- (void)configBottomView {
     self.laudButton.layer.borderColor = [UIColor colorFromHexString:@"b2b2b2"].CGColor;
     self.laudButton.layer.borderWidth = 0.5;
     self.laudButton.layer.cornerRadius = 16;
@@ -46,10 +72,16 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     self.reviewTextField.layer.masksToBounds = YES;
     self.titleLabel.text = self.newsModel.title;
     [self.titleLabel sizeToFit];
-    self.countLabel.text = [NSString stringWithFormat:@"阅读数 %@",self.newsModel.comment_count];
+    self.countLabel.text = [NSString stringWithFormat:@"阅读数 %@",self.newsModel.click];
     [self.countLabel sizeToFit];
     self.timeLabel.text = self.newsModel.publish_time;
     [self.timeLabel sizeToFit];
+    self.reviewCountLabel.layer.cornerRadius = 5.5;
+    self.reviewCountLabel.layer.masksToBounds = YES;
+    self.reviewCountLabel.text = [NSString stringWithFormat:@"%@",self.newsModel.comment_count];
+    if (self.newsModel.comment_count.integerValue == 0) {
+        self.reviewCountLabel.hidden = YES;
+    }
     
     UIView *leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 8, 40, 16)];
     leftView.backgroundColor = UIColor.clearColor;
@@ -58,26 +90,9 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     [leftView addSubview:imageView];
     self.reviewTextField.leftView = leftView;
     self.reviewTextField.leftViewMode = UITextFieldViewModeAlways;
-    self.currentPage = 1;
-    
-    [self.webView sizeToFit];
-    [self.webView scalesPageToFit];
-    self.webView.scrollView.scrollEnabled = NO;
-    self.tableview.tableHeaderView = self.headerView;
-    [self.tableview registerNib:[UINib nibWithNibName:@"NewsReviewTableViewCell" bundle:nil] forCellReuseIdentifier:REVIEW_TABLEVIEW_ID];
-    [self getNewsDetailRequest];
-    self.tableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
-    self.tableview.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
-    
-    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn setImage:[UIImage imageNamed:@"share_black"] forState:UIControlStateNormal];
-    rightBtn.bounds = CGRectMake(0, 0, 40, 30);
-    [rightBtn addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
 }
 
-- (void)notificationSelector:(NSNotification *)notification {
+- (void)shareNotificationSelector:(NSNotification *)notification {
     NSString *object = notification.object;
     if ([object isEqualToString:@"success"]) {
         [self.shareView dismiss];
@@ -101,7 +116,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     [self getNewsDetailReviewListRequest];
-    self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+    self.title = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     CGSize labelSize = [self.title boundingRectWithSize:CGSizeMake(SCREEN_WIDTH-30, 1000)
                                                 options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesFontLeading  |NSStringDrawingUsesLineFragmentOrigin//采用换行模式
                                              attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:21]}//传人的字体字典
@@ -174,10 +189,14 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
                 [self.laudButton setTitle:self.newsModel.laud_count forState:0];
                 if ([self.newsModel.is_laud integerValue] == 0) {
                     [self.laudButton setImage:[UIImage imageNamed:@"news_like"] forState:0];
+                    self.laudButton.layer.borderColor = [UIColor colorFromHexString:@"b2b2b2"].CGColor;
+                    [self.laudButton setTitleColor:[UIColor colorFromHexString:@"b2b2b2"] forState:0];
                     self.laudButton.selected = NO;
                 }
                 else {
                     [self.laudButton setImage:[UIImage imageNamed:@"news_liked"] forState:0];
+                    self.laudButton.layer.borderColor = [UIColor colorFromHexString:@"457fea"].CGColor;
+                    [self.laudButton setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
                     self.laudButton.selected = YES;
                 }
             }else {
@@ -309,10 +328,14 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
         if (islaud) {
             self.newsModel.laud_count = [NSString stringWithFormat:@"%d",self.newsModel.laud_count.intValue+1];
             [sender setImage:[UIImage imageNamed:@"news_liked"] forState:UIControlStateNormal];
+            sender.layer.borderColor = [UIColor colorFromHexString:@"457fea"].CGColor;
+            [sender setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
         }
         else {
             self.newsModel.laud_count = [NSString stringWithFormat:@"%d",self.newsModel.laud_count.intValue-1];
             [sender setImage:[UIImage imageNamed:@"news_like"] forState:UIControlStateNormal];
+            sender.layer.borderColor = [UIColor colorFromHexString:@"b2b2b2"].CGColor;
+            [sender setTitleColor:[UIColor colorFromHexString:@"b2b2b2"] forState:0];
         }
         [sender setTitle:self.newsModel.laud_count forState:0];
     }];

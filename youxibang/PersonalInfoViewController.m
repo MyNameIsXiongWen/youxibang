@@ -62,6 +62,8 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         CGFloat perWidth = (SCREEN_WIDTH-30-30)/4;
         UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(15+(perWidth+10)*(i%4), 25+10+(perWidth+10)*(i/4), perWidth, perWidth)];
         [cell addSubview:imgView];
+        imgView.contentMode = UIViewContentModeScaleAspectFill;
+        imgView.layer.masksToBounds = YES;
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
         btn.frame = imgView.frame;
         [cell addSubview:btn];
@@ -298,18 +300,6 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         photoImg.layer.masksToBounds = YES;
         UIImageView *videoImg = [cell viewWithTag:3];
         videoImg.layer.masksToBounds = YES;
-//        if (self.dataInfo){
-//            [photoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
-//            if (self.dataInfo[@"video"]) {
-//                if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
-//                    if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
-//                        if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"]) {
-//                            [videoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"]]] placeholderImage:[UIImage imageNamed:@"add_video"]];
-//                        }
-//                    }
-//                }
-//            }
-//        }
         [photoImg sd_setImageWithURL:[NSURL URLWithString:UserModel.sharedUser.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
         if (UserModel.sharedUser.video) {
             if (isKindOfNSDictionary(UserModel.sharedUser.video)) {
@@ -380,7 +370,6 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
             EditInfoViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ei"];
             vc.delegate = self;
             vc.type = indexPath.row;
-//            vc.dataInfo = [NSMutableDictionary dictionaryWithDictionary:self.dataInfo];
             [self.navigationController pushViewController:vc animated:1];
         }
     }

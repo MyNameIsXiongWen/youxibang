@@ -40,7 +40,7 @@
     self.blackView.userInteractionEnabled = YES;
     [self.blackView addGestureRecognizer:tap];
     
-    UIImageView *bkgImgView = [EBUtility imgfrome:CGRectMake(0, 0, 261, 284) andImg:[UIImage imageNamed:@"live_pay_bkg"] andView:self];
+    UIImageView *bkgImgView = [EBUtility imgfrome:self.bounds andImg:[UIImage imageNamed:@"live_pay_bkg"] andView:self];
     UILabel *titleLabel = [EBUtility labfrome:CGRectMake(0, 100, self.frame.size.width, 25) andText:@"查看主播的全部资料或聊天" andColor:[UIColor colorFromHexString:@"333333"] andView:self];
     titleLabel.font = [UIFont systemFontOfSize:17.0];
     UILabel *lineLabel = [EBUtility labfrome:CGRectMake(0, 150, self.frame.size.width, 0.5) andText:@"" andColor:nil andView:self];
@@ -53,8 +53,8 @@
     tableview.rowHeight = 45;
     [self addSubview:tableview];
     [tableview mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.mas_left).offset(5);
-        make.right.mas_equalTo(self.mas_right).offset(-20);
+        make.left.mas_equalTo(self.mas_left).offset(10);
+        make.right.mas_equalTo(self.mas_right).offset(-25);
         make.top.mas_equalTo(lineLabel.mas_bottom);
         make.bottom.mas_equalTo(self.mas_bottom);
     }];
@@ -92,17 +92,24 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    if (self.showBuyVip) {
+        return 3;
+    }
+    return 2;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSArray *titleArray = @[[NSString stringWithFormat:@"付费解锁（%@元）",payPrice],@"成为会员，免费观看",@"取消"];
+    NSArray *titleArray = @[[NSString stringWithFormat:@"付费解锁（%@元）",payPrice],@"取消"];
+    if (self.showBuyVip) {
+        titleArray = @[[NSString stringWithFormat:@"付费解锁（%@元）",payPrice],@"成为会员，免费观看",@"取消"];
+    }
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"identifier"];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"identifier"];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     UILabel *label = [EBUtility labfrome:CGRectMake(0, 10, self.frame.size.width-25, 25) andText:titleArray[indexPath.row] andColor:[UIColor colorFromHexString:@"457fea"] andView:cell.contentView];
+    label.backgroundColor = UIColor.clearColor;
     label.font = [UIFont systemFontOfSize:16.0];
     if (indexPath.row == 0) {
         label.textColor = [UIColor colorFromHexString:@"ff3b30"];
@@ -112,12 +119,24 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.row == 2) {
-        [self dismiss];
+    if (self.showBuyVip) {
+        if (indexPath.row == 2) {
+            [self dismiss];
+        }
+        else {
+            if (self.confirmSelecrBlock) {
+                self.confirmSelecrBlock(indexPath.row);
+            }
+        }
     }
     else {
-        if (self.confirmSelecrBlock) {
-            self.confirmSelecrBlock(indexPath.row);
+        if (indexPath.row == 1) {
+            [self dismiss];
+        }
+        else {
+            if (self.confirmSelecrBlock) {
+                self.confirmSelecrBlock(indexPath.row);
+            }
         }
     }
 }

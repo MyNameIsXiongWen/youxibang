@@ -16,6 +16,7 @@ typedef void(^ConfirmSelecrBlock)(NSInteger index);
 - (instancetype)initWithFrame:(CGRect)frame Price:(NSString *)price;
 @property (nonatomic, copy) ConfirmSelecrBlock confirmSelecrBlock;
 @property (nonatomic, strong) UIView *blackView;
+@property (nonatomic, assign) BOOL showBuyVip;
 - (void)show;
 - (void)dismiss;
 

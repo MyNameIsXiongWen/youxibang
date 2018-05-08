@@ -521,7 +521,12 @@ NSString * const ID = @"SDCycleScrollViewCell";
     }
     
     CGRect pageControlFrame = CGRectMake(x, y, size.width, size.height);
-    pageControlFrame.origin.y -= self.pageControlBottomOffset;
+    if (self.UpOffSet) {
+        pageControlFrame.origin.y -= self.pageControlBottomOffset+20;
+    }
+    else {
+        pageControlFrame.origin.y -= self.pageControlBottomOffset;
+    }
     pageControlFrame.origin.x -= self.pageControlRightOffset;
     self.pageControl.frame = pageControlFrame;
     self.pageControl.hidden = !_showPageControl;

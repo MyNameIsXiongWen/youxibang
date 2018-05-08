@@ -42,6 +42,7 @@
     
     UIButton *closeBtn = [EBUtility btnfrome:CGRectMake((171-21)/2, 0, 21, 21) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"live_charm_pay_close"] andView:self];
     [closeBtn addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
+    UIView *line = [EBUtility viewfrome:CGRectMake((171-21)/2+10, 21, 0.5, 29) andColor:UIColor.whiteColor andView:self];
     
     UIImageView *bkgImgView = [EBUtility imgfrome:CGRectMake(0, 50, 171, 127) andImg:[UIImage imageNamed:@"live_charm_pay_bkg"] andView:self];
     UILabel *priceLabel = [EBUtility labfrome:CGRectMake(0, 74, self.frame.size.width, 30) andText:[NSString stringWithFormat:@"%@元",payPrice] andColor:[UIColor colorFromHexString:@"f9d854"] andView:self];

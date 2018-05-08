@@ -20,8 +20,11 @@
     // Configure the view for the selected state
 }
 
-- (void)setContentWithDic:(NSDictionary *)dic Type:(NSUInteger)type {
+- (void)setContentWithDic:(NSDictionary *)dic Type:(NSInteger)type {
     self.idLabel.text = [NSString stringWithFormat:@"ID：%@",dic[@"id"]];
+    if (type == 2) {
+        self.idLabel.hidden = NO;
+    }
     if (type == 1){
         self.constellationLabel.text = [NSString stringWithFormat:@"星座：%@",dic[@"constellation"]];
     }else {

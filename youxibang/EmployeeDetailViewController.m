@@ -23,6 +23,7 @@
 #import "AwardViewController.h"
 #import "LiveCharmPhotoPayView.h"
 #import "ShareView.h"
+#import "VipWebViewController.h"
 
 static NSString *const LIVECHARM_TABLEVIEW_ID = @"livecharm_tableview_id";
 static NSString *const LIVEINFORMATION_TABLEVIEW_ID = @"liveinformation_tableview_id";
@@ -36,6 +37,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     int laudCount;//点赞数
     BOOL isCanTalk;//是否能聊天
     NSString *price;//查看资料或聊天的价格
+    NSDictionary *adDataInfo;//查询会员是否能够点击（应对审核）
 }
 
 @property (nonatomic,strong) UIView *nav;//渐显view
@@ -97,12 +99,13 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         [self detailBottomButton];
     }
     else {
+        [self getADRequest];
         UIButton *share = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-45, 25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"share_white"] andView:self.view];
         share.tag = 1002;
         [share addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
     }
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self queryJurisdictionRequestType:@"2" TargetId:self.employeeId Index:0];
+        [self queryJurisdictionRequestType:@"2" TargetId:self.employeeId Index:0 ViewDidLoad:YES];
     });
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
 }
@@ -212,16 +215,20 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 }
 
 //查询权限  是否能查看微信/聊天/查看魅力图片
-- (void)queryJurisdictionRequestType:(NSString *)type TargetId:(NSString *)targetId Index:(NSInteger)index {
-    if (!DataStore.sharedDataStore.token) {
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-        [self.navigationController pushViewController:vc animated:1];
-        return;
-        
+- (void)queryJurisdictionRequestType:(NSString *)type TargetId:(NSString *)targetId Index:(NSInteger)index ViewDidLoad:(BOOL)viewDidLoad {
+    if (!viewDidLoad) {
+        if (!DataStore.sharedDataStore.token) {
+            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+            [self.navigationController pushViewController:vc animated:1];
+            return;
+            
+        }
     }
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    if (DataStore.sharedDataStore.token) {
+        [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    }
     [dict setObject:type forKey:@"type"];
     [dict setObject:targetId forKey:@"target_id"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
@@ -232,13 +239,13 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
-            LiveCharmPhotoModel *model = self.charmPhotoArray[index];
             if (code == 1) {//有权限 聊天/查看微信和指定魅力照片
                 if (type.integerValue == 2) {//聊天/查看微信
                     isCanTalk = YES;
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
                 }
                 else if (type.integerValue == 1) {
+                    LiveCharmPhotoModel *model = self.charmPhotoArray[index];
                     model.is_charge = @"0";//图片
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
                     [self configZLPhotoPickerBrowserWithArray:self.charmPhotoArray Index:index];
@@ -247,6 +254,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             else if (code == 0) {//没权限 聊天/查看微信和指定魅力照片
                 price = object[@"data"];
                 if (type.integerValue == 1) {//图片
+                    LiveCharmPhotoModel *model = self.charmPhotoArray[index];
                     [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:targetId Index:index];
                 }
             }
@@ -376,7 +384,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 #pragma mark - 分享
 - (void)shareBtn:(UIButton *)sender {
-    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:SHARE_WEBURL ShareTitle:@"我是主播" WithShareDescription:@"这是我的主播魅力名片，我为自己代言，欢迎来围观"];
+    NSString *anchor_url = [NSString stringWithFormat:@"http://m.feirantech.cn/mobile/share/index#/anchorDetail?token%@&anchorId=%@&skip=phone",DataStore.sharedDataStore.token,self.employeeId];
+    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:anchor_url ShareTitle:@"我是主播" WithShareDescription:@"这是我的主播魅力名片，我为自己代言，欢迎来围观"];
     [self.shareView show];
 }
 
@@ -435,12 +444,6 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 //点赞/取消点赞
 - (void)likeRequest:(UIButton *)sender {
-    if (!DataStore.sharedDataStore.token) {
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-        [self.navigationController pushViewController:vc animated:1];
-        return;
-    }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -499,14 +502,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 existBgimg = YES;
             }
         }
-        if (self.dataInfo[@"video"]) {
-            if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
-                if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
-                    if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] || self.dataInfo[@"video"][@"VideoMeta"][@"VideoId"]) {
-                        existVideo = YES;
-                    }
-                }
-            }
+        if (isKindOfNSString(self.dataInfo[@"video_img"])) {
+            existVideo = YES;
         }
     }
     if (existBgimg) {
@@ -518,7 +515,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         bgImgAry = @[@"img_my111"].mutableCopy;
     }
     if (existVideo) {
-        [bgImgAry insertObject:self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] atIndex:0];
+        [bgImgAry insertObject:self.dataInfo[@"video_img"] atIndex:0];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self configMediaPlayer];
         });
@@ -783,20 +780,18 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     UIView *headerView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 65) andColor:[UIColor whiteColor] andView:nil];
     UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, SCREEN_WIDTH, 15) andText:@"" andColor:nil andView:headerView];
     lab.backgroundColor = [UIColor colorFromHexString:@"f0f4f8"];
-    UILabel* name = [EBUtility labfrome:CGRectMake(15, 30, 5, 15) andText:@"技能" andColor:[UIColor colorFromHexString:@"333333"] andView:headerView];
-    name.font = [UIFont systemFontOfSize:14.0];
-    if (self.type == 1) {
-        name.text = @"最近发布";
+    NSArray *nameArray = NSArray.array;
+    if (self.type == 0) {
+        nameArray = @[@"技能",@"资料"];//宝贝个人资料
+    }
+    else if (self.type == 1) {
+        nameArray = @[@"最近发布",@"资料"];//雇主资料
     }
     else if (self.type == 2) {
-        name.text = @"主播资料";
+        nameArray = @[@"主播资料",@"主播魅力",@"资料"];//主播资料
     }
-    if (section == 1) {
-        name.text = @"资料";
-    }
-    else if (section == 2) {
-        name.text = @"主播魅力";
-    }
+    UILabel* name = [EBUtility labfrome:CGRectMake(15, 30, 5, 15) andText:nameArray[section] andColor:[UIColor colorFromHexString:@"333333"] andView:headerView];
+    name.font = [UIFont systemFontOfSize:14.0];
     [name sizeToFit];
     return headerView;
 }
@@ -832,7 +827,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 LiveCharmPhotoModel *model = weakSelf.charmPhotoArray[index];
                 //如果这张照片时收费照片，需要再去请求一下自己能否看，因为照片是针对所有人的，请求是只针对自己
                 if (model.is_charge.intValue == 1) {
-                    [self queryJurisdictionRequestType:@"1" TargetId:model.id Index:index];
+                    [self queryJurisdictionRequestType:@"1" TargetId:model.id Index:index ViewDidLoad:NO];
                 }
                 else {
                     [weakSelf configZLPhotoPickerBrowserWithArray:weakSelf.charmPhotoArray Index:index];
@@ -869,38 +864,77 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 //查看微信号/聊天
 - (void)lookWechatSelector {
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
     [self showPayViewWithPrice:price Type:@"3" TargetId:self.dataInfo[@"id"]];
 }
 
 #pragma mark - 付款/微信/聊天
 - (void)showPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
-    LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284) Price:money];
+    LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284-45) Price:money];
+    freeView.showBuyVip = NO;
+    if (isKindOfNSDictionary(adDataInfo)) {
+        if ([adDataInfo[@"link_lock"] integerValue] == 1) {
+            freeView.showBuyVip = YES;
+            freeView.frame = CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284);
+        }
+    }
     WEAKSELF
     typeof(freeView) __weak weakFreeView = freeView;
-    freeView.confirmSelecrBlock = ^(NSInteger index) {
+    weakFreeView.confirmSelecrBlock = ^(NSInteger index) {
         [weakFreeView dismiss];
-        if (index == 0) {
-            UserModel *user = UserModel.sharedUser;
-            if ([user.is_paypwd isEqualToString:@"0"]){
-                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                SetPayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"spp"];
-                [weakSelf.navigationController pushViewController:vc animated:1];
-                return;
-            }
-            //弹起支付密码alert
-            CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
-            alert.resultDate = ^(NSString *date) {
-                [weakSelf payRequestWithPwd:date Price:money Type:type TargetId:targetId];
-            };
-            alert.resultIndex = ^(NSInteger index) {
-                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                RetrievePayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rpp"];
-                [weakSelf.navigationController pushViewController:vc animated:1];
-            };
-            [alert showAlertView];
-        }
+        [weakSelf clickLivePayViewWithIndex:index Price:money Type:type TargetId:targetId];
     };
     [freeView show];
+}
+
+- (void)clickLivePayViewWithIndex:(NSInteger)index Price:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
+    if (index == 0) {
+        UserModel *user = UserModel.sharedUser;
+        if ([user.is_paypwd isEqualToString:@"0"]){
+            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            SetPayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"spp"];
+            [self.navigationController pushViewController:vc animated:1];
+            return;
+        }
+        //弹起支付密码alert
+        CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
+        alert.resultDate = ^(NSString *date) {
+            [self payRequestWithPwd:date Price:money Type:type TargetId:targetId];
+        };
+        alert.resultIndex = ^(NSInteger index) {
+            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            RetrievePayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rpp"];
+            [self.navigationController pushViewController:vc animated:1];
+        };
+        [alert showAlertView];
+    }
+    else if (index == 1) {
+        VipWebViewController *con = [VipWebViewController new];
+        con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
+        [self.navigationController pushViewController:con animated:YES];
+    }
+}
+
+//获取会员列表
+- (void)getADRequest {
+    NSDictionary *dict = @{@"typeid":@"6"};
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/bannerlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {
+                adDataInfo = [object[@"data"] lastObject];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    }];
 }
 
 #pragma mark - 付款/魅力图片
@@ -991,14 +1025,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index {
     BOOL existVideo = NO;
     if (self.dataInfo) {
-        if (self.dataInfo[@"video"]) {
-            if (isKindOfNSDictionary(self.dataInfo[@"video"])) {
-                if (isKindOfNSDictionary(self.dataInfo[@"video"][@"VideoMeta"])) {
-                    if (self.dataInfo[@"video"][@"VideoMeta"][@"CoverURL"] || self.dataInfo[@"video"][@"VideoMeta"][@"VideoId"]) {
-                        existVideo = YES;
-                    }
-                }
-            }
+        if (isKindOfNSString(self.dataInfo[@"video_img"])) {
+            existVideo = YES;
         }
     }
     if (existVideo) {
@@ -1189,8 +1217,6 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 -(NSString *)getMMSSFromSS:(NSString *)totalTime{
     NSInteger seconds = [totalTime integerValue];
-    //format of hour
-    NSString *str_hour = [NSString stringWithFormat:@"%02ld",seconds/3600];
     //format of minute
     NSString *str_minute = [NSString stringWithFormat:@"%02ld",(seconds%3600)/60];
     //format of second
@@ -1211,14 +1237,14 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
         if (isKindOfNSDictionary(response)) {
             NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
             NSString *str = [response objectForKey:@"message"];
             if (msg == 1) {
                 NSDictionary *tokenDictionary = (NSDictionary *)response;
-                [self.aliPlayer prepareWithVid:self.dataInfo[@"video"][@"VideoMeta"][@"VideoId"]
+                [self.aliPlayer prepareWithVid:self.dataInfo[@"video"]
                                    accessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"]
                                accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"]
                                  securityToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"]];

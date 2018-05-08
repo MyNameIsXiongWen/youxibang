@@ -72,7 +72,7 @@
         if (isKindOfNSDictionary(object)){
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
-            NSLog(@"输出 %@--%@",object,msg);
+            NSLog(@"-------输出 %@--%@",object,msg);
             if (code == 1) {
                 NSMutableDictionary* dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
                 [UserModel keyarchiveUserModelWithDict:dataInfo];

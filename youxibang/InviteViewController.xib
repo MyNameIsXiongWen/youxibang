@@ -96,6 +96,22 @@
                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KIY-Wl-1Ks">
+                    <rect key="frame" x="128" y="208" width="0.5" height="25"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="25" id="I8l-ZF-QZM"/>
+                        <constraint firstAttribute="width" constant="0.5" id="NR4-0h-FWk"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rzw-j6-C03">
+                    <rect key="frame" x="242" y="208" width="0.5" height="25"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="25" id="fg1-SE-dzq"/>
+                        <constraint firstAttribute="width" constant="0.5" id="h8R-lv-gOE"/>
+                    </constraints>
+                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="14U-yr-fCe">
                     <rect key="frame" x="40" y="180" width="80" height="80"/>
                     <subviews>
@@ -190,10 +206,13 @@
                 <constraint firstItem="Tzi-JR-1Gr" firstAttribute="bottom" secondItem="iTu-Ni-rIj" secondAttribute="bottom" constant="33" id="Cs5-Ic-7SQ"/>
                 <constraint firstItem="Tzi-JR-1Gr" firstAttribute="top" secondItem="spJ-B7-7mP" secondAttribute="top" id="HEv-eu-oiv"/>
                 <constraint firstItem="TnR-2g-m2j" firstAttribute="leading" secondItem="14U-yr-fCe" secondAttribute="trailing" constant="28" id="JDI-G6-vnP"/>
+                <constraint firstItem="Rzw-j6-C03" firstAttribute="leading" secondItem="TnR-2g-m2j" secondAttribute="trailing" constant="14" id="LPI-Cd-LNP"/>
                 <constraint firstItem="xyC-CQ-YLR" firstAttribute="leading" secondItem="TnR-2g-m2j" secondAttribute="trailing" constant="27" id="Pjx-li-R65"/>
+                <constraint firstItem="TnR-2g-m2j" firstAttribute="leading" secondItem="KIY-Wl-1Ks" secondAttribute="trailing" constant="19.5" id="Qtu-BE-hUF"/>
                 <constraint firstItem="Tzi-JR-1Gr" firstAttribute="trailing" secondItem="iTu-Ni-rIj" secondAttribute="trailing" constant="27" id="SUF-hw-AZ5"/>
                 <constraint firstItem="Tzi-JR-1Gr" firstAttribute="trailing" secondItem="spJ-B7-7mP" secondAttribute="trailing" id="SiR-Xf-s3l"/>
                 <constraint firstItem="TnR-2g-m2j" firstAttribute="centerX" secondItem="Xf0-iE-v0L" secondAttribute="centerX" id="Vug-v8-KEj"/>
+                <constraint firstItem="Rzw-j6-C03" firstAttribute="centerY" secondItem="KIY-Wl-1Ks" secondAttribute="centerY" id="WhZ-d4-Aho"/>
                 <constraint firstItem="14U-yr-fCe" firstAttribute="centerY" secondItem="TnR-2g-m2j" secondAttribute="centerY" id="Y2R-dp-oPi"/>
                 <constraint firstItem="572-6l-nhZ" firstAttribute="top" secondItem="Tzi-JR-1Gr" secondAttribute="top" constant="260" id="abT-V9-Ih7"/>
                 <constraint firstItem="TnR-2g-m2j" firstAttribute="top" secondItem="Xf0-iE-v0L" secondAttribute="bottom" constant="23" id="bid-aQ-DbI"/>
@@ -202,6 +221,7 @@
                 <constraint firstItem="spJ-B7-7mP" firstAttribute="leading" secondItem="Tzi-JR-1Gr" secondAttribute="leading" id="oKE-5l-yDb"/>
                 <constraint firstItem="n3m-mR-5Oz" firstAttribute="centerX" secondItem="Tzi-JR-1Gr" secondAttribute="centerX" id="s4C-7t-Rem"/>
                 <constraint firstItem="n3m-mR-5Oz" firstAttribute="top" secondItem="572-6l-nhZ" secondAttribute="bottom" constant="-44" id="ub4-aJ-Kr0"/>
+                <constraint firstItem="KIY-Wl-1Ks" firstAttribute="centerY" secondItem="TnR-2g-m2j" secondAttribute="centerY" id="xag-Wi-PY2"/>
                 <constraint firstItem="Xf0-iE-v0L" firstAttribute="top" secondItem="Tzi-JR-1Gr" secondAttribute="top" constant="81" id="y00-EW-hmc"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

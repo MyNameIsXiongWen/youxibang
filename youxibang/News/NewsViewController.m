@@ -69,6 +69,7 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
     else {
         self.type = @"2";
     }
+    self.currentPage = 1;
     [self getNewsListRequest];
 }
 
@@ -169,7 +170,7 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
     [cell.coverImageView sd_setImageWithURL:[NSURL URLWithString:model.thumb] placeholderImage:[UIImage imageNamed:@""]];
     cell.coverImageView.layer.masksToBounds = YES;
     cell.titleLabel.text = model.title;
-    cell.readCountLabel.text = [NSString stringWithFormat:@"阅读数%@",model.comment_count];
+    cell.readCountLabel.text = [NSString stringWithFormat:@"阅读数%@",model.click];
     cell.timeLabel.text = model.publish_time;
     return cell;
 }
@@ -177,6 +178,8 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NewsModel *model = self.dataArray[indexPath.row];
+    model.click = [NSString stringWithFormat:@"%d",model.click.intValue + 1];
+    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
     NewsDetailViewController *detailCon = [NewsDetailViewController new];
     detailCon.newsModel = model;
     detailCon.hidesBottomBarWhenPushed = YES;

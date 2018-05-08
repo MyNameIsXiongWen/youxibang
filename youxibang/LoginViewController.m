@@ -47,28 +47,34 @@
     [btn addTarget:self action:@selector(changeLogin:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
     
-    //第三方登录通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(InfoNotificationAction:) name:@"threeLogin" object:nil];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        //第三方登录通知
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(InfoNotificationAction:) name:@"threeLogin" object:nil];
+    });
 }
+
+//第三方登录通知触发方法
+- (void)InfoNotificationAction:(NSNotification *)notification {
+    NSMutableDictionary* userInfo = notification.userInfo.mutableCopy;
+    self.threeToken = userInfo[@"threetoken"];
+    [self lg:userInfo];
+}
+
 //返回首页
 - (void)back {
     [self.view endEditing:1];
-//    MainTabBarController *minTa = [[MainTabBarController alloc] init];
-//    [minTa setupChildVcs];
-//    self.view.window.rootViewController = minTa;
     MainTabBarController *mainTab = [[MainTabBarController alloc] init];
     AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     delegate.window.rootViewController = mainTab;
 }
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     //如果未安装微信或qq，隐藏按键
     if (![WXApi isWXAppInstalled]) {
         self.wechatBtn.hidden = YES;
     }
-//    if (!([TencentOAuth iphoneQQInstalled] || [TencentOAuth iphoneTIMInstalled])) {
-//        self.qqBtn.hidden = YES;
-//    }
     //自定义返回键，因为要重写返回方法
     UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
     img.image = [UIImage imageNamed:@"back_black"];
@@ -102,12 +108,6 @@
         LoginViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
     }
-}
-//第三方登录通知触发方法
-- (void)InfoNotificationAction:(NSNotification *)notification {
-    NSMutableDictionary* userInfo = notification.userInfo.mutableCopy;
-    self.threeToken = userInfo[@"threetoken"];
-    [self lg:userInfo];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -284,12 +284,15 @@
     }];
 }
 
-#pragma mark - TencentS，。essionDelegate
+#pragma mark - TencentSessionDelegate
 //登录成功回调
 - (void)tencentDidLogin {
     if (_tencentOAuth.accessToken && 0 != [_tencentOAuth.accessToken length]){
-        NSNotification *notification = [NSNotification notificationWithName:@"threeLogin" object:nil userInfo:@{@"typeid":@"3",@"threetoken":[_tencentOAuth getUserOpenID]}];
-        [[NSNotificationCenter defaultCenter] postNotification:notification];
+        self.threeToken = [_tencentOAuth getUserOpenID];
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [dic setObject:@"3" forKey:@"typeid"];
+        [dic setObject:[_tencentOAuth getUserOpenID] forKey:@"threetoken"];
+        [self lg:dic];
     }
 }
 //登录失败回调

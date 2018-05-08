@@ -35,6 +35,9 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     
     NSString *idString;//主播ID
     NSString *moneyString;//上传照片是收费
+    NSMutableArray *leftSalaryArray;
+    NSMutableArray *rightSalaryArray;
+    BOOL selectCity;
 }
 
 //地区相关
@@ -63,7 +66,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
                          @{@"主播类型":@[@"电竞",@"电商",@"体育",@"教育",@"游戏",@"户外",@"其他"]},
                          @{@"直播经验":@[@"1年",@"2年",@"3年",@"4年以上"]},
                          @"",
-                         @{@"期望薪资":@[@"2000-3000",@"3000-5000",@"5000-7000",@"7000-10000",@"面议"]}].mutableCopy;
+                         @""].mutableCopy;
     }
     return _filterArray;
 }
@@ -104,6 +107,14 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     dispatch_async(dispatch_get_main_queue(), ^{
         [self getSelectTypeRequestWithType:2];
     });
+    leftSalaryArray = NSMutableArray.array;
+    rightSalaryArray = NSMutableArray.array;
+    for (int i=1; i<=50; i++) {
+        [leftSalaryArray addObject:[NSString stringWithFormat:@"%d",i]];
+    }
+    for (int i=2; i<=51; i++) {
+        [rightSalaryArray addObject:[NSString stringWithFormat:@"%d",i]];
+    }
 }
 
 //获取选择项
@@ -354,7 +365,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         return cell;
     }
     NSArray *leftArray = @[@"城市",@"直播类型",@"所属平台",@"平台房间号",@"主播类型(选填)",@"直播经验(选填)",@"微信",@"期望薪资",@"经纪公司",@"我的特点(选填)"];
-    NSArray *rightArray = @[areaString?:@"",typeString?:@"请选择",platformString?:@"请选择",room_numberString?:@"",anchor_typeString?:@"请选择",expString?:@"请选择",wechatString?:@"",wish_salaryString?:@"请选择",brokerage_agencyString?:@"",self_evaluateString?:@"请填写"];
+    NSArray *rightArray = @[areaString?:@"",typeString?:@"请选择",platformString?:@"请选择",room_numberString?:@"",anchor_typeString?:@"请选择",expString?:@"请选择",wechatString?:@"",wish_salaryString?:@"请填写(以千为单位)",brokerage_agencyString?:@"",self_evaluateString?:@"请填写"];
     LiveCreateTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:LIVECREATA_TABLEVIEW_ID];
     NSMutableAttributedString *attributeStr = [[NSMutableAttributedString alloc] initWithString:leftArray[indexPath.row]];
     NSRange range = [leftArray[indexPath.row] rangeOfString:@"(选填)"];
@@ -362,9 +373,12 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     cell.leftLabel.attributedText = attributeStr;
     cell.rightLabel.text = [NSString stringWithFormat:@"%@",rightArray[indexPath.row]];
     cell.rightTextField.text = [NSString stringWithFormat:@"%@",rightArray[indexPath.row]];
-    if (indexPath.row == 0 || indexPath.row == 3 || indexPath.row == 6 || indexPath.row == 8) {
-        if (indexPath.row ==0) {
+    if (indexPath.row == 0 || indexPath.row == 3 || indexPath.row == 6 || indexPath.row == 7 || indexPath.row == 8) {
+        if (indexPath.row ==0 || indexPath.row == 7) {
             cell.rightTextField.inputView = self.areaPickerView;
+            if (indexPath.row == 7) {
+                cell.rightTextField.placeholder = @"请填写(以千为单位)";
+            }
         }
         else {
             cell.rightArrowImg.hidden = YES;
@@ -373,7 +387,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         cell.rightTextField.hidden = NO;
         cell.rightTextField.delegate = self;
         cell.rightTextField.tag = indexPath.row;
-        [cell.rightTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+//        [cell.rightTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     }
     else {
         cell.rightArrowImg.hidden = NO;
@@ -385,7 +399,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.row == 1 || indexPath.row == 2 || indexPath.row == 4 || indexPath.row == 5 || indexPath.row == 7) {
+    if (indexPath.row == 1 || indexPath.row == 2 || indexPath.row == 4 || indexPath.row == 5) {
         NSString *title = @"";
         NSArray *dataArray = NSArray.array;
         id object = self.filterArray[indexPath.row];
@@ -456,7 +470,16 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     [self.tableview reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:view.tag inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
 }
 
-- (void)textFieldDidChange:(UITextField *)textField {
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if (textField.tag == 0) {
+        selectCity = YES;
+    }
+    else {
+        selectCity = NO;
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
     if (textField.tag == 0) {
         [self selectPickerView:self.areaPickerView];
     }
@@ -466,6 +489,9 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     else if (textField.tag == 6) {
         wechatString = textField.text;
     }
+    else if (textField.tag == 7) {
+        [self selectPickerView:self.areaPickerView];
+    }
     else if (textField.tag == 8) {
         brokerage_agencyString = textField.text;
     }
@@ -473,9 +499,16 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 }
 
 - (void)selectPickerView:(id)pickerView {
-    provinceString = [self.provinceArray objectAtIndex:[pickerView selectedRowInComponent:0]];
-    cityString = [self.cityArray objectAtIndex:[pickerView selectedRowInComponent:1]];
-    areaString = [NSString stringWithFormat:@"%@%@",provinceString,cityString];
+    if (selectCity) {
+        provinceString = [self.provinceArray objectAtIndex:[pickerView selectedRowInComponent:0]];
+        cityString = [self.cityArray objectAtIndex:[pickerView selectedRowInComponent:1]];
+        areaString = [NSString stringWithFormat:@"%@%@",provinceString,cityString];
+    }
+    else {
+        NSString *left = [leftSalaryArray objectAtIndex:[pickerView selectedRowInComponent:0]];
+        NSString *right = [rightSalaryArray objectAtIndex:[pickerView selectedRowInComponent:1]];
+        wish_salaryString = [NSString stringWithFormat:@"%@000-%@000",left,right];
+    }
 }
 
 #pragma mark - pickerView delegate
@@ -485,37 +518,74 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    if (component == 0) {
-        return self.provinceArray.count;
+    if (selectCity) {
+        if (component == 0) {
+            return self.provinceArray.count;
+        }
+        return self.cityArray.count;
     }
-    return self.cityArray.count;
+    else {
+        if (component == 0) {
+            return leftSalaryArray.count;
+        }
+        return rightSalaryArray.count;
+    }
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    if (component == 0) {
-        return [self.provinceArray objectAtIndex:row];
+    if (selectCity) {
+        if (component == 0) {
+            return [self.provinceArray objectAtIndex:row];
+        }
+        return [self.cityArray objectAtIndex:row];
     }
-    return [self.cityArray objectAtIndex:row];
+    else {
+        if (component == 0) {
+            return [leftSalaryArray objectAtIndex:row];
+        }
+        return [rightSalaryArray objectAtIndex:row];
+    }
 }
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
-    if (component == 0) {
-        return 150*ADAPTATIONRATIO;
+    if (selectCity) {
+        if (component == 0) {
+            return 150*ADAPTATIONRATIO;
+        }
+        return 200*ADAPTATIONRATIO;
     }
-    return 200*ADAPTATIONRATIO;
+    else {
+        return SCREEN_WIDTH/2;
+    }
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    if (component == 0) {
-        self.selectedArray = [self.pickerDic objectForKey:[self.provinceArray objectAtIndex:row]];
-        if (self.selectedArray.count > 0) {
-            self.cityArray = [[self.selectedArray objectAtIndex:0] allKeys];
+    if (selectCity) {
+        if (component == 0) {
+            self.selectedArray = [self.pickerDic objectForKey:[self.provinceArray objectAtIndex:row]];
+            if (self.selectedArray.count > 0) {
+                self.cityArray = [[self.selectedArray objectAtIndex:0] allKeys];
+            }
+            else {
+                self.cityArray = nil;
+            }
+            [pickerView reloadComponent:1];
+            [pickerView selectRow:0 inComponent:1 animated:YES];
+        }
+    }
+    else {
+        if (component == 0) {
+            if (row > [pickerView selectedRowInComponent:1]) {
+                [pickerView reloadComponent:1];
+                [pickerView selectRow:row inComponent:1 animated:YES];
+            }
         }
         else {
-            self.cityArray = nil;
+            if ([pickerView selectedRowInComponent:0] > row) {
+                [pickerView reloadComponent:0];
+                [pickerView selectRow:row inComponent:0 animated:YES];
+            }
         }
-        [pickerView reloadComponent:1];
-        [pickerView selectRow:0 inComponent:1 animated:YES];
     }
 }
 

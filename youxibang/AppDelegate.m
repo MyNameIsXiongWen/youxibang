@@ -286,8 +286,7 @@
             [[NetWorkEngine shareNetWorkEngine] getInfoFromServerWithUrlStr:[NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code",WX_APP_ID,WX_APP_SECRET,temp.code] Paremeters:nil successOperation:^(id response) {
                 NSLog(@"绑定输出 %@",response);
                 
-                NSNotification *notification = [NSNotification notificationWithName:@"threeLogin"object:nil userInfo:@{@"typeid":@"2",@"threetoken":response[@"openid"],@"unionid":response[@"unionid"]}];
-                [[NSNotificationCenter defaultCenter] postNotification:notification];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"threeLogin" object:nil userInfo:@{@"typeid":@"2",@"threetoken":response[@"openid"],@"unionid":response[@"unionid"]}];
             } failoperation:^(NSError *error) {
                 NSLog(@"errr %@",error);
             }];

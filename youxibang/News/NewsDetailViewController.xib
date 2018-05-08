@@ -15,12 +15,12 @@
                 <outlet property="countLabel" destination="ft2-pS-8BS" id="ORL-76-O2W"/>
                 <outlet property="headerView" destination="UkK-Am-vfF" id="4np-6R-JcB"/>
                 <outlet property="laudButton" destination="4NS-Eo-dXz" id="uiO-hZ-LHv"/>
+                <outlet property="reviewCountLabel" destination="emo-gx-6am" id="h41-7S-meT"/>
                 <outlet property="reviewTextField" destination="Jm7-gZ-Jql" id="tqQ-V0-Cxn"/>
                 <outlet property="tableview" destination="tyz-ou-DDp" id="gou-yq-gcx"/>
                 <outlet property="timeLabel" destination="2k2-0H-05q" id="CQ1-nc-8bn"/>
                 <outlet property="titleLabel" destination="h7z-w0-XKW" id="Cs7-t1-1zh"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
-                <outlet property="webView" destination="jQ4-Ho-0cD" id="upB-CW-7bQ"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -89,17 +89,30 @@
                                 <action selector="clickLaudBtn:" destination="-1" eventType="touchUpInside" id="aJ2-8t-3sP"/>
                             </connections>
                         </button>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="500" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="emo-gx-6am">
+                            <rect key="frame" x="232" y="8" width="22" height="11"/>
+                            <color key="backgroundColor" red="0.27058823529411763" green="0.49803921568627452" blue="0.91764705882352937" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="11" id="d2q-DY-rkP"/>
+                                <constraint firstAttribute="width" constant="22" id="jrL-z9-nKM"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstItem="2q9-wJ-l3S" firstAttribute="leading" secondItem="Jm7-gZ-Jql" secondAttribute="trailing" constant="17" id="23r-6e-SQJ"/>
                         <constraint firstItem="4NS-Eo-dXz" firstAttribute="centerY" secondItem="3Fv-Ux-9qD" secondAttribute="centerY" id="8T7-4A-SMx"/>
+                        <constraint firstItem="2q9-wJ-l3S" firstAttribute="top" secondItem="emo-gx-6am" secondAttribute="bottom" constant="-11" id="BY2-zR-Iic"/>
                         <constraint firstAttribute="trailing" secondItem="4NS-Eo-dXz" secondAttribute="trailing" constant="15" id="Hs1-Bd-dCl"/>
                         <constraint firstAttribute="trailing" secondItem="IdU-bK-70P" secondAttribute="trailing" id="Ib7-Yn-NAi"/>
                         <constraint firstItem="Jm7-gZ-Jql" firstAttribute="centerY" secondItem="3Fv-Ux-9qD" secondAttribute="centerY" id="OlW-dT-xVu"/>
                         <constraint firstItem="Jm7-gZ-Jql" firstAttribute="leading" secondItem="3Fv-Ux-9qD" secondAttribute="leading" constant="15" id="UjY-rq-c85"/>
                         <constraint firstItem="2q9-wJ-l3S" firstAttribute="centerY" secondItem="3Fv-Ux-9qD" secondAttribute="centerY" id="UqC-id-Kpq"/>
                         <constraint firstItem="IdU-bK-70P" firstAttribute="top" secondItem="3Fv-Ux-9qD" secondAttribute="top" id="W1r-Q3-Y1y"/>
+                        <constraint firstItem="emo-gx-6am" firstAttribute="leading" secondItem="2q9-wJ-l3S" secondAttribute="trailing" constant="-21" id="Z3e-sc-t1i"/>
                         <constraint firstAttribute="height" constant="49" id="Zra-yG-5yb"/>
                         <constraint firstItem="IdU-bK-70P" firstAttribute="leading" secondItem="3Fv-Ux-9qD" secondAttribute="leading" id="e9e-qt-0vO"/>
                         <constraint firstItem="4NS-Eo-dXz" firstAttribute="leading" secondItem="2q9-wJ-l3S" secondAttribute="trailing" constant="20" id="k5W-og-XNa"/>
@@ -120,7 +133,7 @@
             <point key="canvasLocation" x="34.5" y="53.5"/>
         </view>
         <view contentMode="scaleToFill" id="UkK-Am-vfF">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="90"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="70"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PFf-iX-G7P">
@@ -182,14 +195,6 @@
                         <constraint firstItem="ft2-pS-8BS" firstAttribute="centerY" secondItem="hMG-q3-fZA" secondAttribute="centerY" id="yxX-5G-YPA"/>
                     </constraints>
                 </view>
-                <webView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jQ4-Ho-0cD">
-                    <rect key="frame" x="0.0" y="70" width="375" height="20"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <connections>
-                        <outlet property="delegate" destination="-1" id="uZM-HD-ibU"/>
-                    </connections>
-                </webView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>

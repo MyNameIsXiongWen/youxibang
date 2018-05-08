@@ -108,6 +108,9 @@ typedef enum {
 
 //////////////////////  滚动控制API //////////////////////
 
+/** 首页pagecontroller上移 */
+@property (nonatomic, assign) BOOL UpOffSet;
+
 /** 自动滚动间隔时间,默认2s */
 @property (nonatomic, assign) CGFloat autoScrollTimeInterval;
 

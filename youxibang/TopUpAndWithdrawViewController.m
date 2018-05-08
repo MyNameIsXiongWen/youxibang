@@ -94,8 +94,8 @@
     
     if (self.type == 1){
         NSString* account = self.tf.text;
-        if (account.intValue <= 0 || account.intValue % 10 != 0){
-            [SVProgressHUD showErrorWithStatus:@"金额必须为大于0的整十位数"];
+        if (account.intValue < 30){
+            [SVProgressHUD showErrorWithStatus:@"金额不能小于30"];
             return;
         }
         NSMutableDictionary* dic = [UserNameTool readPersonalData];
@@ -117,6 +117,10 @@
         [alert showAlertView];
     }else{
         NSString* account = self.tf.text;
+        if (account.intValue <= 0){
+            [SVProgressHUD showErrorWithStatus:@"金额必须大于0"];
+            return;
+        }
         NSString* otype;
         if (self.zfbBtn.selected){
             otype = @"1";

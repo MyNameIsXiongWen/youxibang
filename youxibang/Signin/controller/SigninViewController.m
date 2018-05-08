@@ -35,16 +35,12 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 }
 
 - (void)getDataInfoRequest {
-    if (!DataStore.sharedDataStore.token) {
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-        [self.navigationController pushViewController:vc animated:1];
-        return;
-    }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = NSDictionary.dictionary;
-    dic = @{@"token":DataStore.sharedDataStore.token};
+    if (DataStore.sharedDataStore.token) {
+        dic = @{@"token":DataStore.sharedDataStore.token};
+    }
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/get_my_gold",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -129,6 +125,7 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
                 signinBtn.enabled = NO;
                 [dataInfo setObject:@"1" forKey:@"is_sign"];
                 [self.tableview reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+                [SVProgressHUD showSuccessWithStatus:@"签到成功"];
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
             }

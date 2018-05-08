@@ -140,25 +140,27 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     [change addTarget:self action:@selector(changeInfo:) forControlEvents:UIControlEventTouchUpInside];
     
     if (userModel.is_anchor.integerValue == 1) {
-        UILabel *fansLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"粉丝数:%@",userModel.follow_count] andColor:[UIColor whiteColor] andView:headerView];
-        fansLabel.textAlignment = NSTextAlignmentRight;
+        UILabel *laudLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"%@\n赞",userModel.laud_count] andColor:[UIColor whiteColor] andView:headerView];
+        laudLabel.textAlignment = NSTextAlignmentCenter;
+        laudLabel.font = [UIFont systemFontOfSize:13.0];
+        laudLabel.numberOfLines = 2;
+        [laudLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(headerView.mas_bottom).offset(-12);
+            make.right.equalTo(headerView.mas_right).offset(-15);
+            make.size.mas_equalTo(CGSizeMake(30, 35));
+        }];
+        UILabel *fansLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"%@\n粉丝",userModel.follow_count] andColor:[UIColor whiteColor] andView:headerView];
+        fansLabel.textAlignment = NSTextAlignmentCenter;
         fansLabel.font = [UIFont systemFontOfSize:13.0];
+        fansLabel.numberOfLines = 2;
         fansLabel.userInteractionEnabled = YES;
         [fansLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerY.equalTo(vipImg.mas_centerY);
-            make.right.equalTo(headerView.mas_right).offset(-15);
-            make.size.mas_equalTo(CGSizeMake(100, 13));
+            make.centerY.equalTo(laudLabel.mas_centerY);
+            make.right.equalTo(laudLabel.mas_left);
+            make.size.mas_equalTo(CGSizeMake(50, 35));
         }];
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFansSelector)];
         [fansLabel addGestureRecognizer:tap];
-        UILabel *laudLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"点赞数:%@",userModel.laud_count] andColor:[UIColor whiteColor] andView:headerView];
-        laudLabel.textAlignment = NSTextAlignmentRight;
-        laudLabel.font = [UIFont systemFontOfSize:13.0];
-        [laudLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerY.equalTo(name.mas_centerY);
-            make.right.equalTo(headerView.mas_right).offset(-15);
-            make.size.mas_equalTo(CGSizeMake(100, 13));
-        }];
     }
     
     [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
@@ -340,9 +342,11 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1){
-        VipWebViewController *con = [VipWebViewController new];
-        con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
-        [self.navigationController pushViewController:con animated:YES];
+        if ([adDataInfo[@"link_lock"] integerValue] == 1) {
+            VipWebViewController *con = [VipWebViewController new];
+            con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
+            [self.navigationController pushViewController:con animated:YES];
+        }
     }
     else if (indexPath.section == 2) {
         [self pushToController:indexPath];
@@ -351,7 +355,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (UITableViewCell *)displayTableViewCell:(NSIndexPath *)indexPath {
     UserModel *usermodel = UserModel.sharedUser;
-    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我的技能(和我是主播只能二选一)",@"我是主播(和我的技能只能二选一)",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
+    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我的技能",@"我是主播",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
     NSArray* imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_gamebaby",@"ico_anchor",@"ico_order_center",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
     if (usermodel.is_anchor.integerValue == 1) {
         ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我是主播",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
@@ -393,9 +397,23 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     else {
         if (UserModel.sharedUser.is_anchor.integerValue == 0 && UserModel.sharedUser.isbaby.integerValue == 0) {
             if (indexPath.row == 2){//实名认证或者个人技能
-                [self pushToMySkill];
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"我的技能和我是主播\n只能二选一" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *confim = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    [self pushToMySkill];
+                }];
+                [alert addAction:cancel];
+                [alert addAction:confim];
+                [self presentViewController:alert animated:YES completion:nil];
             }else if (indexPath.row == 3){//我是主播
-                [self pushToAnchor];
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"我是主播和我的技能\n只能二选一" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *confim = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    [self pushToAnchor];
+                }];
+                [alert addAction:cancel];
+                [alert addAction:confim];
+                [self presentViewController:alert animated:YES completion:nil];
             }else if (indexPath.row == 4){//订单列表
                 [self pushToOrder];
             }else if (indexPath.row == 5){//点击分享邀请码
@@ -440,14 +458,11 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 }
 
 - (void)pushToAnchor {
-    if ([UserModel sharedUser].is_realauth.integerValue == 1) {
-        LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
-        [self.navigationController pushViewController:vc animated:1];
-    }else{
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
-        [self.navigationController pushViewController:vc animated:1];
-    }
+    LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
+    [self.navigationController pushViewController:vc animated:1];
+//    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
+//    [self.navigationController pushViewController:vc animated:1];
 }
 
 - (void)pushToOrder {
