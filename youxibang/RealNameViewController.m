@@ -64,9 +64,7 @@
     
     [self gainCodeRequest:self.phone.text];
 }
--(void)gainCodeRequest:(NSString *)phoneString
-{
-    
+- (void)gainCodeRequest:(NSString *)phoneString {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:phoneString forKey:@"mobile"];
     //        [dict setObject:@"send" forKey:@"act"];
@@ -114,8 +112,8 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
-    [dict setObject:self.phone.text forKey:@"mobile"];
-    [dict setObject:self.code.text forKey:@"smscode"];
+    [dict setObject:[DataStore sharedDataStore].mobile forKey:@"mobile"];
+//    [dict setObject:self.code.text forKey:@"smscode"];
     [dict setObject:self.name.text forKey:@"realname"];
     [dict setObject:self.idCard.text forKey:@"idcard"];
     

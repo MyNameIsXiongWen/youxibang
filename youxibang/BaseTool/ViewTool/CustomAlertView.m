@@ -615,7 +615,7 @@
         
         [self addSubview:self.alertView];
         
-        self.alertView.frame = CGRectMake(0, height, SCREEN_WIDTH, 380);
+        self.alertView.frame = CGRectMake(0, height, SCREEN_WIDTH, 300);
         self.alertView.backgroundColor = [UIColor groupTableViewBackgroundColor];
         
         UIButton* alphaBtn1 = [EBUtility btnfrome:CGRectMake(0, 0, SCREEN_WIDTH, height) andText:@"" andColor:[UIColor clearColor] andimg:nil andView:self];
@@ -623,7 +623,7 @@
         alphaBtn1.backgroundColor = [UIColor clearColor];
         
         [self addSubview:self.alertView];
-        float h = ary.count > 10 ? (40*10) : (40*ary.count);
+        float h = ary.count > 6 ? (50*6) : (50*ary.count);
         self.alertView.frame = CGRectMake(0, height, SCREEN_WIDTH, h);
         self.alertView.backgroundColor = [UIColor groupTableViewBackgroundColor];
         

@@ -31,16 +31,16 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
     self.tableview.rowHeight = 70;
     self.tableview.tableHeaderView = [self configTableviewHeaderview];
     [self.tableview registerNib:[UINib nibWithNibName:@"SigninTableViewCell" bundle:nil] forCellReuseIdentifier:SIGNTABLEVIEW_ID];
-    [self getDataInfoRequest];
+    if (DataStore.sharedDataStore.token) {
+        [self getDataInfoRequest];
+    }
 }
 
 - (void)getDataInfoRequest {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = NSDictionary.dictionary;
-    if (DataStore.sharedDataStore.token) {
-        dic = @{@"token":DataStore.sharedDataStore.token};
-    }
+    dic = @{@"token":DataStore.sharedDataStore.token};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/get_my_gold",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -97,6 +97,12 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 }
 
 - (void)intoSelector {
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
     SigninCoinHistoryViewController *historyCon = [SigninCoinHistoryViewController new];
     [self.navigationController pushViewController:historyCon animated:YES];
 }

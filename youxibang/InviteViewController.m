@@ -53,7 +53,7 @@
     [SVProgressHUD show];
     NSDictionary *dic = NSDictionary.dictionary;
     dic = @{@"token":DataStore.sharedDataStore.token};
-    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/get_my_gold",HttpURLString] Paremeters:dic successOperation:^(id object) {
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/get_invitecode_info",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
         if (isKindOfNSDictionary(object)){
@@ -63,8 +63,9 @@
             if (code == 1) {
                 NSDictionary *dataInfo = object[@"data"];
                 self.getCoinLabel.text = [NSString stringWithFormat:@"%@",dataInfo[@"gold"]];
-                self.inviteCountLabel.text = [NSString stringWithFormat:@"%@",dataInfo[@"invitation_count"]];
-                self.todayGetCoinLabel.text = [NSString stringWithFormat:@"%@",dataInfo[@"invitation_gold"]];
+                self.inviteCountLabel.text = [NSString stringWithFormat:@"%@",dataInfo[@"leadernum"]];
+                self.todayGetCoinLabel.text = [NSString stringWithFormat:@"%@",dataInfo[@"today_gold"]];
+                self.inviteCodeLabel.text = dataInfo[@"invitecode"];
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
             }

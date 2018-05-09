@@ -540,12 +540,10 @@ static NSString *_cellIdentifier = @"collectionViewCell";
             LiveCharmPhotoModel *model = self.charmPhotoArray[indexPath.item];
             if (model.is_charge.intValue == 1) {
                 scrollView.visualEffectView.hidden = NO;
-//                scrollView.placeholderLabel.hidden = NO;
-                [self queryJurisdictionRequestType:@"1" Index:indexPath.item SuperView:scrollView];
+                [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:model.id SuperView:scrollView Index:indexPath.item];
             }
             else {
                 scrollView.visualEffectView.hidden = YES;
-//                scrollView.placeholderLabel.hidden = YES;
             }
         }
         scrollView.sheet = self.sheet;
@@ -577,8 +575,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     
     return cell;
 }
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     if (self.isPush) {
         [self.navigationController popViewControllerAnimated:YES];
@@ -586,46 +583,6 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         [self dismissViewControllerAnimated:YES completion:nil];
     }
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
-}
-
-//查询权限  是否能查看微信/聊天/查看魅力图片
-- (void)queryJurisdictionRequestType:(NSString *)type Index:(NSInteger)index SuperView:(ZLPhotoPickerBrowserPhotoScrollView *)superView {
-    if (!DataStore.sharedDataStore.token) {
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-        [self.navigationController pushViewController:vc animated:1];
-        return;
-    }
-    LiveCharmPhotoModel *model = self.charmPhotoArray[index];
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
-    [dict setObject:type forKey:@"type"];
-    [dict setObject:model.id forKey:@"target_id"];
-    NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
-    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:requestUrl Paremeters:dict successOperation:^(id object) {
-        [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        if (isKindOfNSDictionary(object)){
-            NSInteger code = [object[@"errcode"] integerValue];
-            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
-            NSLog(@"输出 %@--%@",object,msg);
-            if (code == 1) {//有权限查看指定魅力照片
-                if (type.integerValue == 1) {
-                    model.is_charge = @"0";
-                    if (self.paySuccessedBlock) {
-                        self.paySuccessedBlock();
-                    }
-                    [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]];
-                }
-            }
-            else if (code == 0) {//没权限 查看指定魅力照片
-                if (type.integerValue == 1) {//图片
-                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:model.id SuperView:superView Index:index];
-                }
-            }
-        }
-    } failoperation:^(NSError *error) {
-    }];
 }
 
 #pragma mark - 付款/魅力图片
@@ -636,7 +593,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     payView.confirmPayBlock = ^(NSInteger indexTag) {
         [weakPayView dismiss];
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选取支付方式" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDestructive handler:nil];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
         UIAlertAction *pay = [UIAlertAction actionWithTitle:@"余额支付" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             UserModel *user = UserModel.sharedUser;
             if ([user.is_paypwd isEqualToString:@"0"]){

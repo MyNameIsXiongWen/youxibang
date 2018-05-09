@@ -41,7 +41,7 @@
             if (self.type == ContentTypeIntelligent) {
                 IntelligentModel *model = intelligentArray[i];
                 IntelligentView *intView = [[IntelligentView alloc] initWithFrame:CGRectMake(15+145*i, 0, 135, viewHeight)];
-                [intView.imageView sd_setImageWithURL:[NSURL URLWithString:model.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
+                [intView.imageView sd_setImageWithURL:[NSURL URLWithString:model.photo] placeholderImage:[UIImage imageNamed:@"placeholder_anchor_list"]];
                 intView.nameLabel.text = model.nickname;
                 intView.priceLabel.text = [NSString stringWithFormat:@"¥%@",model.price];
                 intView.timeLabel.text = model.last_login;
@@ -53,7 +53,7 @@
             else if (self.type == ContentTypeLive) {
                 IntelligentModel *model = intelligentArray[i];
                 LiveView *intView = [[LiveView alloc] initWithFrame:CGRectMake(15+145*i, 0, 135, viewHeight)];
-                [intView.imageView sd_setImageWithURL:[NSURL URLWithString:model.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
+                [intView.imageView sd_setImageWithURL:[NSURL URLWithString:model.photo] placeholderImage:[UIImage imageNamed:@"placeholder_anchor"]];
                 [self.contentScrollView addSubview:intView];
                 UIButton *btn = [EBUtility btnfrome:intView.frame andText:@"" andColor:nil andimg:nil andView:self.contentScrollView];
                 btn.tag = i;

@@ -46,12 +46,6 @@
     btn.layer.masksToBounds = YES;
     [btn addTarget:self action:@selector(changeLogin:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        //第三方登录通知
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(InfoNotificationAction:) name:@"threeLogin" object:nil];
-    });
 }
 
 //第三方登录通知触发方法
@@ -61,16 +55,41 @@
     [self lg:userInfo];
 }
 
+- (void)leftBarButtonSelector {
+    [self backWithLogin:NO];
+}
 //返回首页
-- (void)back {
+- (void)backWithLogin:(BOOL)login {
     [self.view endEditing:1];
-    MainTabBarController *mainTab = [[MainTabBarController alloc] init];
-    AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    delegate.window.rootViewController = mainTab;
+    UIViewController *vc = self.navigationController.childViewControllers.firstObject;
+    if (login) {
+        if ([NSStringFromClass(vc.class) isEqualToString:@"LoginViewController"]) {
+            [self dismissViewControllerAnimated:1 completion:nil];
+        }
+        else {
+            [self.navigationController popViewControllerAnimated:1];
+        }
+    }
+    else {
+        if ([NSStringFromClass(vc.class) isEqualToString:@"MineViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"MessageViewController"]) {
+            MainTabBarController *mainTab = [[MainTabBarController alloc] init];
+            AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            delegate.window.rootViewController = mainTab;
+        }
+        else if ([NSStringFromClass(vc.class) isEqualToString:@"LoginViewController"]) {
+            [self dismissViewControllerAnimated:1 completion:nil];
+        }
+        else {
+            [self.navigationController popViewControllerAnimated:1];
+        }
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"threeLogin" object:nil];
+    //第三方登录通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(InfoNotificationAction:) name:@"threeLogin" object:nil];
     //如果未安装微信或qq，隐藏按键
     if (![WXApi isWXAppInstalled]) {
         self.wechatBtn.hidden = YES;
@@ -80,7 +99,7 @@
     img.image = [UIImage imageNamed:@"back_black"];
     UIButton *leftBtn = [[UIButton alloc]initWithFrame:CGRectMake(-15, 0, 40, 40)];
     [leftBtn addSubview:img];
-    [leftBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    [leftBtn addTarget:self action:@selector(leftBarButtonSelector) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
     if (self.phoneNumberString && (self.passwordString || self.codeString)) {
         if (!self.codeOrPassword){
@@ -256,9 +275,7 @@
                         
                     }
                 }];
-                MainTabBarController *mainTab = [[MainTabBarController alloc] init];
-                AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                delegate.window.rootViewController = mainTab;
+                [self backWithLogin:YES];
             }else if (code == 8){//验证码首次登录，设置密码
                 SetPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spw"];
                 vc.inviteCode = object[@"data"];

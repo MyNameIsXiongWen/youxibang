@@ -183,7 +183,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     LiveCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:COLLECTIONVIEW_IDENTIFIER forIndexPath:indexPath];
     IntelligentModel *model = self.dataArray[indexPath.row];
-    [cell.photoImageView sd_setImageWithURL:[NSURL URLWithString:model.photo] placeholderImage:[UIImage imageNamed:@""]];
+    [cell.photoImageView sd_setImageWithURL:[NSURL URLWithString:model.photo] placeholderImage:[UIImage imageNamed:@"placeholder_anchor_list"]];
     cell.ageLabel.text = [NSString stringWithFormat:@"%@岁",model.age];
     cell.timeLabel.text = model.last_login;
     cell.nameLabel.text = model.nickname;
@@ -271,7 +271,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
     }
     else if (btn.tag == 3) {
         if (!self.filterView) {
-            self.filterView = [[LiveFilterView alloc] initWithFrame:CGRectMake(0, 64+40, SCREEN_WIDTH, SCREEN_HEIGHT-64-40) WithFilterArray:self.filterArray AndSelectedIndexArray:self.selectedIndexArray];
+            self.filterView = [[LiveFilterView alloc] initWithFrame:CGRectMake(0, StatusBarHeight+44+40, SCREEN_WIDTH, SCREEN_HEIGHT-(StatusBarHeight+44)-40) WithFilterArray:self.filterArray AndSelectedIndexArray:self.selectedIndexArray];
             [self.filterView show];
             [btn setImage:[UIImage imageNamed:@"live_filter_selected"] forState:0];
             [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];

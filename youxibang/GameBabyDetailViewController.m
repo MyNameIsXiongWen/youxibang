@@ -359,7 +359,7 @@
         if (indexPath.section == 0){
             if (indexPath.row == 0){
                 UIImageView* img = [cell viewWithTag: 1];
-                [img sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"image"]]] placeholderImage:[UIImage imageNamed:@"img_geren111"]];
+                [img sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.dataInfo[@"image"]]] placeholderImage:[UIImage imageNamed:@"placeholder_media"]];
             }else if (indexPath.row == 1){
                 
                 UILabel* title = [cell viewWithTag: 1];

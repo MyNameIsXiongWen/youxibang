@@ -52,7 +52,7 @@ static NSString *const LIVECHARM_COLLECTIONVIEW_ID = @"livecharm_collectionview_
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     LiveCharmPhotoModel *model = self.liveCharmArray[indexPath.row];
     LiveCharmCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:LIVECHARM_COLLECTIONVIEW_ID forIndexPath:indexPath];
-    [cell.liveCharmImageView sd_setImageWithURL:[NSURL URLWithString:model.url] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+    [cell.liveCharmImageView sd_setImageWithURL:[NSURL URLWithString:model.url] placeholderImage:[UIImage imageNamed:@"placeholder_anchor_photo"]];
     cell.liveCharmImageView.layer.masksToBounds = YES;
     if (model.is_charge.integerValue == 1) {
         cell.msgLabel.hidden = NO;

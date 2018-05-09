@@ -35,7 +35,7 @@ static NSString *const LIVEFILTERTABLEVIEW_ID = @"live_filter_tableview_id";
 }
 
 - (void)configUI {
-    self.blackView = [[UIView alloc] initWithFrame:CGRectMake(0, 64+40, SCREEN_WIDTH, SCREEN_HEIGHT-40-64)];
+    self.blackView = [[UIView alloc] initWithFrame:CGRectMake(0, StatusBarHeight+44+40, SCREEN_WIDTH, SCREEN_HEIGHT-40-(StatusBarHeight+44))];
     self.blackView.backgroundColor = [UIColor blackColor];
     self.blackView.alpha = 0;
     [[UIApplication sharedApplication].keyWindow addSubview:self.blackView];

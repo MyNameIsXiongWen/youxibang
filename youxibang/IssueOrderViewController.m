@@ -326,15 +326,15 @@
     if ([textView.text isEqualToString:@" "]){
         textView.text = @"";
     }
-    [UIView animateWithDuration:0.3 animations:^{
-        
-        CGRect frame = self.view.frame;
-        
-        frame.origin.y = - 20;
-        
-        self.view.frame = frame;
-        
-    }];
+//    [UIView animateWithDuration:0.3 animations:^{
+//        
+//        CGRect frame = self.view.frame;
+//        
+//        frame.origin.y = - 20;
+//        
+//        self.view.frame = frame;
+//        
+//    }];
     
     
     return YES;
@@ -344,15 +344,15 @@
 
 -(BOOL)textViewShouldEndEditing:(UITextView *)textField{
     
-    [UIView animateWithDuration:0.3 animations:^{
-        
-        CGRect frame = self.view.frame;
-        
-        frame.origin.y = 64;
-        
-        self.view.frame = frame;
-        
-    }];
+//    [UIView animateWithDuration:0.3 animations:^{
+//
+//        CGRect frame = self.view.frame;
+//
+//        frame.origin.y = 64;
+//
+//        self.view.frame = frame;
+//
+//    }];
     if ([textField.text isEqualToString:@""]){
         RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
         cell.placeholdLab.hidden = NO;

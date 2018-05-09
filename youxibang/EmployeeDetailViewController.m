@@ -66,10 +66,29 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self configUI];
+    [self downloadInfo];
+    if (self.type != 2) {
+        [self detailBottomButton];
+    }
+    else {
+        UIButton *share = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-45, StatusBarHeight-20+25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"share_white"] andView:self.view];
+        share.tag = 1002;
+        [share addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self getBuyVipInfoRequest];
+            [self queryJurisdictionRequestTargetId:self.employeeId];
+        });
+    }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
+}
+
+- (void)configUI {
     self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     self.tableView.showsVerticalScrollIndicator = NO;
     self.edgesForExtendedLayout = UIRectEdgeNone;
-
+    
     self.tableView.tableFooterView = [UIView new];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -82,34 +101,20 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [self.tableView registerNib:[UINib nibWithNibName:@"LiveInformationTableViewCell" bundle:nil] forCellReuseIdentifier:LIVEINFORMATION_TABLEVIEW_ID];
     ScrollViewContentInsetAdjustmentNever(self, self.tableView);
     //渐显view
-    UIView *nav = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:UIColor.whiteColor andView:self.view];
-    UIView *lineView = [EBUtility viewfrome:CGRectMake(0, 63.5, SCREEN_WIDTH, 0.5) andColor:[UIColor colorFromHexString:@"b2b2b2"] andView:nav];
-    UILabel *title = [EBUtility labfrome:CGRectMake(0, 32, SCREEN_WIDTH, 20) andText:@"昵称" andColor:[UIColor colorFromHexString:@"333333"] andView:nav];
+    UIView *nav = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 44+StatusBarHeight) andColor:UIColor.whiteColor andView:self.view];
+    UIView *lineView = [EBUtility viewfrome:CGRectMake(0, StatusBarHeight+43.5, SCREEN_WIDTH, 0.5) andColor:[UIColor colorFromHexString:@"b2b2b2"] andView:nav];
+    UILabel *title = [EBUtility labfrome:CGRectMake(0, StatusBarHeight-20+32, SCREEN_WIDTH, 20) andText:@"昵称" andColor:[UIColor colorFromHexString:@"333333"] andView:nav];
     title.font = [UIFont systemFontOfSize:18];
     title.textAlignment = NSTextAlignmentCenter;
     title.tag = 1000;
     nav.alpha = 0;
     self.nav = nav;
-    UIButton *back = [EBUtility btnfrome:CGRectMake(0, 25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"back"] andView:self.view];
+    UIButton *back = [EBUtility btnfrome:CGRectMake(0, StatusBarHeight-20+25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"back"] andView:self.view];
     back.tag = 1001;
     [back addTarget:self action:@selector(backBtn:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self downloadInfo];
-    if (self.type != 2) {
-        [self detailBottomButton];
-    }
-    else {
-        [self getADRequest];
-        UIButton *share = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-45, 25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"share_white"] andView:self.view];
-        share.tag = 1002;
-        [share addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self queryJurisdictionRequestType:@"2" TargetId:self.employeeId Index:0 ViewDidLoad:YES];
-    });
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
 }
 
+//通知
 - (void)notificationSelector:(NSNotification *)notification {
     NSString *object = notification.object;
     if ([object isEqualToString:@"success"]) {
@@ -121,6 +126,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     }
 }
 
+#pragma mark - 配置宝贝详情页下面2个按钮
 - (void)detailBottomButton {
     self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 44);
     UIButton* phone = [EBUtility btnfrome:CGRectMake(0, SCREEN_HEIGHT - 44, SCREEN_WIDTH/2, 44) andText:@"电话" andColor:[UIColor whiteColor] andimg:nil andView:self.view];
@@ -133,6 +139,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [confirm addTarget:self action:@selector(conBtn:) forControlEvents:UIControlEventTouchUpInside];
 }
 
+#pragma mark - 配置主播详情页下面的3个按钮
 - (void)configBottomView {
     if ([self.dataInfo[@"user_id"] integerValue] == DataStore.sharedDataStore.userid.integerValue) {
         return;
@@ -214,22 +221,13 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     self.playerView.hidden = YES;
 }
 
-//查询权限  是否能查看微信/聊天/查看魅力图片
-- (void)queryJurisdictionRequestType:(NSString *)type TargetId:(NSString *)targetId Index:(NSInteger)index ViewDidLoad:(BOOL)viewDidLoad {
-    if (!viewDidLoad) {
-        if (!DataStore.sharedDataStore.token) {
-            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-            [self.navigationController pushViewController:vc animated:1];
-            return;
-            
-        }
-    }
+//查询权限  是否能查看微信/聊天
+- (void)queryJurisdictionRequestTargetId:(NSString *)targetId {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     if (DataStore.sharedDataStore.token) {
         [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     }
-    [dict setObject:type forKey:@"type"];
+    [dict setObject:@"2" forKey:@"type"];
     [dict setObject:targetId forKey:@"target_id"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:requestUrl Paremeters:dict successOperation:^(id object) {
@@ -239,24 +237,12 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
-            if (code == 1) {//有权限 聊天/查看微信和指定魅力照片
-                if (type.integerValue == 2) {//聊天/查看微信
-                    isCanTalk = YES;
-                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
-                }
-                else if (type.integerValue == 1) {
-                    LiveCharmPhotoModel *model = self.charmPhotoArray[index];
-                    model.is_charge = @"0";//图片
-                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
-                    [self configZLPhotoPickerBrowserWithArray:self.charmPhotoArray Index:index];
-                }
+            if (code == 1) {//有权限 聊天/查看微信
+                isCanTalk = YES;
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
             }
-            else if (code == 0) {//没权限 聊天/查看微信和指定魅力照片
+            else if (code == 0) {//没权限 聊天/查看微信
                 price = object[@"data"];
-                if (type.integerValue == 1) {//图片
-                    LiveCharmPhotoModel *model = self.charmPhotoArray[index];
-                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:targetId Index:index];
-                }
             }
         }
     } failoperation:^(NSError *error) {
@@ -503,7 +489,9 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             }
         }
         if (isKindOfNSString(self.dataInfo[@"video_img"])) {
-            existVideo = YES;
+            if ([self.dataInfo[@"video_img"] length] > 0) {
+                existVideo = YES;
+            }
         }
     }
     if (existBgimg) {
@@ -512,7 +500,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         }
     }
     else {
-        bgImgAry = @[@"img_my111"].mutableCopy;
+        bgImgAry = @[@"placeholder_media"].mutableCopy;
     }
     if (existVideo) {
         [bgImgAry insertObject:self.dataInfo[@"video_img"] atIndex:0];
@@ -521,6 +509,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         });
     }
     SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, CGRectGetHeight(headerView.frame)) imageNamesGroup:bgImgAry];
+    cycleScrollView.placeholderImage = [UIImage imageNamed:@"placeholder_media"];
     cycleScrollView.infiniteLoop = YES;
     cycleScrollView.delegate = self;
     cycleScrollView.hideBkgView = NO;
@@ -687,7 +676,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:self.employeeId forKey:@"target_id"];
+    [dict setObject:self.dataInfo[@"user_id"] forKey:@"target_id"];
     [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@member/follow",HttpURLString];
     if (sender.selected) {
@@ -827,7 +816,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 LiveCharmPhotoModel *model = weakSelf.charmPhotoArray[index];
                 //如果这张照片时收费照片，需要再去请求一下自己能否看，因为照片是针对所有人的，请求是只针对自己
                 if (model.is_charge.intValue == 1) {
-                    [self queryJurisdictionRequestType:@"1" TargetId:model.id Index:index ViewDidLoad:NO];
+                    LiveCharmPhotoModel *model = self.charmPhotoArray[index];
+                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:model.id Index:index];
                 }
                 else {
                     [weakSelf configZLPhotoPickerBrowserWithArray:weakSelf.charmPhotoArray Index:index];
@@ -901,17 +891,25 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             [self.navigationController pushViewController:vc animated:1];
             return;
         }
-        //弹起支付密码alert
-        CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
-        alert.resultDate = ^(NSString *date) {
-            [self payRequestWithPwd:date Price:money Type:type TargetId:targetId];
-        };
-        alert.resultIndex = ^(NSInteger index) {
-            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            RetrievePayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rpp"];
-            [self.navigationController pushViewController:vc animated:1];
-        };
-        [alert showAlertView];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选取支付方式" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+        UIAlertAction *pay = [UIAlertAction actionWithTitle:@"余额支付" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            //弹起支付密码alert
+            CustomAlertView* customAlert = [[CustomAlertView alloc] initWithType:6];
+            customAlert.resultDate = ^(NSString *date) {
+                [self payRequestWithPwd:date Price:money Type:type TargetId:targetId];
+            };
+            customAlert.resultIndex = ^(NSInteger index) {
+                UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                RetrievePayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rpp"];
+                [self.navigationController pushViewController:vc animated:1];
+            };
+            [customAlert showAlertView];
+        }];
+        [alert addAction:pay];
+        [alert addAction:cancel];
+        [self presentViewController:alert animated:YES completion:nil];
     }
     else if (index == 1) {
         VipWebViewController *con = [VipWebViewController new];
@@ -920,8 +918,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     }
 }
 
-//获取会员列表
-- (void)getADRequest {
+//获取购买会员信息
+- (void)getBuyVipInfoRequest {
     NSDictionary *dict = @{@"typeid":@"6"};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/bannerlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
         if (isKindOfNSDictionary(object)){
@@ -946,7 +944,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         [weakPayView dismiss];
         
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选取支付方式" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDestructive handler:nil];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
         UIAlertAction *pay = [UIAlertAction actionWithTitle:@"余额支付" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             UserModel *user = UserModel.sharedUser;
             if ([user.is_paypwd isEqualToString:@"0"]){
@@ -1026,7 +1024,9 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     BOOL existVideo = NO;
     if (self.dataInfo) {
         if (isKindOfNSString(self.dataInfo[@"video_img"])) {
-            existVideo = YES;
+            if ([self.dataInfo[@"video_img"] length] > 0) {
+                existVideo = YES;
+            }
         }
     }
     if (existVideo) {

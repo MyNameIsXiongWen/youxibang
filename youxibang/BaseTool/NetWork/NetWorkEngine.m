@@ -34,7 +34,7 @@
         // AFN请求操作管理对象
         self.manager = [AFHTTPSessionManager manager];
         [self.manager.requestSerializer willChangeValueForKey:@"timeoutInterval"];
-        self.manager.requestSerializer.timeoutInterval = 10.f;
+        self.manager.requestSerializer.timeoutInterval = 15;
         [self.manager.requestSerializer didChangeValueForKey:@"timeoutInterval"];
     }
     return self;

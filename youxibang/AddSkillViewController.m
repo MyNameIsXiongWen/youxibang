@@ -530,17 +530,17 @@
 }
 -(BOOL)textFieldShouldBeginEditing:(UITextView *)textField{
 
-    if (textField.tag == 2 ){
-        [UIView animateWithDuration:0.3 animations:^{
-            
-            CGRect frame = self.view.frame;
-            
-            frame.origin.y = - 50;
-            
-            self.view.frame = frame;
-            
-        }];
-    }
+//    if (textField.tag == 2 ){
+//        [UIView animateWithDuration:0.3 animations:^{
+//            
+//            CGRect frame = self.view.frame;
+//            
+//            frame.origin.y = - 50;
+//            
+//            self.view.frame = frame;
+//            
+//        }];
+//    }
 
     return YES;
 }
@@ -549,17 +549,17 @@
 
 -(BOOL)textFieldShouldEndEditing:(UITextView *)textField{
     
-    if (textField.tag == 2 ){
-        [UIView animateWithDuration:0.3 animations:^{
-            
-            CGRect frame = self.view.frame;
-            
-            frame.origin.y = 64;
-            
-            self.view.frame = frame;
-            
-        }];
-    }
+//    if (textField.tag == 2 ){
+//        [UIView animateWithDuration:0.3 animations:^{
+//
+//            CGRect frame = self.view.frame;
+//
+//            frame.origin.y = 64;
+//
+//            self.view.frame = frame;
+//
+//        }];
+//    }
 
     return YES;
     

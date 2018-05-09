@@ -79,6 +79,8 @@ static NSString *const FIRST_INTO = @"first_into";
 #define JPUSH_KEY @"fbd6c9a36808409ae6359ff9"
 #define NIM_APP_ID @"d27ffe90d087aaeb5c579f7485a2dcb6"
 
+#define StatusBarHeight  UIApplication.sharedApplication.statusBarFrame.size.height
+#define TabbarHeight     (StatusBarHeight>20?83:49) // 适配iPhone x 底栏高度
 //iOS11 解决SafeArea的问题，同时能解决pop时上级页面scrollView抖动的问题
 #define ScrollViewContentInsetAdjustmentNever(viewcontroller,scrollview)\
 if (@available(iOS 11.0, *)){\

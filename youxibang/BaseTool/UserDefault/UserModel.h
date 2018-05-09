@@ -36,9 +36,11 @@
 @property (copy, nonatomic) NSString *is_anchor;
 @property (copy, nonatomic) NSString *isbaby;
 @property (copy, nonatomic) NSString *vip_grade;
+@property (copy, nonatomic) NSString *video;
+@property (copy, nonatomic) NSString *video_img;
 @property (copy, nonatomic) NSArray *bgimg;
 @property (copy, nonatomic) NSArray *interest;
-@property (strong, nonatomic) NSDictionary *video;
+//@property (strong, nonatomic) NSDictionary *video;
 
 @property(nonatomic, strong) NSString *city;//城市
 @property(nonatomic, strong) NSString *latitude;//纬度

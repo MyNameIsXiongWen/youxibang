@@ -28,13 +28,13 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.title = @"资讯头条";
     self.currentPage = 1;
     self.type = @"1";
-    self.tableview = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-49) style:UITableViewStylePlain];
+    self.tableview = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-TabbarHeight) style:UITableViewStylePlain];
     self.tableview.delegate = self;
     self.tableview.dataSource = self;
     self.tableview.rowHeight = 112;
+    self.tableview.tableFooterView = UIView.new;
     self.tableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
     self.tableview.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
     self.tableview.tableHeaderView = [self configTableViewHeaderView];
@@ -82,6 +82,7 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
     }
     self.cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 175) imageNamesGroup:ary];
     self.cycleScrollView.infiniteLoop = YES;
+    self.cycleScrollView.placeholderImage = [UIImage imageNamed:@"placeholder_banner"];
     self.cycleScrollView.delegate = self;
     self.cycleScrollView.hideBkgView = YES;
     self.cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
@@ -167,7 +168,7 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NewsModel *model = self.dataArray[indexPath.row];
     NewsTableViewCell *cell =[tableView dequeueReusableCellWithIdentifier:NEWS_TABLEVIEW_ID];
-    [cell.coverImageView sd_setImageWithURL:[NSURL URLWithString:model.thumb] placeholderImage:[UIImage imageNamed:@""]];
+    [cell.coverImageView sd_setImageWithURL:[NSURL URLWithString:model.thumb] placeholderImage:[UIImage imageNamed:@"placeholder_news"]];
     cell.coverImageView.layer.masksToBounds = YES;
     cell.titleLabel.text = model.title;
     cell.readCountLabel.text = [NSString stringWithFormat:@"阅读数%@",model.click];

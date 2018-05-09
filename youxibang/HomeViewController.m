@@ -120,10 +120,10 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 
 - (void)configNavView {
     //白色的navi
-    self.navView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:[UIColor whiteColor] andView:self.view];
+    self.navView = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 44+StatusBarHeight) andColor:[UIColor whiteColor] andView:self.view];
     self.navView.alpha = 0;
     
-    UIView* searchView = [EBUtility viewfrome:CGRectMake(80, 30, SCREEN_WIDTH - 80-30*ADAPTATIONRATIO, 25) andColor:[UIColor whiteColor] andView:self.view];
+    UIView* searchView = [EBUtility viewfrome:CGRectMake(80, StatusBarHeight-20+30, SCREEN_WIDTH - 80-30*ADAPTATIONRATIO, 25) andColor:[UIColor whiteColor] andView:self.view];
     searchView.layer.cornerRadius = 12.5;
     searchView.layer.masksToBounds = NO;
     searchView.tag = 10000;
@@ -135,12 +135,12 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [searchBtn addTarget:self action:@selector(searchView:) forControlEvents:UIControlEventTouchUpInside];
     
     //定位按钮
-    self.locationBtn = [EBUtility btnfrome:CGRectMake(15, 32, 50, 20) andText:self.historySelectArr.count==0?@"全国":((SDCityModel *)self.historySelectArr.firstObject).name andColor:UIColor.whiteColor andimg:[UIImage imageNamed:@"home_location"] andView:self.view];
+    self.locationBtn = [EBUtility btnfrome:CGRectMake(15, StatusBarHeight-20+32, 50, 20) andText:self.historySelectArr.count==0?@"全国":((SDCityModel *)self.historySelectArr.firstObject).name andColor:UIColor.whiteColor andimg:[UIImage imageNamed:@"home_location"] andView:self.view];
     [self.locationBtn setImageEdgeInsets:UIEdgeInsetsMake(0, -5, 0, 5)];
     [self.locationBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 2, 0, -2)];
     self.locationBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
     [self.locationBtn addTarget:self action:@selector(locationUser:) forControlEvents:UIControlEventTouchUpInside];
-    UIView* lineView = [EBUtility viewfrome:CGRectMake(0, 63.5, SCREEN_WIDTH, 0.5) andColor:[UIColor colorFromHexString:@"b2b2b2"] andView:self.navView];
+    UIView* lineView = [EBUtility viewfrome:CGRectMake(0, 43.5+StatusBarHeight, SCREEN_WIDTH, 0.5) andColor:[UIColor colorFromHexString:@"b2b2b2"] andView:self.navView];
 }
 
 - (void)configUI {
@@ -151,6 +151,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
         [ary addObject:i[@"adimg"]];
     }
     self.cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 175) imageNamesGroup:ary];
+    self.cycleScrollView.placeholderImage = [UIImage imageNamed:@"placeholder_banner"];
     self.cycleScrollView.infiniteLoop = YES;
     self.cycleScrollView.delegate = self;
     self.cycleScrollView.hideBkgView = YES;
@@ -211,7 +212,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     UILabel *footerLabel = [EBUtility labfrome:footerView.bounds andText:@"然后，就没有然后了～" andColor:[UIColor colorFromHexString:@"444444"] andView:footerView];
     footerLabel.font = [UIFont systemFontOfSize:11.0];
     
-    self.contentTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, -20, SCREEN_WIDTH, SCREEN_HEIGHT-49+20) style:UITableViewStyleGrouped];
+    self.contentTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, -StatusBarHeight, SCREEN_WIDTH, SCREEN_HEIGHT-TabbarHeight+StatusBarHeight) style:UITableViewStyleGrouped];
     self.contentTableview.delegate = self;
     self.contentTableview.dataSource = self;
     self.contentTableview.tag = 999;

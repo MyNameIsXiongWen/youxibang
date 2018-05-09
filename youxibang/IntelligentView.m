@@ -42,7 +42,7 @@
     self.priceLabel = [EBUtility labfrome:CGRectMake(5, 160, 65, 15) andText:@"" andColor:[UIColor colorFromHexString:@"457fea"] andView:self];
     self.priceLabel.textAlignment = NSTextAlignmentLeft;
     self.priceLabel.font = [UIFont systemFontOfSize:12.0];
-    self.timeLabel = [EBUtility labfrome:CGRectMake(70, 160, 50, 15) andText:@"" andColor:[UIColor colorFromHexString:@"aaaaaa"] andView:self];
+    self.timeLabel = [EBUtility labfrome:CGRectMake(70, 160, 60, 15) andText:@"" andColor:[UIColor colorFromHexString:@"aaaaaa"] andView:self];
     self.timeLabel.textAlignment = NSTextAlignmentRight;
     self.timeLabel.font = [UIFont systemFontOfSize:11.0];
     

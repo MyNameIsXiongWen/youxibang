@@ -191,7 +191,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
                 }
                 [self.tableview reloadData];
             }else{
-                [SVProgressHUD showErrorWithStatus:msg];
+//                [SVProgressHUD showErrorWithStatus:msg];
             }
         }
     } failoperation:^(NSError *error) {
@@ -365,7 +365,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         return cell;
     }
     NSArray *leftArray = @[@"城市",@"直播类型",@"所属平台",@"平台房间号",@"主播类型(选填)",@"直播经验(选填)",@"微信",@"期望薪资",@"经纪公司",@"我的特点(选填)"];
-    NSArray *rightArray = @[areaString?:@"",typeString?:@"请选择",platformString?:@"请选择",room_numberString?:@"",anchor_typeString?:@"请选择",expString?:@"请选择",wechatString?:@"",wish_salaryString?:@"请填写(以千为单位)",brokerage_agencyString?:@"",self_evaluateString?:@"请填写"];
+    NSArray *rightArray = @[areaString?:@"",typeString?:@"请选择",platformString?:@"请选择",room_numberString?:@"",anchor_typeString?:@"请选择",expString?:@"请选择",wechatString?:@"",wish_salaryString?:@"",brokerage_agencyString?:@"",self_evaluateString?:@"请填写"];
     LiveCreateTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:LIVECREATA_TABLEVIEW_ID];
     NSMutableAttributedString *attributeStr = [[NSMutableAttributedString alloc] initWithString:leftArray[indexPath.row]];
     NSRange range = [leftArray[indexPath.row] rangeOfString:@"(选填)"];
@@ -377,10 +377,15 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         if (indexPath.row ==0 || indexPath.row == 7) {
             cell.rightTextField.inputView = self.areaPickerView;
             if (indexPath.row == 7) {
-                cell.rightTextField.placeholder = @"请填写(以千为单位)";
+                cell.rightTextField.placeholder = @"请选择(以千为单位)";
+            }
+            else {
+                cell.rightTextField.placeholder = @"请选择";
             }
         }
-        else {
+        else {{
+            cell.rightTextField.placeholder = @"请填写";
+        }
             cell.rightArrowImg.hidden = YES;
         }
         cell.rightLabel.hidden = YES;
@@ -398,6 +403,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.view endEditing:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.row == 1 || indexPath.row == 2 || indexPath.row == 4 || indexPath.row == 5) {
         NSString *title = @"";
@@ -472,10 +478,20 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     if (textField.tag == 0) {
-        selectCity = YES;
+        if (!selectCity) {
+            selectCity = YES;
+            [self.areaPickerView reloadAllComponents];
+            [self.areaPickerView selectRow:0 inComponent:0 animated:0];
+            [self.areaPickerView selectRow:0 inComponent:1 animated:0];
+        }
     }
     else {
-        selectCity = NO;
+        if (selectCity) {
+            selectCity = NO;
+            [self.areaPickerView reloadAllComponents];
+            [self.areaPickerView selectRow:0 inComponent:0 animated:0];
+            [self.areaPickerView selectRow:0 inComponent:1 animated:0];
+        }
     }
 }
 

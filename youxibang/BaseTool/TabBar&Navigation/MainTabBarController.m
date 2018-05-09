@@ -78,8 +78,7 @@
 //    [tab setShadowImage:img];
 //}
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
-    if (viewController.tabBarItem.tag == 3 ||viewController.tabBarItem.tag == 2) {
-        
+    if (viewController.tabBarItem.tag == 2 || viewController.tabBarItem.tag == 3) {
         if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
                return YES;
             }else{

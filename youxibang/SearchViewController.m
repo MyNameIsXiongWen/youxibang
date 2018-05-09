@@ -22,7 +22,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.tableView.frame = CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 24);
+    self.tableView.frame = CGRectMake(0, StatusBarHeight+44, SCREEN_WIDTH, SCREEN_HEIGHT - (StatusBarHeight+44));
     self.tableView.showsVerticalScrollIndicator = NO;
     self.currentPage = 1;
     
@@ -32,8 +32,8 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     //头部view
-    UIView* hv = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 64) andColor:[UIColor groupTableViewBackgroundColor] andView:self.view];
-    UIView* searchView = [EBUtility viewfrome:CGRectMake(10, 25, SCREEN_WIDTH - 70, 32) andColor:[UIColor whiteColor] andView:hv];
+    UIView* hv = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, StatusBarHeight+44) andColor:[UIColor groupTableViewBackgroundColor] andView:self.view];
+    UIView* searchView = [EBUtility viewfrome:CGRectMake(10, StatusBarHeight-20+25, SCREEN_WIDTH - 70, 32) andColor:[UIColor whiteColor] andView:hv];
     searchView.layer.cornerRadius = 5;
     searchView.layer.masksToBounds = NO;
     UIImageView* img = [EBUtility imgfrome:CGRectMake(10, 7, 16, 16) andImg:[UIImage imageNamed:@"ico_search"] andView:searchView];
@@ -41,14 +41,14 @@
     self.tf = tf;
     tf.delegate = self;
     tf.returnKeyType = UIReturnKeySearch;
-    UIButton* sBtn = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH - 60, 25, 60, 32) andText:@"取消" andColor:Nav_color andimg:nil andView:hv];
+    UIButton* sBtn = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH - 60, StatusBarHeight-20+25, 60, 32) andText:@"取消" andColor:Nav_color andimg:nil andView:hv];
     [sBtn addTarget:self action:@selector(searchEmployee:) forControlEvents:UIControlEventTouchUpInside];
     self.searchBtn = sBtn;
     //默认显示历史记录
     self.isHistoryRecord = YES;
     
     self.historyRecord = [[[NSUserDefaults standardUserDefaults] objectForKey:@"historyRecord"] mutableCopy];
-    
+    ScrollViewContentInsetAdjustmentNever(self, self.tableView);
 }
 - (NSMutableArray*)dataAry{
     if (!_dataAry){
@@ -64,18 +64,13 @@
 }
 -(void)refreshHead{
     self.currentPage = 1;
-    [self.dataAry removeAllObjects];
-    [self.tableView reloadData];
     [self searchData];
     [self.tableView.mj_header endRefreshing];
 }
 -(void)refreshFooter{
-    //    if (!_isEnd){
     self.currentPage ++;
     [self searchData];
-    //    }else{
     [self.tableView.mj_footer endRefreshing];
-    //    }
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -114,7 +109,12 @@
             NSLog(@"输出 %@--%@",object,msg);
             
             if (code == 1) {
-                [self.dataAry addObjectsFromArray:object[@"data"]];
+                if (self.currentPage == 1) {
+                    self.dataAry = object[@"data"];
+                }
+                else {
+                    [self.dataAry addObjectsFromArray:object[@"data"]];
+                }
                 [self.tableView reloadData];
             }else if (code == 2) {
                 [SVProgressHUD showErrorWithStatus:msg];
@@ -124,9 +124,7 @@
                 [SVProgressHUD showErrorWithStatus:msg];
             }
         }
-        
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
         [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];

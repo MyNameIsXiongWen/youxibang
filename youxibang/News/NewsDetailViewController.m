@@ -40,7 +40,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     [self configBottomView];
     self.currentPage = 1;
     
-    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 70, SCREEN_WIDTH, 100)];
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 72, SCREEN_WIDTH, 100)];
     self.webView.delegate = self;
     [self.webView sizeToFit];
     [self.webView scalesPageToFit];
@@ -128,7 +128,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     CGRect newFrame = webView.frame;
     newFrame.size.width = SCREEN_WIDTH;
     newFrame.size.height = actualSize.height;
-    newFrame.origin.y = 70 + (labelSize.height-25);
+    newFrame.origin.y = 72 + (labelSize.height-25);
     webView.frame = newFrame;
     
     CGRect newHeaderViewFrame = self.headerView.frame;
@@ -190,7 +190,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
                 if ([self.newsModel.is_laud integerValue] == 0) {
                     [self.laudButton setImage:[UIImage imageNamed:@"news_like"] forState:0];
                     self.laudButton.layer.borderColor = [UIColor colorFromHexString:@"b2b2b2"].CGColor;
-                    [self.laudButton setTitleColor:[UIColor colorFromHexString:@"b2b2b2"] forState:0];
+                    [self.laudButton setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
                     self.laudButton.selected = NO;
                 }
                 else {
@@ -335,7 +335,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
             self.newsModel.laud_count = [NSString stringWithFormat:@"%d",self.newsModel.laud_count.intValue-1];
             [sender setImage:[UIImage imageNamed:@"news_like"] forState:UIControlStateNormal];
             sender.layer.borderColor = [UIColor colorFromHexString:@"b2b2b2"].CGColor;
-            [sender setTitleColor:[UIColor colorFromHexString:@"b2b2b2"] forState:0];
+            [sender setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
         }
         [sender setTitle:self.newsModel.laud_count forState:0];
     }];

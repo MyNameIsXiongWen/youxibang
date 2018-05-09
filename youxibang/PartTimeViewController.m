@@ -33,7 +33,7 @@
     self.tableView.tableFooterView = [UIView new];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 64);
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - (StatusBarHeight+44));
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refreshHead)];
     self.tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
@@ -168,6 +168,8 @@
                 if (code == 1) {
                     [self.dataAry addObjectsFromArray:object[@"data"]];
                     [self.tableView reloadData];
+                }else if (code == 2) {
+                    [SVProgressHUD showErrorWithStatus:@"暂无更多数据"];
                 }else{
                     [SVProgressHUD showErrorWithStatus:msg];
                 }
@@ -207,6 +209,8 @@
                 if (code == 1) {
                     [self.dataAry addObjectsFromArray:object[@"data"]];
                     [self.tableView reloadData];
+                }else if (code == 2) {
+                    [SVProgressHUD showErrorWithStatus:@"暂无更多数据"];
                 }else{
                     [SVProgressHUD showErrorWithStatus:msg];
                 }
@@ -250,7 +254,7 @@
     if (self.ptOrBaby){
         if (sender.tag == 0){
             NSArray* timeAry = @[@"综合排序",@"价格最高",@"价格最低",@"接单最多",@"接单最少"];
-            CustomAlertView* alert = [[CustomAlertView alloc]initWithHeight:([sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height + 64) AndAry:timeAry];
+            CustomAlertView* alert = [[CustomAlertView alloc]initWithHeight:([sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height + StatusBarHeight+44) AndAry:timeAry];
             alert.resultDate = ^(NSString *date) {
                 sender.selected = NO;
                 [sender setTitle:timeAry[date.intValue] forState:0];
@@ -267,7 +271,7 @@
             for (NSDictionary* i in self.gameAry){
                 [ary addObject:i[@"title"]];
             }
-            CustomAlertView* alert = [[CustomAlertView alloc]initWithSiftWithHeight:[sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height+ 64 AndTitleAry:ary];
+            CustomAlertView* alert = [[CustomAlertView alloc]initWithSiftWithHeight:[sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height+ StatusBarHeight+44 AndTitleAry:ary];
             alert.resultDate = ^(NSString *date) {
                 sender.selected = NO;
                 NSArray<NSString*>* temp = [date componentsSeparatedByString:@","];
@@ -291,7 +295,7 @@
             for (NSDictionary* i in self.gameAry){
                 [ary addObject:i[@"title"]];
             }
-            CustomAlertView* alert = [[CustomAlertView alloc]initWithHeight:([sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height + 64) AndAry:ary];
+            CustomAlertView* alert = [[CustomAlertView alloc]initWithHeight:([sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height + StatusBarHeight+44) AndAry:ary];
             alert.resultDate = ^(NSString *date) {
                 sender.selected = NO;
                 [sender setTitle:[NSString stringWithFormat:@"%@",self.gameAry[date.integerValue][@"title"]] forState:0];
@@ -304,7 +308,7 @@
             [alert showAlertView];
         }else if (sender.tag == 1){
             NSArray* timeAry = @[@"综合排序",@"价格最高",@"价格最低",@"时间最多",@"时间最少"];
-            CustomAlertView* alert = [[CustomAlertView alloc]initWithHeight:([sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height+ 64) AndAry:timeAry];
+            CustomAlertView* alert = [[CustomAlertView alloc]initWithHeight:([sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height+ StatusBarHeight+44) AndAry:timeAry];
             alert.resultDate = ^(NSString *date) {
                 sender.selected = NO;
                 [sender setTitle:timeAry[date.intValue] forState:0];
@@ -318,7 +322,7 @@
             [alert showAlertView];
         }else if (sender.tag == 2){
             NSArray* priceAry = @[@"1-100",@"101-300",@"301-500",@"500以上",@"无限制"];
-            CustomAlertView* alert = [[CustomAlertView alloc]initWithHeight:([sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height+ 64) AndAry:priceAry];
+            CustomAlertView* alert = [[CustomAlertView alloc]initWithHeight:([sender.superview convertRect:sender.frame toView:self.view].origin.y + sender.height+ StatusBarHeight+44) AndAry:priceAry];
             alert.resultDate = ^(NSString *date) {
                 sender.selected = NO;
                 [sender setTitle:priceAry[date.intValue] forState:0];
@@ -382,9 +386,7 @@
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"banner"];
             SDCycleScrollView *cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 175) imageNamesGroup:nil];
-            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-                cycleScrollView.height = 350;
-            }
+            cycleScrollView.placeholderImage = [UIImage imageNamed:@"placeholder_banner"];
             cycleScrollView.infiniteLoop = YES;
             cycleScrollView.hideBkgView = YES;
             cycleScrollView.delegate = self;

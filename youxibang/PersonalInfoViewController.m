@@ -301,15 +301,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         UIImageView *videoImg = [cell viewWithTag:3];
         videoImg.layer.masksToBounds = YES;
         [photoImg sd_setImageWithURL:[NSURL URLWithString:UserModel.sharedUser.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_l"]];
-        if (UserModel.sharedUser.video) {
-            if (isKindOfNSDictionary(UserModel.sharedUser.video)) {
-                if (isKindOfNSDictionary(UserModel.sharedUser.video[@"VideoMeta"])) {
-                    if (UserModel.sharedUser.video[@"VideoMeta"][@"CoverURL"]) {
-                        [videoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",UserModel.sharedUser.video[@"VideoMeta"][@"CoverURL"]]] placeholderImage:[UIImage imageNamed:@"add_video"]];
-                    }
-                }
-            }
-        }
+        [videoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",UserModel.sharedUser.video_img]] placeholderImage:[UIImage imageNamed:@"add_video"]];
         UITapGestureRecognizer *photoTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
         UITapGestureRecognizer *videoTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
 //        photoImg.userInteractionEnabled = YES;

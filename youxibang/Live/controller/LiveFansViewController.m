@@ -91,7 +91,7 @@ static NSString *const FANSTABLEVIEW_ID = @"fanstableview_id";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     IntelligentModel *model = self.fansArray[indexPath.row];
     FansTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:FANSTABLEVIEW_ID];
-    [cell.headImgView sd_setImageWithURL:[NSURL URLWithString:model.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+    [cell.headImgView sd_setImageWithURL:[NSURL URLWithString:model.photo] placeholderImage:[UIImage imageNamed:@"placeholder_fans"]];
     cell.nameLabel.text = model.nickname;
     if (model.sex.integerValue == 2) {
         cell.ageLabel.textColor = [UIColor colorFromHexString:@"f335a0"];

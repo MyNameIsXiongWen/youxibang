@@ -67,7 +67,7 @@
     }
     [self.btnAry removeAllObjects];
     CGFloat startX = 10;
-    CGFloat startY = 20+64;
+    CGFloat startY = StatusBarHeight+64;
     CGFloat buttonHeight = 40;
     
     for(int i = 0; i < self.titleAry.count; i++)

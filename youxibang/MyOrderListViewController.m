@@ -42,12 +42,10 @@
     
     //占位图
     self.placeHoldView = [EBUtility viewfrome:self.view.bounds andColor:[UIColor whiteColor] andView:self.view];
-    UIImageView* img = [EBUtility imgfrome:CGRectMake(0, 0, 220, 235) andImg:[UIImage imageNamed:@"kong_news"] andView:self.placeHoldView];
-    img.center = CGPointMake(self.placeHoldView.width/2, self.placeHoldView.height/4);
-    UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, 220, 20) andText:@"你还没有订单，快邀请小伙伴们来玩吧" andColor:[UIColor darkGrayColor] andView:self.placeHoldView];
+    UIImageView* img = [EBUtility imgfrome:CGRectMake((SCREEN_WIDTH-310)/2, (SCREEN_HEIGHT-424)/2, 310, 360) andImg:[UIImage imageNamed:@"kong_news"] andView:self.placeHoldView];
+    UILabel* lab = [EBUtility labfrome:CGRectMake((SCREEN_WIDTH-310)/2, (SCREEN_HEIGHT-424)/2+335, 310, 20) andText:@"你还没有订单，快邀请小伙伴们来玩吧" andColor:[UIColor darkGrayColor] andView:self.placeHoldView];
     lab.font = [UIFont systemFontOfSize:12];
     lab.textAlignment = 1;
-    lab.center = CGPointMake(self.placeHoldView.width/2, self.placeHoldView.height/4 + 140);
     self.placeHoldView.hidden = YES;
     [self.view bringSubviewToFront:self.placeHoldView];
     [self refreshHead];
@@ -57,12 +55,12 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 //    [self refreshHead];
 }
 
-- (void)siftInfo:(UIButton*)sender{
+- (void)siftInfo:(UIButton*)sender {
     CustomAlertView* alert = [[CustomAlertView alloc] initWithSiftList];
     alert.resultIndex = ^(NSInteger index) {
         self.type = index;
@@ -71,28 +69,26 @@
     [alert showAlertView];
 }
 
--(void)refreshHead{
+-(void)refreshHead {
     self.currentPage = 1;
-//    [self.dataAry removeAllObjects];
-//    [self.tableView reloadData];
     [self downloadData];
     [self.tableView.mj_header endRefreshing];
 }
--(void)refreshFooter{
+-(void)refreshFooter {
     self.currentPage ++;
     [self downloadData];
     [self.tableView.mj_footer endRefreshing];
     
 }
 
-- (NSMutableArray*)dataAry{
+- (NSMutableArray*)dataAry {
     if (!_dataAry){
         _dataAry = [NSMutableArray array];
     }
     return _dataAry;
 }
 //下载数据
-- (void)downloadData{
+- (void)downloadData {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
     [dict setObject:[NSString stringWithFormat:@"%ld",(long)self.type] forKey:@"type"];
@@ -130,7 +126,7 @@
     }];
 }
 //聚合操作  type 1、雇主催单，2、撤销申请，3、同意退单，4、撤销仲裁，5、（未开始）取消订单，6、拒绝退单，7、申请验收
-- (void)getRequestWithType:(NSString*)type AndOrderSn:(NSString*)orderSn{
+- (void)getRequestWithType:(NSString*)type AndOrderSn:(NSString*)orderSn {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     
