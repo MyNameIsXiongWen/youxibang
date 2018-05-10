@@ -99,14 +99,25 @@
         [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
             textField.placeholder = @"不超过20字";
         }];
+        [alert.textFields[0] addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            if (alert.textFields[0].text.length > 20){
-                [self.titleAry insertObject:[@{@"name":[alert.textFields[0].text substringToIndex:20],@"selected":@"0"} mutableCopy] atIndex:self.titleAry.count - 1];
-            }else{
-                [self.titleAry insertObject:[@{@"name":alert.textFields[0].text,@"selected":@"0"} mutableCopy] atIndex:self.titleAry.count - 1];
+            NSString *content = [alert.textFields[0].text stringByReplacingOccurrencesOfString:@" " withString:@""];
+            if (content.length > 20){
+                UIButton *btn =UIButton.new;
+                btn.tag = _titleAry.count-1;
+                [self selectInterestingBtn:btn];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"兴趣爱好不能超过20字符" andDuration:2.0];
             }
-            
-            [self initInterestingBtn];
+            else if (content.length == 0) {
+                UIButton *btn =UIButton.new;
+                btn.tag = _titleAry.count-1;
+                [self selectInterestingBtn:btn];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"兴趣爱好不能为空" andDuration:2.0];
+            }
+            else {
+                [self.titleAry insertObject:[@{@"name":alert.textFields[0].text,@"selected":@"0"} mutableCopy] atIndex:self.titleAry.count - 1];
+                [self initInterestingBtn];
+            }
         }]];
         [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
             
@@ -200,6 +211,14 @@
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.tf resignFirstResponder];
+}
+
+- (void)textFieldDidChange:(UITextField *)textField {
+    NSRegularExpression *regularExpression = [NSRegularExpression regularExpressionWithPattern:@"[^\\u0020-\\u007E\\u00A0-\\u00BE\\u2E80-\\uA4CF\\uF900-\\uFAFF\\uFE30-\\uFE4F\\uFF00-\\uFFEF\\u0080-\\u009F\\u2000-\\u201f\r\n]" options:0 error:nil];
+    NSString *noEmojiStr = [regularExpression stringByReplacingMatchesInString:textField.text options:0 range:NSMakeRange(0, textField.text.length) withTemplate:@""];
+    if (![noEmojiStr isEqualToString:textField.text]) {
+        textField.text = noEmojiStr;
+    }
 }
 /*
 #pragma mark - Navigation

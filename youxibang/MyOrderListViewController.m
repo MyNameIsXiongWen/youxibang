@@ -42,13 +42,14 @@
     self.currentPage = 1;
     
     //占位图
-    self.placeHoldView = [EBUtility viewfrome:self.view.bounds andColor:[UIColor whiteColor] andView:self.view];
-    UIImageView* img = [EBUtility imgfrome:CGRectMake((SCREEN_WIDTH-310)/2, (SCREEN_HEIGHT-424)/2, 310, 360) andImg:[UIImage imageNamed:@"kong_news"] andView:self.placeHoldView];
-    UILabel* lab = [EBUtility labfrome:CGRectMake((SCREEN_WIDTH-310)/2, (SCREEN_HEIGHT-424)/2+335, 310, 20) andText:@"你还没有订单，快邀请小伙伴们来玩吧" andColor:[UIColor darkGrayColor] andView:self.placeHoldView];
+    self.placeHoldView = [EBUtility viewfrome:CGRectMake(0, StatusBarHeight+44, SCREEN_WIDTH, SCREEN_HEIGHT - (StatusBarHeight+44)) andColor:[UIColor whiteColor] andView:self.view];
+    UIImageView* img = [EBUtility imgfrome:CGRectMake(0, 0, 220, 235) andImg:[UIImage imageNamed:@"kong_news"] andView:self.placeHoldView];
+    img.center = CGPointMake(self.placeHoldView.width/2, self.placeHoldView.height/4);
+    UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, 220, 20) andText:@"你还没有任务，快邀请小伙伴们来玩吧" andColor:[UIColor darkGrayColor] andView:self.placeHoldView];
     lab.font = [UIFont systemFontOfSize:12];
     lab.textAlignment = 1;
+    lab.center = CGPointMake(self.placeHoldView.width/2, self.placeHoldView.height/4 + 140);
     self.placeHoldView.hidden = YES;
-    [self.view bringSubviewToFront:self.placeHoldView];
     [self refreshHead];
 }
 
@@ -113,7 +114,7 @@
                 }
                 [self.tableView reloadData];
             }else{
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
                 if (self.currentPage == 1){
                     self.placeHoldView.hidden = NO;
                 }

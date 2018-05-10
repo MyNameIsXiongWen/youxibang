@@ -37,7 +37,6 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self configBottomView];
     self.currentPage = 1;
     
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 72, SCREEN_WIDTH, 100)];
@@ -185,6 +184,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
             if (code == 1) {
                 self.newsModel = [NewsModel mj_objectWithKeyValues:object[@"data"]];
                 [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.newsModel.content]]];
+                [self configBottomView];
                 
                 [self.laudButton setTitle:self.newsModel.laud_count forState:0];
                 if ([self.newsModel.is_laud integerValue] == 0) {
@@ -297,6 +297,11 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
                 [self.tableview insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
                 self.reviewTextField.text = @"";
                 [self.reviewTextField resignFirstResponder];
+                self.newsModel.comment_count = [NSString stringWithFormat:@"%d",self.newsModel.comment_count.intValue+1];
+                self.reviewCountLabel.text = [NSString stringWithFormat:@"%@",self.newsModel.comment_count];
+                if (self.newsModel.comment_count.integerValue == 0) {
+                    self.reviewCountLabel.hidden = YES;
+                }
                 [SVProgressHUD showSuccessWithStatus:@"评论成功"];
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
@@ -422,6 +427,11 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
         [weakSelf deleteReviewRequest:model.comment_id CompleteHandle:^{
             [weakSelf.reviewArray removeObject:model];
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            self.newsModel.comment_count = [NSString stringWithFormat:@"%d",self.newsModel.comment_count.intValue-1];
+            weakSelf.reviewCountLabel.text = [NSString stringWithFormat:@"%@",weakSelf.newsModel.comment_count];
+            if (weakSelf.newsModel.comment_count.integerValue == 0) {
+                weakSelf.reviewCountLabel.hidden = YES;
+            }
         }];
     }];
     return @[deleteRoWAction];

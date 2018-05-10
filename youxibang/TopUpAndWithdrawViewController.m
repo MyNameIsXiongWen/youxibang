@@ -89,6 +89,10 @@
 //提现
 - (IBAction)topUp:(id)sender {
     if (self.type == 1){
+        if (UserModel.sharedUser.user_money.intValue < 30) {
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"余额不够最低提现金额" andDuration:2.0];
+            return;
+        }
         NSString* account = self.tf.text;
         if (account.intValue < 30){
             [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能少于30元" andDuration:2.0];

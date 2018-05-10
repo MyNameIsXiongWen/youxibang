@@ -209,7 +209,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFansSelector)];
     [fansLabel addGestureRecognizer:tap];
     
-    [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
+    [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_head"]];
     name.text = userModel.nickname;
     if (userModel.sex.integerValue == 1) {
         sexImg.image = [UIImage imageNamed:@"live_detail_male"];
@@ -460,14 +460,22 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     else {
         if (UserModel.sharedUser.is_anchor.integerValue == 0 && UserModel.sharedUser.isbaby.integerValue == 0) {
             if (indexPath.row == 2){//实名认证或者个人技能
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"我的技能和我是主播\n只能二选一" message:nil preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-                UIAlertAction *confim = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                if ([NSString stringWithFormat:@"%@",UserModel.sharedUser.is_realauth].integerValue == 2) {
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"您的实名认证正在审核中" andDuration:2.0];
+                }
+                else if ([NSString stringWithFormat:@"%@",UserModel.sharedUser.is_realauth].integerValue == 1) {
                     [self pushToMySkill];
-                }];
-                [alert addAction:cancel];
-                [alert addAction:confim];
-                [self presentViewController:alert animated:YES completion:nil];
+                }
+                else {
+                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"我的技能和我是主播\n只能二选一" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                    UIAlertAction *confim = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                        [self pushToMySkill];
+                    }];
+                    [alert addAction:cancel];
+                    [alert addAction:confim];
+                    [self presentViewController:alert animated:YES completion:nil];
+                }
             }else if (indexPath.row == 3){//我是主播
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"我是主播和我的技能\n只能二选一" message:nil preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
@@ -523,9 +531,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 - (void)pushToAnchor {
     LiveCreateViewController* vc = [[LiveCreateViewController alloc]init];
     [self.navigationController pushViewController:vc animated:1];
-//    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    RealNameViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rn"];
-//    [self.navigationController pushViewController:vc animated:1];
 }
 
 - (void)pushToOrder {
@@ -572,6 +577,26 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     }
 }
 
+//下载技能列表
+- (void)downloadMySkillDataCompletionHandle:(void(^)(NSArray *dataarray))handle {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/mysklist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {
+                if (handle) {
+                    handle(object[@"data"]);
+                }
+            }
+        }
+    } failoperation:^(NSError *error) {
+    }];
+}
 
 #pragma mark ALIPLAYER DELEGATE
 - (void)vodPlayer:(AliyunVodPlayer *)vodPlayer onEventCallback:(AliyunVodPlayerEvent)event{

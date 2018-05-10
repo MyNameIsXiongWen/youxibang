@@ -34,7 +34,7 @@
     self.tableView.tableFooterView = [UIView new];
     self.currentPage = 1;
 
-    self.placeHoldView = [EBUtility viewfrome:self.view.bounds andColor:[UIColor whiteColor] andView:nil];
+    self.placeHoldView = [EBUtility viewfrome:self.view.bounds andColor:[UIColor whiteColor] andView:self.view];
     UIImageView* img = [EBUtility imgfrome:CGRectMake(0, 0, 220, 235) andImg:[UIImage imageNamed:@"kong_news"] andView:self.placeHoldView];
     img.center = CGPointMake(self.placeHoldView.width/2, self.placeHoldView.height/4);
     UILabel* lab = [EBUtility labfrome:CGRectMake(0, 0, 220, 20) andText:@"你还没有任务，快邀请小伙伴们来玩吧" andColor:[UIColor darkGrayColor] andView:self.placeHoldView];
@@ -42,7 +42,6 @@
     lab.textAlignment = 1;
     lab.center = CGPointMake(self.placeHoldView.width/2, self.placeHoldView.height/4 + 140);
     self.placeHoldView.hidden = YES;
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -93,7 +92,7 @@
                 [self.dataAry addObjectsFromArray:object[@"data"]];
                 [self.tableView reloadData];
             }else{
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
                 if (self.currentPage == 1){
                     self.placeHoldView.hidden = NO;
                 }

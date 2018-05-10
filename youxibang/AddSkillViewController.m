@@ -23,6 +23,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 0-40);
     self.tableView.tableFooterView = [UIView new];
     self.title = @"添加技能";
 }
@@ -155,7 +156,8 @@
                 NSInteger code = [object[@"errcode"] integerValue];
                 NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
                 NSLog(@"输出 %@--%@",object,msg);
-                
+                UserModel *userModel = UserModel.sharedUser;
+                userModel.isbaby = @"1";
                 if (code == 1) {
                     [SVProgressHUD showSuccessWithStatus:msg];
                     [self.navigationController popViewControllerAnimated:1];
@@ -363,6 +365,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"celllll"];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.textLabel.text = @"技能";
+            cell.textLabel.textColor = [UIColor colorFromHexString:@"333333"];
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.textLabel.font = [UIFont systemFontOfSize:15];
         }
@@ -377,24 +380,27 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cellll"];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
-        UILabel *lab = [EBUtility labfrome:CGRectMake(20, 5, 100, 25) andText:@"技能封面照" andColor:[UIColor blackColor] andView:cell.viewForLastBaselineLayout];
+        UILabel *lab = [EBUtility labfrome:CGRectMake(15, 5, 100, 25) andText:@"技能封面照" andColor:[UIColor colorFromHexString:@"333333"] andView:cell.contentView];
         lab.textAlignment = 0;
         
-        UIButton* btn = [EBUtility btnfrome:CGRectMake(10, 30, 90, 90) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"ico_add1"] andView:cell.viewForLastBaselineLayout];
-        [btn addTarget:self action:@selector(amendHeadImg) forControlEvents:UIControlEventTouchUpInside];
-        btn.tag = 1;
-        btn.imageView.contentMode = UIViewContentModeScaleAspectFill;
-        
+        UIImageView *imgView = [EBUtility imgfrome:CGRectMake(10, 30, 90, 90) andImg:[UIImage imageNamed:@"ico_add1"] andView:cell.contentView];
         if (self.originSkill) {
-            [[[UIImageView alloc] init] sd_setImageWithURL:[NSURL URLWithString:self.originSkill[@"bgimg"]] placeholderImage:[UIImage imageNamed:@"ico_add1"] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                [btn setImage:image forState:0];
-            }];
+            [imgView sd_setImageWithURL:[NSURL URLWithString:self.originSkill[@"bgimg"]] placeholderImage:[UIImage imageNamed:@"ico_add1"]];
         }
+        imgView.tag = 111;
+        imgView.contentMode = UIViewContentModeScaleAspectFill;
+        imgView.layer.masksToBounds = YES;
+        imgView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(amendHeadImg)];
+        [imgView addGestureRecognizer:tap];
+
         return cell;
     }
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"cell%ld",indexPath.section]];
     if (self.originSkill) {
         if (indexPath.section == 1) {
+            UILabel* la = [cell viewWithTag: 0];
+            la.textColor = [UIColor colorFromHexString:@"333333"];
             UITextField* tf = [cell viewWithTag: 1];
             tf.text = [NSString stringWithFormat:@"%@",self.originSkill[@"duanwei"]];
         }else if (indexPath.section == 2) {
@@ -462,27 +468,15 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
     [picker dismissViewControllerAnimated:YES completion:^{ }]; //关闭摄像头或用户相册
     
-    UIImageView* tempImage = [[UIImageView alloc]initWithFrame:CGRectMake(0,0,SCREEN_WIDTH,SCREEN_WIDTH/5*2)];
-    tempImage.image = [UIImageView OriginImage:image scaleToSize:CGSizeMake(SCREEN_WIDTH, image.size.height * SCREEN_WIDTH/image.size.width)];
-    tempImage.contentMode = UIViewContentModeTop;
-    
-    UIGraphicsBeginImageContextWithOptions(tempImage.bounds.size, tempImage.opaque, 0.0);
-    
-    //把当前的全部画面导入到栈顶context中并进行渲染
-    [tempImage.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
-    // 从当前context中创建一个新图片
-    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
-    
-    // 使当前的context出堆栈
+    UIGraphicsBeginImageContext(image.size);
+    [image drawInRect:CGRectMake(0,0,image.size.width,image.size.height)];
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:5]];
-        UIButton* btn = [cell viewWithTag:1];
-        [btn setImage:img forState:0];
-        self.img = img;
-    });
+    UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:5]];
+    UIImageView *imgView = [cell viewWithTag:111];
+    imgView.image = newImage;
+    self.img = newImage;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

@@ -9,7 +9,7 @@
 
 @interface LiveCreateMyEvaluateViewController () <UITextViewDelegate>
 
-@property (weak, nonatomic) IBOutlet UITextView *textview;
+@property (strong, nonatomic) UITextView *textview;
 
 @end
 
@@ -19,8 +19,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.title = @"我的特点";
-    self.textview.frame = CGRectMake(15, StatusBarHeight+44+15, SCREEN_WIDTH-30, 150);
+    self.textview = [[UITextView alloc] initWithFrame:CGRectMake(15, StatusBarHeight+44+15, SCREEN_WIDTH-30, 150)];
+    self.textview.font = [UIFont systemFontOfSize:15.0];
+    self.textview.delegate = self;
     self.textview.text = self.evaluateString;
+    [self.view addSubview:self.textview];
 }
 
 - (void)didReceiveMemoryWarning {

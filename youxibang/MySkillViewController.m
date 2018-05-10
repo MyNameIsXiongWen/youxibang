@@ -80,7 +80,6 @@
 
 //跳转增加技能
 - (void)addSkill{
-    
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     AddSkillViewController* vc = [sb instantiateViewControllerWithIdentifier:@"as"];
     [self.navigationController pushViewController:vc animated:1];
@@ -118,12 +117,10 @@
     return cell;
 }
 //跳转编辑技能
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     AddSkillViewController* vc = [sb instantiateViewControllerWithIdentifier:@"as"];
     vc.originSkill = self.dataAry[indexPath.row];
-
     [self.navigationController pushViewController:vc animated:1];
 }
 

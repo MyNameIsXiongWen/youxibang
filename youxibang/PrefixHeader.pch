@@ -47,11 +47,11 @@
 
 #define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
 #define HttpImageString @""
-#define HttpURLString @"http://jx.zimogame.com/index.php/api/"
+#define HttpURLString @"http://mobile.ishangbo.com/index.php/api/"
 //#define HttpURLString @"http://192.168.2.166:8888/api/"
 //#define HttpURLString @"https://m.feirantech.cn/api/"
 
-#define SHARE_WEBURL @"http://jx.zimogame.com/mobile/share/"
+#define SHARE_WEBURL @"http://mobile.ishangbo.com/mobile/share/"
 //#define SHARE_WEBURL @"http://m.feirantech.cn/mobile/share/"
 
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width

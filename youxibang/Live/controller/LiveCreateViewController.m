@@ -270,6 +270,8 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {
+                UserModel *userModel = UserModel.sharedUser;
+                userModel.is_anchor = @"1";
                 [self.navigationController popViewControllerAnimated:YES];
                 NSMutableArray *oneArray = NSMutableArray.array;
                 NSMutableArray *twoArray = NSMutableArray.array;
@@ -487,7 +489,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
             [self.areaPickerView selectRow:0 inComponent:1 animated:0];
         }
     }
-    else {
+    else if (textField.tag == 7) {
         if (selectCity) {
             selectCity = NO;
             [self.areaPickerView reloadAllComponents];
