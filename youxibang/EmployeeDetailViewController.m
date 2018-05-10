@@ -70,7 +70,9 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [self configUI];
     [self downloadInfo];
     if (self.type != 2) {
-        [self detailBottomButton];
+        if (self.type == 0) {
+            [self detailBottomButton];
+        }
     }
     else {
         UIButton *share = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-45, StatusBarHeight-20+25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"share_white"] andView:self.view];

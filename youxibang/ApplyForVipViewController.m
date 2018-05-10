@@ -244,17 +244,6 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
-//    if ([textField.superview convertRect:textField.frame toView:self.view].origin.y > 300){
-//        [UIView animateWithDuration:0.3 animations:^{
-//
-//            CGRect frame = self.view.frame;
-//
-//            frame.origin.y = 64;
-//
-//            self.view.frame = frame;
-//
-//        }];
-//    }
     return YES;
     
 }
@@ -264,35 +253,12 @@
 
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     
-//    if ([textField.superview convertRect:textField.frame toView:self.view].origin.y > 300){
-//        [UIView animateWithDuration:0.3 animations:^{
-//            
-//            CGRect frame = self.view.frame;
-//            
-//            frame.origin.y = - 130;
-//            
-//            self.view.frame = frame;
-//            
-//        }];
-//    }
-    
     return YES;
 }
 
 //结束编辑时键盘下去 视图下移动画
 
 -(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
-    if ([textField.superview convertRect:textField.frame toView:self.view].origin.y < 300){
-        [UIView animateWithDuration:0.3 animations:^{
-            
-            CGRect frame = self.view.frame;
-            
-            frame.origin.y = 64;
-            
-            self.view.frame = frame;
-            
-        }];
-    }
     return YES;
 }
 /*

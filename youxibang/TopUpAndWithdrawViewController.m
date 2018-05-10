@@ -90,12 +90,16 @@
 - (IBAction)topUp:(id)sender {
     if (self.type == 1){
         if (UserModel.sharedUser.user_money.intValue < 30) {
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"余额不够最低提现金额" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"账户余额不够最低提现金额" andDuration:2.0];
             return;
         }
         NSString* account = self.tf.text;
         if (account.intValue < 30){
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能少于30元" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能低于30元" andDuration:2.0];
+            return;
+        }
+        if (UserModel.sharedUser.user_money.intValue < account.intValue){
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能高于账户余额" andDuration:2.0];
             return;
         }
         UserModel *userModel = UserModel.sharedUser;

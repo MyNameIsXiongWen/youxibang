@@ -216,39 +216,7 @@
     [self.view endEditing:1];
     [self.backgroundContainerView endEditing:1];
 }
-//-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-//    if (textField == self.idCard){
-//        [UIView animateWithDuration:0.3 animations:^{
-//
-//            CGRect frame = self.view.frame;
-//
-//            frame.origin.y = - 40;
-//
-//            self.view.frame = frame;
-//
-//        }];
-//    }
-//
-//    return YES;
-//}
 
-//结束编辑时键盘下去 视图下移动画
-
-//-(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
-//    if (textField == self.idCard){
-//        [UIView animateWithDuration:0.3 animations:^{
-//
-//            CGRect frame = self.view.frame;
-//
-//            frame.origin.y = 64;
-//
-//            self.view.frame = frame;
-//
-//        }];
-//    }
-//
-//    return YES;
-//}
 /*
 #pragma mark - Navigation
 

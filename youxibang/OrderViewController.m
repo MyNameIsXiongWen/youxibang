@@ -383,15 +383,6 @@
     if ([textView.text isEqualToString:@" "]){
         textView.text = @"";
     }
-    [UIView animateWithDuration:0.3 animations:^{
-        
-        CGRect frame = self.view.frame;
-        
-        frame.origin.y = - 175;
-        
-        self.view.frame = frame;
-        
-    }];
     
     
     return YES;
@@ -400,16 +391,6 @@
 //结束编辑时键盘下去 视图下移动画
 
 -(BOOL)textViewShouldEndEditing:(UITextView *)textField{
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        
-        CGRect frame = self.view.frame;
-        
-        frame.origin.y = 64;
-        
-        self.view.frame = frame;
-        
-    }];
     if ([textField.text isEqualToString:@""]){
         RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:3]];
         cell.placeholdLab.hidden = NO;

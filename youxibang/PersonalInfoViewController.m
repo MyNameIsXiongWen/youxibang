@@ -306,6 +306,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell0"];
         cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         UIImageView *photoImg = [cell viewWithTag:1];
         photoImg.layer.masksToBounds = YES;
         UIImageView *videoImg = [cell viewWithTag:3];
@@ -329,6 +330,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
             [subView removeFromSuperview];
         }
         cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         UILabel *xingxiang = [EBUtility labfrome:CGRectMake(15, 10, 100, 15) andText:@"形象照" andColor:[UIColor colorFromHexString:@"333333"] andView:cell];
         xingxiang.textAlignment = NSTextAlignmentLeft;
         xingxiang.font = [UIFont systemFontOfSize:14.0];

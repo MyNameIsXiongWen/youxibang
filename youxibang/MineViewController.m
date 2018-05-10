@@ -418,15 +418,15 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (UITableViewCell *)displayTableViewCell:(NSIndexPath *)indexPath {
     UserModel *usermodel = UserModel.sharedUser;
-    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我的技能",@"我是主播",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
-    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_gamebaby",@"ico_anchor",@"ico_order_center",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"订单中心",@"我的技能",@"我是主播",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
+    NSArray* imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_order_center",@"ico_gamebaby",@"ico_anchor",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
     if (usermodel.is_anchor.integerValue == 1) {
-        ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我是主播",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
-        imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_anchor",@"ico_order_center",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+        ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"订单中心",@"我是主播",@"有奖邀请",@"联系客服",@"系统设置"]];
+        imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_order_center",@"ico_anchor",@"ico_txgl",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
     }
     else if (usermodel.isbaby.integerValue == 1) {
-        ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"我的技能",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
-        imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_gamebaby",@"ico_order_center",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
+        ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"订单中心",@"我的技能",@"有奖邀请",@"联系客服",@"系统设置"]];
+        imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_order_center",@"ico_gamebaby",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
     }
     MineTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:TABLEVIEW_IDENTIFIER];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -459,7 +459,9 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     }
     else {
         if (UserModel.sharedUser.is_anchor.integerValue == 0 && UserModel.sharedUser.isbaby.integerValue == 0) {
-            if (indexPath.row == 2){//实名认证或者个人技能
+            if (indexPath.row == 2){//订单列表
+                [self pushToOrder];
+            }else if (indexPath.row == 3){//实名认证或者个人技能
                 if ([NSString stringWithFormat:@"%@",UserModel.sharedUser.is_realauth].integerValue == 2) {
                     [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"您的实名认证正在审核中" andDuration:2.0];
                 }
@@ -476,7 +478,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
                     [alert addAction:confim];
                     [self presentViewController:alert animated:YES completion:nil];
                 }
-            }else if (indexPath.row == 3){//我是主播
+            }else if (indexPath.row == 4){//我是主播
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"我是主播和我的技能\n只能二选一" message:nil preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
                 UIAlertAction *confim = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -485,8 +487,6 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
                 [alert addAction:cancel];
                 [alert addAction:confim];
                 [self presentViewController:alert animated:YES completion:nil];
-            }else if (indexPath.row == 4){//订单列表
-                [self pushToOrder];
             }else if (indexPath.row == 5){//点击分享邀请码
                 [self pushToInvite];
             }else if (indexPath.row == 6){//自定义alert显示客服电话
@@ -496,7 +496,9 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
             }
         }
         else {
-            if (indexPath.row == 2) {//我是主播或者个人技能
+            if (indexPath.row == 2){//订单列表
+                [self pushToOrder];
+            }else if (indexPath.row == 3) {//我是主播或者个人技能
                 UserModel *usermodel = UserModel.sharedUser;
                 if (usermodel.is_anchor.integerValue == 1) {
                     [self pushToAnchor];
@@ -504,9 +506,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
                 else if (usermodel.isbaby.integerValue == 1) {
                     [self pushToMySkill];
                 }
-            }else if (indexPath.row == 3){//订单列表
-                [self pushToOrder];
-            }else if (indexPath.row == 4){//点击分享邀请码
+            } else if (indexPath.row == 4){//点击分享邀请码
                 [self pushToInvite];
             }else if (indexPath.row == 5){//自定义alert显示客服电话
                 [self pushToAlertView];
@@ -606,9 +606,10 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         case AliyunVodPlayerEventPrepareDone:
             //播放准备完成时触发
         {
+            self.playerView.hidden = NO;
             //开始播放
             [self.aliPlayer start];
-            self.aliPlayer.quality = AliyunVodPlayerVideoHD;
+            self.aliPlayer.quality = AliyunVodPlayerVideoSD;
             
             AliyunVodPlayerVideo *videoModel = [self.aliPlayer getAliyunMediaInfo];
             if (videoModel) {
@@ -624,6 +625,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
             break;
         case AliyunVodPlayerEventPlay:
             //暂停后恢复播放时触发
+            self.playerView.hidden = NO;
             break;
         case AliyunVodPlayerEventFirstFrame:
             //播放视频首帧显示出来时触发
@@ -657,6 +659,8 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     }
 }
 - (void)vodPlayer:(AliyunVodPlayer *)vodPlayer playBackErrorModel:(ALPlayerVideoErrorModel *)errorModel{
+    [SVProgressHUD dismiss];
+    [SVProgressHUD setDefaultMaskType:1];
     //播放出错时触发，通过errorModel可以查看错误码、错误信息、视频ID、视频地址和requestId。
     [self.timer invalidate];
     //    [self.sliderProgress setValue:0];
@@ -678,6 +682,8 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 }
 - (void)onTimeExpiredErrorWithVodPlayer:(AliyunVodPlayer *)vodPlayer{
     //播放器鉴权数据过期回调，出现过期可重新prepare新的地址或进行UI上的错误提醒。
+    [SVProgressHUD dismiss];
+    [SVProgressHUD setDefaultMaskType:1];
     [self.timer invalidate];
     //    [self.sliderProgress setValue:0];
     self.progressView.progress = 0;

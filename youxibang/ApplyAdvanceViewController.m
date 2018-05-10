@@ -28,17 +28,6 @@
     self.title = @"预支工资申请";
     
     self.operator = 1;
-    //增加监听，当键盘出现或改变时
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    
-    //增加监听，当键退出时
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
     
     UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
     img.image = [UIImage imageNamed:@"back_black"];
@@ -235,38 +224,6 @@
     }
     sender.selected = YES;
     self.operator = sender.tag;
-}
-//当键盘出现或改变时调用
-- (void)keyboardWillShow:(NSNotification *)aNotification
-{
-    //获取键盘的高度
-    NSDictionary *userInfo = [aNotification userInfo];
-    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-    CGRect keyboardRect = [aValue CGRectValue];
-    int height = keyboardRect.size.height;
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        
-        CGRect frame = self.view.frame;
-        
-        frame.origin.y = - height + 64;
-        
-        self.view.frame = frame;
-        
-    }];
-}
-
-//当键退出时调用
-- (void)keyboardWillHide:(NSNotification *)aNotification{
-    [UIView animateWithDuration:0.3 animations:^{
-        
-        CGRect frame = self.view.frame;
-        
-        frame.origin.y = 64;
-        
-        self.view.frame = frame;
-        
-    }];
 }
 
 #pragma mark - tableViewDelegate/DataSource
