@@ -28,6 +28,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.imgArray = @[@"guide_one",@"guide_two"];
+    if (SCREEN_WIDTH == 414) {
+        self.imgArray = @[@"guide_one_plus",@"guide_two_plus"];
+    }
     self.photoScrollView.contentSize = CGSizeMake(SCREEN_WIDTH*self.imgArray.count, 0);
     for (int i=0; i<self.imgArray.count; i++) {
         UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*i, -20, SCREEN_WIDTH, SCREEN_HEIGHT)];

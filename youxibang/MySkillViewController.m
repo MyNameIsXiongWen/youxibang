@@ -25,8 +25,8 @@
     self.tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
     
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 55, 25)];
-    UIButton* btn = [EBUtility btnfrome:CGRectMake(0, 0, 65, 25) andText:@"添加" andColor:[UIColor whiteColor] andimg:nil andView:rv];
-    btn.titleLabel.font = [UIFont systemFontOfSize:14];
+    UIButton* btn = [EBUtility btnfrome:CGRectMake(0, 0, 65, 25) andText:@"添加" andColor:[UIColor colorFromHexString:@"333333"] andimg:nil andView:rv];
+    btn.titleLabel.font = [UIFont systemFontOfSize:15];
     [btn addTarget:self action:@selector(addSkill) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
 }

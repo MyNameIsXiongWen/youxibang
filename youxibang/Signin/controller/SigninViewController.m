@@ -211,6 +211,12 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 }
 
 - (void)cellBtnSelector:(UIButton *)sender {
+    if (!DataStore.sharedDataStore.token) {
+        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+        [self.navigationController pushViewController:vc animated:1];
+        return;
+    }
     if (sender.tag == 999) {
         [self signSelector:sender];
     }

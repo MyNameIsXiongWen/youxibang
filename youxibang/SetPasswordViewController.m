@@ -24,10 +24,11 @@
     self.password.secureTextEntry = YES;
     self.secPassword.secureTextEntry = YES;
     if (self.inviteCode) {
-        self.invitationCode.hidden = YES;
+        self.invitationCode.text = self.inviteCode;
+        self.invitationCode.enabled = NO;
     }
     else {
-        self.invitationCode.hidden = NO;
+        self.invitationCode.enabled = YES;
     }
 }
 

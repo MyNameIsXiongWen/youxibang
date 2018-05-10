@@ -119,7 +119,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     self.title = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     CGSize labelSize = [self.title boundingRectWithSize:CGSizeMake(SCREEN_WIDTH-30, 1000)
                                                 options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesFontLeading  |NSStringDrawingUsesLineFragmentOrigin//采用换行模式
-                                             attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:21]}//传人的字体字典
+                                             attributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:21]}//传人的字体字典
                                                 context:nil].size;
     if (labelSize.height < 25) {
         labelSize.height = 25;
@@ -226,11 +226,16 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
             if (code == 1) {
                 if (self.currentPage == 1) {
                     self.reviewArray = [NewsReviewModel mj_objectArrayWithKeyValuesArray:object[@"data"]];
+                    [self.tableview reloadData];
                 }
                 else {
+                    NSInteger count = self.reviewArray.count;
                     [self.reviewArray addObjectsFromArray:[NewsReviewModel mj_objectArrayWithKeyValuesArray:object[@"data"]]];
+                    [self.tableview reloadData];
+                    if (count > 1) {
+                        [self.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:0];
+                    }
                 }
-                [self.tableview reloadData];
             }
             else {
                 [SVProgressHUD showErrorWithStatus:msg];

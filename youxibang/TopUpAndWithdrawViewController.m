@@ -54,7 +54,7 @@
         UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [rightBtn setTitle:@"账户管理" forState:UIControlStateNormal];
         rightBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
-        [rightBtn setTitleColor:[UIColor colorFromHexString:@"437fed"] forState:UIControlStateNormal];
+        [rightBtn setTitleColor:[UIColor colorFromHexString:@"333333"] forState:UIControlStateNormal];
         rightBtn.bounds = CGRectMake(0, 0, 70, 30);
         [rightBtn addTarget:self action:@selector(withdrawAccountManage) forControlEvents:UIControlEventTouchUpInside];
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
@@ -95,7 +95,7 @@
     if (self.type == 1){
         NSString* account = self.tf.text;
         if (account.intValue < 30){
-            [SVProgressHUD showErrorWithStatus:@"金额不能小于30"];
+            [SVProgressHUD showErrorWithStatus:@"金额必须大于0"];
             return;
         }
         NSMutableDictionary* dic = [UserNameTool readPersonalData];
@@ -118,7 +118,7 @@
     }else{
         NSString* account = self.tf.text;
         if (account.intValue <= 0){
-            [SVProgressHUD showErrorWithStatus:@"金额必须大于0"];
+            [SVProgressHUD showErrorWithStatus:@"金额不能小于30"];
             return;
         }
         NSString* otype;

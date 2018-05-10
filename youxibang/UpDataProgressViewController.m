@@ -39,8 +39,9 @@
     
     //右上角按键
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 55, 25)];
-    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-20, 0, 85, 25) andText:@"确认上传" andColor:[UIColor whiteColor] andimg:nil andView:rv];
-
+    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-20, 0, 85, 25) andText:@"确认上传" andColor:[UIColor colorFromHexString:@"333333"] andimg:nil andView:rv];
+    
+    btn.titleLabel.font = [UIFont systemFontOfSize:15.0];
     [btn addTarget:self action:@selector(upData:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
     

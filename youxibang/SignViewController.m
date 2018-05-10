@@ -31,7 +31,7 @@
 }
 //注册协议
 - (IBAction)signDelegate:(id)sender {
-    DSWebViewController* vc = [[DSWebViewController alloc]initWithURLSting:@"http://youxibang.zjr1.com/index.php/api/onlypage/detail/id/1.html"];
+    DSWebViewController* vc = [[DSWebViewController alloc]initWithURLSting:[NSString stringWithFormat:@"%@onlypage/detail/id/1.html",HttpURLString]];
     [self.navigationController pushViewController:vc animated:1];
 }
 //获取验证码

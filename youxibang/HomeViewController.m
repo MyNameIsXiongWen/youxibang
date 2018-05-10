@@ -28,15 +28,10 @@
 #import "NewsModel.h"
 #import "SigninViewController.h"
 
-#import "LMJScrollTextView2.h"
-
 #define historyCityFilepath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"historyCity.data"]
 
 static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifier";
-@interface HomeViewController ()<SDCycleScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, AMapLocationManagerDelegate, LMJScrollTextView2Delegate> {
-    LMJScrollTextView2 * _scrollTextView1;
-    LMJScrollTextView2 * _scrollTextView2;
-}
+@interface HomeViewController ()<SDCycleScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, AMapLocationManagerDelegate>
 
 @property (strong, nonatomic) SDCycleScrollView *cycleScrollView;
 @property (strong, nonatomic) UITableView *adTableview;
@@ -81,20 +76,22 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 
     [self configUI];
     [self homeDataRequest];
-//    self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(scrollTableView) userInfo:nil repeats:YES];
-//    [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(scrollTableView) userInfo:nil repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
     //这个通知是付款完成后跳转个人页面的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushMineView:) name:@"pushMineView" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessage:) name:@"refreshMessage" object:nil];
 }
 
 - (void)scrollTableView {
-    if (self.currentIndex == self.informationAry.count-1) {
-        self.currentIndex = 0;
+    if (self.currentIndex == self.informationAry.count-2 || self.currentIndex == self.informationAry.count-1) {
+        NSMutableArray *tempArray = self.informationAry.mutableCopy;
+        for (NewsModel *model in tempArray) {
+            [self.informationAry addObject:model];
+        }
+        [self.adTableview reloadData];
     }
-    else {
-        self.currentIndex ++;
-    }
+    self.currentIndex += 2;
     if (self.informationAry.count > self.currentIndex) {
         [self.adTableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
     }
@@ -127,7 +124,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     searchView.layer.cornerRadius = 12.5;
     searchView.layer.masksToBounds = NO;
     searchView.tag = 10000;
-    UIButton* searchBtn = [EBUtility btnfrome:CGRectMake(45, 0, searchView.frame.size.width-45-20, 25) andText:@"搜任务标题、用户昵称、ID" andColor:[UIColor colorFromHexString:@"83889a"] andimg:nil andView:searchView];
+    UIButton* searchBtn = [EBUtility btnfrome:CGRectMake(45, 0, searchView.frame.size.width-45-20, 25) andText:@"搜索用户昵称、ID" andColor:[UIColor colorFromHexString:@"83889a"] andimg:nil andView:searchView];
     [searchBtn setImage:[UIImage imageNamed:@"home_search"] forState:0];
     searchBtn.imageEdgeInsets = UIEdgeInsetsMake(0, -15, 0, 15);
     searchBtn.titleEdgeInsets = UIEdgeInsetsMake(0, -10, 0, 10);
@@ -179,29 +176,13 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     UIImageView *iconImgView = [EBUtility imgfrome:CGRectMake(5, 275, 55, 70) andImg:[UIImage imageNamed:@"home_toutiao"] andView:headerView];
     iconImgView.contentMode = UIViewContentModeCenter;
     iconImgView.backgroundColor = UIColor.whiteColor;
-//    self.adTableview = [[UITableView alloc] initWithFrame:CGRectMake(50, 293, SCREEN_WIDTH-50-22, 35) style:UITableViewStylePlain];
-//    self.adTableview.delegate = self;
-//    self.adTableview.dataSource = self;
-//    self.adTableview.tag = 111;
-//    self.adTableview.separatorStyle = UITableViewCellSelectionStyleNone;
-//    [headerView addSubview:self.adTableview];
-    
-    _scrollTextView1 = [[LMJScrollTextView2 alloc] initWithFrame:CGRectMake(50, 294, SCREEN_WIDTH-50-22, 17)];
-    _scrollTextView1.delegate        = self;
-    _scrollTextView1.backgroundColor = [UIColor whiteColor];
-    _scrollTextView1.textColor       = [UIColor colorFromHexString:@"444444"];
-    _scrollTextView1.textFont        = [UIFont systemFontOfSize:11.f];
-    _scrollTextView1.textAlignment   = NSTextAlignmentLeft;
-    _scrollTextView1.touchEnable     = YES;
-    [headerView addSubview:_scrollTextView1];
-    _scrollTextView2 = [[LMJScrollTextView2 alloc] initWithFrame:CGRectMake(50, 294+17, SCREEN_WIDTH-50-22, 17)];
-    _scrollTextView2.delegate        = self;
-    _scrollTextView2.backgroundColor = [UIColor whiteColor];
-    _scrollTextView2.textColor       = [UIColor colorFromHexString:@"444444"];
-    _scrollTextView2.textFont        = [UIFont systemFontOfSize:11.f];
-    _scrollTextView2.textAlignment   = NSTextAlignmentLeft;
-    _scrollTextView2.touchEnable     = YES;
-    [headerView addSubview:_scrollTextView2];
+    self.adTableview = [[UITableView alloc] initWithFrame:CGRectMake(50, 293, SCREEN_WIDTH-50-22, 35) style:UITableViewStylePlain];
+    self.adTableview.scrollEnabled = NO;
+    self.adTableview.delegate = self;
+    self.adTableview.dataSource = self;
+    self.adTableview.tag = 111;
+    self.adTableview.separatorStyle = UITableViewCellSelectionStyleNone;
+    [headerView addSubview:self.adTableview];
     
     UIImageView *arrowImgView = [EBUtility imgfrome:CGRectMake(SCREEN_WIDTH-22, 304, 7, 12) andImg:[UIImage imageNamed:@"arrow_right"] andView:headerView];
     arrowImgView.contentMode = UIViewContentModeCenter;
@@ -226,15 +207,6 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     self.contentTableview.tableFooterView = footerView;
     
     [self configNavView];
-}
-
-#pragma mark - LMJScrollTextView2 Delegate
-- (void)scrollTextView2:(LMJScrollTextView2 *)scrollTextView currentTextIndex:(NSInteger)index{
-    NSLog(@"当前是信息%ld",index);
-}
-- (void)scrollTextView2:(LMJScrollTextView2 *)scrollTextView clickIndex:(NSInteger)index content:(NSString *)content{
-    NSLog(@"#####点击的是：第%ld条信息 内容：%@",index,content);
-    [self.tabBarController setSelectedIndex:1];
 }
 
 //兼职，游戏宝贝，发布三个按钮的方法，发布任务必须登陆后才能进入
@@ -298,34 +270,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
                 self.intelligentArray = [ContentModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"group"]];
                 self.anchorAry = [IntelligentModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"anchor"]];
                 self.informationAry = [NewsModel mj_objectArrayWithKeyValuesArray:self.responseDictionary[@"information"]];
-                NSMutableArray *textArray1 = NSMutableArray.array;
-                NSMutableArray *textArray2 = NSMutableArray.array;
-                for (int i=0; i<self.informationAry.count; i++) {
-                    NewsModel *model = self.informationAry[i];
-                    NSMutableAttributedString * attrStr = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"      %@",model.title]];
-                    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-                    if (model.cat_id.integerValue == 1) {
-                        textAttachment.image = [UIImage imageNamed:@"home_news"];
-                    }
-                    else {
-                        textAttachment.image = [UIImage imageNamed:@"home_hr"];
-                    }
-                    textAttachment.bounds = CGRectMake(10, -2, 26, 12.5);
-                    NSAttributedString *attachmentAttrStr = [NSAttributedString attributedStringWithAttachment:textAttachment];
-                    [attrStr insertAttributedString:attachmentAttrStr atIndex:0];
-                    if (i%2 == 0) {
-                        [textArray1 addObject:attrStr];
-                    }
-                    else {
-                        [textArray2 addObject:attrStr];
-                    }
-                }
-                
-                _scrollTextView1.textDataArr = textArray1;
-                [_scrollTextView1 startScrollBottomToTopWithNoSpace];
-                _scrollTextView2.textDataArr = textArray2;
-                [_scrollTextView2 startScrollBottomToTopWithNoSpace];
-//                [self.adTableview reloadData];
+                [self.adTableview reloadData];
                 [self.timer fire];//新闻招聘上下滚动启动
                 [self.contentTableview reloadData];
             }
@@ -668,9 +613,16 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
         return 17.5;
     }
     if (indexPath.section == 0) {
-        return 135+55;
+        if (self.anchorAry.count > 0) {
+            return 135+55;
+        }
+        return 55;
     }
-    return 180+55;
+    ContentModel *model = self.intelligentArray[indexPath.section-1];
+    if (model.data.count > 0) {
+        return 180+55;
+    }
+    return 55;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {

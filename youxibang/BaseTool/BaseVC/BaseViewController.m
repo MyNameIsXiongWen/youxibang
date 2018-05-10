@@ -35,10 +35,13 @@
     [JPUSHService setAlias:@"" completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
         
     } seq:1];
+//    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+//    MainNavigationController * HomePageNVC = [[MainNavigationController alloc] initWithRootViewController:vc];
+//    [self presentViewController:HomePageNVC animated:YES completion:nil];
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-    MainNavigationController * HomePageNVC = [[MainNavigationController alloc] initWithRootViewController:vc];
-    [self presentViewController:HomePageNVC animated:YES completion:nil];
+    [self.navigationController pushViewController:vc animated:1];
 }
 
 - (void)didReceiveMemoryWarning {

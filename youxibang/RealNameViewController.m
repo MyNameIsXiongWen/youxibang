@@ -27,49 +27,28 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"实名认证";
-    
     NSMutableDictionary* dic = [UserNameTool readPersonalData];
     if ([NSString stringWithFormat:@"%@",dic[@"is_realauth"]].integerValue == 2){
         self.sucView.hidden = NO;
         UILabel* lab = [self.sucView viewWithTag:1];
         lab.text = [NSString stringWithFormat:@"%@",[dic objectForKey:@"is_realauthstr"]];
     }
-    self.phone.text = [DataStore sharedDataStore].mobile;
-    self.phone.userInteractionEnabled = NO;
+//    self.phone.text = [DataStore sharedDataStore].mobile;
+//    self.phone.userInteractionEnabled = NO;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (IBAction)getCode:(JKCountDownButton *)sender { 
-//    if ( [EBUtility isMobileNumber:self.phone.text] ==NO) {
-//        [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号码"];
-//        return;
-//    }
-    
-//    sender.enabled = NO;
-//    //button type要 设置成custom 否则会闪动
-//    [sender startWithSecond:60];
-//
-//    [sender didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
-//        NSString *title = [NSString stringWithFormat:@"剩余%d秒",second];
-//        return title;
-//    }];
-//    [sender didFinished:^NSString *(JKCountDownButton *countDownButton, int second) {
-//        countDownButton.enabled = YES;
-//        return @"获取验证码";
-//    }];
-    
-    
+- (IBAction)getCode:(JKCountDownButton *)sender {
     [self gainCodeRequest:self.phone.text];
 }
+
 - (void)gainCodeRequest:(NSString *)phoneString {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:phoneString forKey:@"mobile"];
-    //        [dict setObject:@"send" forKey:@"act"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/sendsms.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
-        
         
         NSInteger code = [object[@"errcode"] integerValue];
         NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]];
@@ -99,21 +78,28 @@
 }
 
 - (IBAction)commitInfo:(id)sender {
-    if ([EBUtility isBlankString:self.code.text] || [EBUtility isBlankString:self.phone.text] || [EBUtility isBlankString:self.name.text] || [EBUtility isBlankString:self.idCard.text]){
-        [SVProgressHUD showErrorWithStatus:@"内容不能为空"];
+    if (!self.photoZ){
+        [SVProgressHUD showErrorWithStatus:@"请上传身份证正面"];
         return;
     }
-    if (!(self.photoZ && self.photoF)){
-        [SVProgressHUD showErrorWithStatus:@"请上传身份证"];
+    if (!self.photoF){
+        [SVProgressHUD showErrorWithStatus:@"请上传身份证反面"];
+        return;
+    }
+    if ([EBUtility isBlankString:self.name.text]) {
+        [SVProgressHUD showErrorWithStatus:@"姓名不能为空"];
+        return;
+    }
+    if ([EBUtility isBlankString:self.idCard.text]) {
+        [SVProgressHUD showErrorWithStatus:@"身份证号码不能为空"];
+        return;
     }
     
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
     [dict setObject:[DataStore sharedDataStore].mobile forKey:@"mobile"];
-//    [dict setObject:self.code.text forKey:@"smscode"];
     [dict setObject:self.name.text forKey:@"realname"];
     [dict setObject:self.idCard.text forKey:@"idcard"];
     

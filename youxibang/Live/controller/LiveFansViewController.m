@@ -113,6 +113,7 @@ static NSString *const FANSTABLEVIEW_ID = @"fanstableview_id";
         [cell.realnameImgView setImage:[UIImage imageNamed:@"live_detail_realnamed"]];
     }
     cell.vipImgView.image = [UIImage imageNamed:[NSString stringWithFormat:@"vip_grade_%@",model.vip_grade]];
+    cell.attentionButton.tag = indexPath.row;
     [cell.attentionButton addTarget:self action:@selector(payAttentionTo:) forControlEvents:UIControlEventTouchUpInside];
     return cell;
 }

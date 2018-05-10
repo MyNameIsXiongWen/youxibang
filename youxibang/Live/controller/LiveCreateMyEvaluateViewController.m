@@ -19,6 +19,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.title = @"我的特点";
+    self.textview.frame = CGRectMake(15, StatusBarHeight+44+15, SCREEN_WIDTH-30, 150);
     self.textview.text = self.evaluateString;
 }
 

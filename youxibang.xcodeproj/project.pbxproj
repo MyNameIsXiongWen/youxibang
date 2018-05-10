@@ -219,6 +219,8 @@
 		875936A12092E37A00591D33 /* LiveCharmPhotoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 875936A02092E37A00591D33 /* LiveCharmPhotoModel.m */; };
 		875936A420933CAE00591D33 /* LivePayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 875936A320933CAE00591D33 /* LivePayView.m */; };
 		877E526820A19B6B005A53E5 /* LMJScrollTextView2.m in Sources */ = {isa = PBXBuildFile; fileRef = 877E526720A19B6B005A53E5 /* LMJScrollTextView2.m */; };
+		877E526C20A33AE9005A53E5 /* HomeSearchViewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 877E526A20A33AE4005A53E5 /* HomeSearchViewTableViewCell.m */; };
+		877E526D20A33AE9005A53E5 /* HomeSearchViewTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 877E526B20A33AE4005A53E5 /* HomeSearchViewTableViewCell.xib */; };
 		878323D3207CB2EB0048E4E9 /* SDCityPicker.gif in Resources */ = {isa = PBXBuildFile; fileRef = 878323BF207CB2EB0048E4E9 /* SDCityPicker.gif */; };
 		878323D4207CB2EB0048E4E9 /* SDCityPickerConst.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323C1207CB2EB0048E4E9 /* SDCityPickerConst.m */; };
 		878323D5207CB2EB0048E4E9 /* SDCityPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 878323C5207CB2EB0048E4E9 /* SDCityPickerViewController.m */; };
@@ -648,6 +650,9 @@
 		875936A320933CAE00591D33 /* LivePayView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LivePayView.m; sourceTree = "<group>"; };
 		877E526620A19B6B005A53E5 /* LMJScrollTextView2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LMJScrollTextView2.h; sourceTree = "<group>"; };
 		877E526720A19B6B005A53E5 /* LMJScrollTextView2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LMJScrollTextView2.m; sourceTree = "<group>"; };
+		877E526920A33AE4005A53E5 /* HomeSearchViewTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomeSearchViewTableViewCell.h; sourceTree = "<group>"; };
+		877E526A20A33AE4005A53E5 /* HomeSearchViewTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomeSearchViewTableViewCell.m; sourceTree = "<group>"; };
+		877E526B20A33AE4005A53E5 /* HomeSearchViewTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeSearchViewTableViewCell.xib; sourceTree = "<group>"; };
 		878323BF207CB2EB0048E4E9 /* SDCityPicker.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = SDCityPicker.gif; sourceTree = "<group>"; };
 		878323C0207CB2EB0048E4E9 /* SDCityPickerConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCityPickerConst.h; sourceTree = "<group>"; };
 		878323C1207CB2EB0048E4E9 /* SDCityPickerConst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCityPickerConst.m; sourceTree = "<group>"; };
@@ -1389,6 +1394,9 @@
 				18C8B46E2011EACB0028853C /* OrderViewController.m */,
 				18B398E72019A6C1004E09ED /* PayOrderViewController.h */,
 				18B398E82019A6C1004E09ED /* PayOrderViewController.m */,
+				877E526920A33AE4005A53E5 /* HomeSearchViewTableViewCell.h */,
+				877E526A20A33AE4005A53E5 /* HomeSearchViewTableViewCell.m */,
+				877E526B20A33AE4005A53E5 /* HomeSearchViewTableViewCell.xib */,
 			);
 			name = "搜索,下单,支付";
 			sourceTree = "<group>";
@@ -2065,6 +2073,7 @@
 				87416AB8209965B400482C26 /* SigninCoinHistoryViewController.xib in Resources */,
 				18F22CC72040E8F000B74B65 /* LPDImagePickerController.bundle in Resources */,
 				875936532090643400591D33 /* LiveCollectionViewCell.xib in Resources */,
+				877E526D20A33AE9005A53E5 /* HomeSearchViewTableViewCell.xib in Resources */,
 				875936552090643400591D33 /* LiveFilterCollectionViewCell.xib in Resources */,
 				878323D3207CB2EB0048E4E9 /* SDCityPicker.gif in Resources */,
 				1873625C201030A80045EF9E /* Main.storyboard in Resources */,
@@ -2356,6 +2365,7 @@
 				18F6D00120206D8E0001917B /* SupplementInfoViewController.m in Sources */,
 				18F6CFFB202062030001917B /* ForgotPasswordViewController.m in Sources */,
 				18736256201030A80045EF9E /* AppDelegate.m in Sources */,
+				877E526C20A33AE9005A53E5 /* HomeSearchViewTableViewCell.m in Sources */,
 				875936732091743C00591D33 /* NewsTableViewCell.m in Sources */,
 				875936622090651200591D33 /* FansTableViewCell.m in Sources */,
 				18B398E320180F9B004E09ED /* OrderMessageViewController.m in Sources */,

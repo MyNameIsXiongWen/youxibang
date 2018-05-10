@@ -171,6 +171,7 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
     [cell.coverImageView sd_setImageWithURL:[NSURL URLWithString:model.thumb] placeholderImage:[UIImage imageNamed:@"placeholder_news"]];
     cell.coverImageView.layer.masksToBounds = YES;
     cell.titleLabel.text = model.title;
+    cell.titleLabel.numberOfLines = 3;
     cell.readCountLabel.text = [NSString stringWithFormat:@"阅读数%@",model.click];
     cell.timeLabel.text = model.publish_time;
     return cell;

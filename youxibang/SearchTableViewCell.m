@@ -28,7 +28,7 @@
     return self;
 }
 - (void)initCellView{
-    self.imgv = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"navi_bg"] andView:self.viewForLastBaselineLayout];
+    self.imgv = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"ico_head"] andView:self.viewForLastBaselineLayout];
     self.imgv.layer.masksToBounds = YES;
     self.imgv.layer.cornerRadius = 30;
     
@@ -118,19 +118,19 @@
     if (type == 0){
         self.grade.hidden = YES;
         for (int i = 0; i < ((NSArray*)dic[@"image"]).count; i ++){
-            UIImageView* img = [EBUtility imgfrome:CGRectMake(25 * i, 0, 20, 20) andImg:[UIImage imageNamed:@"ico_dota"] andView:self.tagImage];
+            UIImageView* img = [EBUtility imgfrome:CGRectMake(25 * i, 0, 20, 20) andImg:[UIImage imageNamed:@"placeholder_fans"] andView:self.tagImage];
             img.layer.cornerRadius = 3;
             img.layer.masksToBounds = YES;
             
-            [img sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",dic[@"image"][i]]] placeholderImage:[UIImage imageNamed:@"ico_dota"]];
+            [img sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",dic[@"image"][i]]] placeholderImage:[UIImage imageNamed:@"placeholder_fans"]];
         }
     }else if (type == 1){
         self.grade.text = [NSString stringWithFormat:@" %@\t",dic[@"duanwei"]];
-        UIImageView* img = [EBUtility imgfrome:CGRectMake(0, 0, 20, 20) andImg:[UIImage imageNamed:@"ico_dota"] andView:self.tagImage];
+        UIImageView* img = [EBUtility imgfrome:CGRectMake(0, 0, 20, 20) andImg:[UIImage imageNamed:@"placeholder_fans"] andView:self.tagImage];
         img.layer.cornerRadius = 3;
         img.layer.masksToBounds = YES;
         
-        [img sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",dic[@"image"]]] placeholderImage:[UIImage imageNamed:@"ico_dota"]];
+        [img sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",dic[@"image"]]] placeholderImage:[UIImage imageNamed:@"placeholder_fans"]];
     }else if (type == 2){
         self.age.hidden = YES;
         [self.tagImage mas_updateConstraints:^(MASConstraintMaker *make) {

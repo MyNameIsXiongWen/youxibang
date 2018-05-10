@@ -38,6 +38,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     BOOL isCanTalk;//是否能聊天
     NSString *price;//查看资料或聊天的价格
     NSDictionary *adDataInfo;//查询会员是否能够点击（应对审核）
+    BOOL hadRequestLimitOfWechat_IM;//是都请求过是否有查看微信号和聊天的权限
 }
 
 @property (nonatomic,strong) UIView *nav;//渐显view
@@ -75,16 +76,12 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         UIButton *share = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH-45, StatusBarHeight-20+25, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"share_white"] andView:self.view];
         share.tag = 1002;
         [share addTarget:self action:@selector(shareBtn:) forControlEvents:UIControlEventTouchUpInside];
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self getBuyVipInfoRequest];
-            [self queryJurisdictionRequestTargetId:self.employeeId];
-        });
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationSelector:) name:@"SHARENOTIFICATION" object:nil];
 }
 
 - (void)configUI {
+    self.view.backgroundColor = UIColor.groupTableViewBackgroundColor;
     self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     self.tableView.showsVerticalScrollIndicator = NO;
     self.edgesForExtendedLayout = UIRectEdgeNone;
@@ -222,30 +219,36 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 }
 
 //查询权限  是否能查看微信/聊天
-- (void)queryJurisdictionRequestTargetId:(NSString *)targetId {
+- (void)queryJurisdictionRequestTargetId:(NSString *)targetId completionHandle:(void(^)(BOOL limit))handle {
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    if (DataStore.sharedDataStore.token) {
-        [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
-    }
+    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     [dict setObject:@"2" forKey:@"type"];
     [dict setObject:targetId forKey:@"target_id"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:requestUrl Paremeters:dict successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
+        hadRequestLimitOfWechat_IM = YES;
         if (isKindOfNSDictionary(object)){
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {//有权限 聊天/查看微信
                 isCanTalk = YES;
-                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
             }
             else if (code == 0) {//没权限 聊天/查看微信
                 price = object[@"data"];
             }
+            if (handle) {
+                handle(isCanTalk);
+            }
         }
     } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
     }];
 }
 
@@ -259,45 +262,35 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [super viewWillDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
     [self.tableView removeObserver:self forKeyPath:@"contentOffset"];
+    if (self.aliPlayer) {
+        [self.aliPlayer releasePlayer];
+    }
+    self.playerView.hidden = YES;
 }
 
 //viewdidload查询详情
 - (void)downloadInfo{
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    if (self.type == 0){//宝贝信息
+    if (self.type != 2){//宝贝信息  雇主信息
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        [dict setObject:self.employeeId forKey:@"buserid"];
-        if (![EBUtility isBlankString:[DataStore sharedDataStore].userid]){
-            [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+        NSString *method = @"";
+        if ([DataStore sharedDataStore].token){
+            [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        }
+        if (self.type == 0) {
+            [dict setObject:self.employeeId forKey:@"buserid"];
+            method = @"Gamebaby/userbabydetail.html";
+            if ([DataStore sharedDataStore].userid){
+                [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+            }
+        }
+        else if (self.type == 1) {
+            [dict setObject:self.employeeId forKey:@"userid"];
+            method = @"Parttime/partindex.html";
         }
         
-        [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/userbabydetail.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
-            [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            if (isKindOfNSDictionary(object)){
-                NSInteger code = [object[@"errcode"] integerValue];
-                NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
-                NSLog(@"输出 %@--%@",object,msg);
-                
-                if (code == 1) {
-                    self.dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
-                    self.tableView.tableHeaderView = [self configTableViewHeaderView];
-                    [self.tableView reloadData];
-                }else{
-                    [SVProgressHUD showErrorWithStatus:msg];
-                }
-            }
-        } failoperation:^(NSError *error) {
-            [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
-        }];
-    }
-    else if (self.type == 1){//雇主信息
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        [dict setObject:self.employeeId forKey:@"userid"];
-        [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/partindex.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
+        [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@%@",HttpURLString,method] Paremeters:dict successOperation:^(id object) {
             [SVProgressHUD dismiss];
             [SVProgressHUD setDefaultMaskType:1];
             if (isKindOfNSDictionary(object)){
@@ -318,7 +311,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
         }];
     }
-    else if (self.type == 2){//主播信息
+    else {//主播信息
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         [dict setObject:self.employeeId forKey:@"id"];
         if ([DataStore sharedDataStore].token) {
@@ -335,8 +328,22 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                     self.dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
                     self.tableView.tableHeaderView = [self configTableViewHeaderView];
                     self.charmPhotoArray = [LiveCharmPhotoModel mj_objectArrayWithKeyValuesArray:self.dataInfo[@"img_arr"]];
+                    if (DataStore.sharedDataStore.userid.integerValue == [self.dataInfo[@"user_id"] integerValue]) {
+                        for (LiveCharmPhotoModel *model in self.charmPhotoArray) {
+                            model.is_charge = @"0";
+                        }
+                    }
                     [self.tableView reloadData];
                     [self configBottomView];
+                    if ([self.dataInfo[@"user_id"] integerValue] == DataStore.sharedDataStore.userid.integerValue) {
+                        isCanTalk = YES;
+                        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+                    }
+                    else {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self getBuyVipInfoRequest];
+                        });
+                    }
                 }else{
                     [SVProgressHUD showErrorWithStatus:msg];
                 }
@@ -408,13 +415,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         return;
     }
     if (sender.tag == 777) {
-        if (isCanTalk){
-            NIMSession *session = [NIMSession session:[NSString stringWithFormat:@"%@",self.dataInfo[@"invitecode"]] type:NIMSessionTypeP2P];
-            ChatViewController *vc = [[ChatViewController alloc] initWithSession:session];
-            [self.navigationController pushViewController:vc animated:YES];
-        }else{
-            [self lookWechatSelector];
-        }
+        [self lookWechatSelector:sender];
     }
     else if (sender.tag == 888) {
         [self likeRequest:sender];
@@ -433,7 +434,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:self.employeeId forKey:@"target_id"];
+    [dict setObject:self.dataInfo[@"user_id"] forKey:@"target_id"];
     [dict setObject:@"3" forKey:@"type"];
     [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@article/laud",HttpURLString];
@@ -538,7 +539,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     UIImageView *realnamedImg = [EBUtility imgfrome:CGRectZero andImg:[UIImage imageNamed:@"live_detail_realnamed"] andView:headerView];
     [realnamedImg mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(sexImg.mas_centerY);
-        make.left.equalTo(vipImg.mas_right).offset(7);
+        make.left.equalTo(vipImg.mas_right).offset(10);
         make.size.mas_equalTo(CGSizeMake(35, 20));
     }];
     
@@ -548,6 +549,18 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 //        make.left.equalTo(realnamedImg.mas_right).offset(7);
 //        make.size.mas_equalTo(CGSizeMake(29, 18));
 //    }];
+    
+    UILabel *time = [EBUtility labfrome:CGRectZero andText:@"时间" andColor:[UIColor whiteColor] andView:headerView];
+    time.backgroundColor = [UIColor colorFromHexString:@"666666"];
+    time.font = [UIFont systemFontOfSize:11.0];
+    time.layer.cornerRadius = 2;
+    time.layer.masksToBounds = YES;
+    [time sizeToFit];
+    [time mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(age.mas_centerY);
+        make.left.equalTo(realnamedImg.mas_right).offset(10);
+        make.height.mas_equalTo(16);
+    }];
     
     UILabel *name = [EBUtility labfrome:CGRectZero andText:@"昵称" andColor:[UIColor whiteColor] andView:headerView];
     name.textAlignment = NSTextAlignmentLeft;
@@ -579,20 +592,34 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         make.size.mas_equalTo(CGSizeMake(100, 13));
     }];
     
-    UIButton *attentionBtn = [EBUtility btnfrome:CGRectZero andText:@"" andColor:nil andimg:[UIImage imageNamed:@"live_detail_attention"] andView:headerView];
-    [attentionBtn addTarget:self action:@selector(payAttentionTo:) forControlEvents:UIControlEventTouchUpInside];
-    [attentionBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(fans.mas_top).offset(-6);
-        make.right.equalTo(headerView.mas_right).offset(-15);
-        make.size.mas_equalTo(CGSizeMake(65, 22));
-    }];
-    if (self.type != 2) {
-        fans.hidden = YES;
-        attentionBtn.hidden = YES;
+    BOOL display = NO;
+    if (self.type == 2) {
+        if ([self.dataInfo[@"user_id"] integerValue] != DataStore.sharedDataStore.userid.integerValue) {
+            display = YES;
+        }
     }
     else {
-        fans.hidden = NO;
-        attentionBtn.hidden = NO;
+        if ([self.employeeId integerValue] != DataStore.sharedDataStore.userid.integerValue) {
+            display = YES;
+        }
+    }
+    
+    if (display) {
+        UIButton *attentionBtn = [EBUtility btnfrome:CGRectZero andText:@"" andColor:nil andimg:[UIImage imageNamed:@"live_detail_attention"] andView:headerView];
+        [attentionBtn addTarget:self action:@selector(payAttentionTo:) forControlEvents:UIControlEventTouchUpInside];
+        [attentionBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.mas_equalTo(fans.mas_top).offset(-6);
+            make.right.equalTo(headerView.mas_right).offset(-15);
+            make.size.mas_equalTo(CGSizeMake(65, 22));
+        }];
+        if ([self.dataInfo[@"is_follow"] integerValue] == 0) {
+            [attentionBtn setImage:[UIImage imageNamed:@"live_detail_attention"] forState:0];
+            attentionBtn.selected = NO;
+        }
+        else if ([self.dataInfo[@"is_follow"] integerValue] == 1) {
+            [attentionBtn setImage:[UIImage imageNamed:@"live_detail_attentioned"] forState:0];
+            attentionBtn.selected = YES;
+        }
     }
     
     if (self.dataInfo.count > 0){
@@ -634,32 +661,26 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 make.size.mas_equalTo(CGSizeMake(0, 20));
             }];
         }
+        time.text = [NSString stringWithFormat:@"  %@  ",self.dataInfo[@"last_login"]];
         fansCount = [self.dataInfo[@"follow_count"] intValue];
         fans.text = [NSString stringWithFormat:@"%d粉丝",fansCount];
-        if ([self.dataInfo[@"is_follow"] integerValue] == 0) {
-            [attentionBtn setImage:[UIImage imageNamed:@"live_detail_attention"] forState:0];
-            attentionBtn.selected = NO;
-        }
-        else if ([self.dataInfo[@"is_follow"] integerValue] == 1) {
-            [attentionBtn setImage:[UIImage imageNamed:@"live_detail_attentioned"] forState:0];
-            attentionBtn.selected = YES;
-        }
         
+        UIButton* phone = [self.view viewWithTag:100];
+        UIButton* com = [self.view viewWithTag:101];
         if ([NSString stringWithFormat:@"%@",self.dataInfo[@"isable"]].integerValue == 2) {
-            UIButton* phone = [self.view viewWithTag:100];
             phone.hidden = YES;
-            UIButton* com = [self.view viewWithTag:101];
             com.hidden = YES;
             self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         }
-        else {
-            if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_strangercall"]].integerValue != 1) {
-                UIButton* phone = [self.view viewWithTag:100];
+        else if ([NSString stringWithFormat:@"%@",self.dataInfo[@"is_strangercall"]].integerValue != 1) {
                 phone.hidden = YES;
-                UIButton* com = [self.view viewWithTag:101];
                 com.width = SCREEN_WIDTH;
                 com.x = 0;
-            }
+        }
+        if (!display) {
+            phone.hidden = YES;
+            com.hidden = YES;
+            self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         }
     }
     return headerView;
@@ -676,7 +697,12 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:self.dataInfo[@"user_id"] forKey:@"target_id"];
+    if (self.type == 2) {
+        [dict setObject:self.dataInfo[@"user_id"] forKey:@"target_id"];
+    }
+    else {
+        [dict setObject:self.employeeId forKey:@"target_id"];
+    }
     [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@member/follow",HttpURLString];
     if (sender.selected) {
@@ -803,7 +829,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             LiveInformationTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:LIVEINFORMATION_TABLEVIEW_ID];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             [cell setContentWithDic:self.dataInfo IsTalk:isCanTalk];
-            [cell.lookButton addTarget:self action:@selector(lookWechatSelector) forControlEvents:UIControlEventTouchUpInside];
+            cell.lookButton.tag = 123;
+            [cell.lookButton addTarget:self action:@selector(lookWechatSelector:) forControlEvents:UIControlEventTouchUpInside];
             return cell;
         }
     }
@@ -814,10 +841,16 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             WEAKSELF
             cell.didSelectItemBlock = ^(NSInteger index) {
                 LiveCharmPhotoModel *model = weakSelf.charmPhotoArray[index];
-                //如果这张照片时收费照片，需要再去请求一下自己能否看，因为照片是针对所有人的，请求是只针对自己
                 if (model.is_charge.intValue == 1) {
-                    LiveCharmPhotoModel *model = self.charmPhotoArray[index];
-                    [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:model.id Index:index];
+                    if (!DataStore.sharedDataStore.token) {
+                        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+                        [self.navigationController pushViewController:vc animated:1];
+                    }
+                    else {
+                        LiveCharmPhotoModel *model = self.charmPhotoArray[index];
+                        [self showCharmPhotoPayViewWithPrice:model.fee Type:@"2" TargetId:model.id Index:index];
+                    }
                 }
                 else {
                     [weakSelf configZLPhotoPickerBrowserWithArray:weakSelf.charmPhotoArray Index:index];
@@ -853,14 +886,45 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 }
 
 //查看微信号/聊天
-- (void)lookWechatSelector {
+- (void)lookWechatSelector:(UIButton *)sender {
     if (!DataStore.sharedDataStore.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
         return;
     }
-    [self showPayViewWithPrice:price Type:@"3" TargetId:self.dataInfo[@"id"]];
+    if (isCanTalk) {//有权限 查看微信/聊天
+        if (sender.tag == 777) {//聊天
+            NIMSession *session = [NIMSession session:[NSString stringWithFormat:@"%@",self.dataInfo[@"invitecode"]] type:NIMSessionTypeP2P];
+            ChatViewController *vc = [[ChatViewController alloc] initWithSession:session];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+        else if (sender.tag == 123) {//查看微信
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+        }
+    }
+    else {
+        if (hadRequestLimitOfWechat_IM) {
+            [self showPayViewWithPrice:price Type:@"3" TargetId:self.dataInfo[@"id"]];
+        }
+        else {
+            [self queryJurisdictionRequestTargetId:self.employeeId completionHandle:^(BOOL limit) {
+                if (limit) {
+                    if (sender.tag == 777) {//聊天
+                        NIMSession *session = [NIMSession session:[NSString stringWithFormat:@"%@",self.dataInfo[@"invitecode"]] type:NIMSessionTypeP2P];
+                        ChatViewController *vc = [[ChatViewController alloc] initWithSession:session];
+                        [self.navigationController pushViewController:vc animated:YES];
+                    }
+                    else if (sender.tag == 123) {//查看微信
+                        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+                    }
+                }
+                else {
+                    [self showPayViewWithPrice:price Type:@"3" TargetId:self.dataInfo[@"id"]];
+                }
+            }];
+        }
+    }
 }
 
 #pragma mark - 付款/微信/聊天
@@ -1147,6 +1211,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 //    [self.sliderProgress setValue:0];
     self.progressView.progress = 0;
     self.currentTimeLabel.text = [self getMMSSFromSS:[NSString stringWithFormat:@"%.f",0.0]];
+    self.playerView.hidden = YES;
 }
 - (void)vodPlayer:(AliyunVodPlayer*)vodPlayer willSwitchToQuality:(AliyunVodPlayerVideoQuality)quality{
     //将要切换清晰度时触发
@@ -1166,6 +1231,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 //    [self.sliderProgress setValue:0];
     self.progressView.progress = 0;
     self.currentTimeLabel.text = [self getMMSSFromSS:[NSString stringWithFormat:@"%.f",0.0]];
+    self.playerView.hidden = YES;
 }
 /*
  *功能：播放过程中鉴权即将过期时提供的回调消息（过期前一分钟回调）
@@ -1188,14 +1254,18 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     //使用vid+STS方式播放（点播用户推荐使用）
     if (self.aliPlayer.playerState == 4) {
         [self.aliPlayer resume];
+        self.playerView.hidden = NO;
     }
     else if (self.aliPlayer.playerState == 6) {
         [self.aliPlayer replay];
+        self.playerView.hidden = NO;
     }
     else {
-        [self getVideoUploadToken];
+        if (self.aliPlayer) {
+            self.playerView.hidden = NO;
+            [self getVideoUploadToken];
+        }
     }
-    self.playerView.hidden = NO;
 }
 
 #pragma mark - seek

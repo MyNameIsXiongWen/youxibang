@@ -43,7 +43,6 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     self.title = @"完善信息";
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerNib:[UINib nibWithNibName:@"MineTableViewCell" bundle:nil] forCellReuseIdentifier:PERSONAL_TABLEVIEW_IDENTIFIER];
-//    self.picArray = [[NSMutableArray alloc] initWithArray:self.dataInfo[@"bgimg"]];
     self.picArray = [[NSMutableArray alloc] initWithArray:UserModel.sharedUser.bgimg];
     
     self.client = [[VODUploadSVideoClient alloc] init];
@@ -290,6 +289,17 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         return ((SCREEN_WIDTH-30-30)/4+10)*(self.picArray.count/4+1) + 10+25;
     }
     return 44;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (section == 2) {
+        return 15;
+    }
+    return 0.1;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0.1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

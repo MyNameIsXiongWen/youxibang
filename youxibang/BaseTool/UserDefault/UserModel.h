@@ -17,6 +17,7 @@
 @property (copy, nonatomic) NSString *nickname;
 @property (copy, nonatomic) NSString *sex;
 @property (copy, nonatomic) NSString *mysign;
+@property (copy, nonatomic) NSString *last_login;
 @property (copy, nonatomic) NSString *is_vip;
 @property (copy, nonatomic) NSString *invitecode;
 @property (copy, nonatomic) NSString *is_newmsgsounds;

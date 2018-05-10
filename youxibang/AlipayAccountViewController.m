@@ -23,8 +23,9 @@
     self.title = @"提现账户";
     //右上角按键
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 55, 25)];
-    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-40, 0, 105, 25) andText:@"设置支付密码" andColor:[UIColor whiteColor] andimg:nil andView:rv];
+    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-40, 0, 105, 25) andText:@"设置支付密码" andColor:[UIColor colorFromHexString:@"333333"] andimg:nil andView:rv];
     
+    btn.titleLabel.font = [UIFont systemFontOfSize:15.0];
     [btn addTarget:self action:@selector(addPayPassword:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
 

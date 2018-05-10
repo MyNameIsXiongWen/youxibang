@@ -36,7 +36,7 @@
     //切换密码登录
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 55, 25)];
     UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(-20, 0, 85, 25) andText:@"密码登录" andColor:[UIColor colorFromHexString:@"333333"] andimg:nil andView:rv];
-    
+    btn.titleLabel.font = [UIFont systemFontOfSize:15.0];
     if (!self.codeOrPassword){
         self.title = @"密码登录";
         self.code.secureTextEntry = YES;

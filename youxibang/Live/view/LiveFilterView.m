@@ -9,8 +9,7 @@
 #import <Masonry.h>
 #import "LiveFilterTableViewCell.h"
 
-static NSString *const LIVEFILTERTABLEVIEW_ID = @"live_filter_tableview_id";
-@implementation LiveFilterView 
+@implementation LiveFilterView
 
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -23,7 +22,6 @@ static NSString *const LIVEFILTERTABLEVIEW_ID = @"live_filter_tableview_id";
 - (instancetype)initWithFrame:(CGRect)frame WithFilterArray:(NSArray *)filterArray AndSelectedIndexArray:(NSMutableArray *)selectedArray {
     self = [super initWithFrame:frame];
     if (self) {
-//        self.filterArray = @[@{@"是否在线":@[@"全部",@"在线",@"离线"]},@{@"直播类型":@[@"全部",@"游戏",@"娱乐",@"体育",@"户外",@"教育",@"其他"]},@{@"工作形式":@[@"全部",@"全职",@"兼职"]},@{@"直播经验":@[@"全部",@"1年",@"2年",@"3年",@"4年以上"]}];
         self.filterArray = filterArray;
         selectedIndexArray = selectedArray;
     }
@@ -31,7 +29,9 @@ static NSString *const LIVEFILTERTABLEVIEW_ID = @"live_filter_tableview_id";
 }
 
 - (void)tapBlackView {
-    [self dismiss];
+    if (self.dismissFilterBlock) {
+        self.dismissFilterBlock();
+    }
 }
 
 - (void)configUI {
@@ -47,7 +47,6 @@ static NSString *const LIVEFILTERTABLEVIEW_ID = @"live_filter_tableview_id";
     self.tableview.delegate = self;
     self.tableview.dataSource = self;
     self.tableview.separatorStyle = UITableViewCellSeparatorStyleNone;
-//    [self.tableview registerNib:[UINib nibWithNibName:@"LiveFilterTableViewCell" bundle:nil] forCellReuseIdentifier:LIVEFILTERTABLEVIEW_ID];
     [self addSubview:self.tableview];
     
     UIButton *clearBtn = [EBUtility btnfrome:CGRectZero andText:@"清除" andColor:[UIColor colorFromHexString:@"777777"] andimg:nil andView:self];
@@ -60,12 +59,12 @@ static NSString *const LIVEFILTERTABLEVIEW_ID = @"live_filter_tableview_id";
     lineLabel.backgroundColor = [UIColor colorFromHexString:@"cccccc"];
     [clearBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.mas_equalTo(self);
-        make.bottom.mas_equalTo(self.mas_bottom).offset(-150*ADAPTATIONRATIO);
+        make.bottom.mas_equalTo(self.mas_bottom);
         make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH/2, 52));
     }];
     [confirmBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.trailing.mas_equalTo(self);
-        make.bottom.mas_equalTo(self.mas_bottom).offset(-150*ADAPTATIONRATIO);
+        make.bottom.mas_equalTo(self.mas_bottom);
         make.size.equalTo(clearBtn);
     }];
     [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -84,9 +83,6 @@ static NSString *const LIVEFILTERTABLEVIEW_ID = @"live_filter_tableview_id";
         [selectedIndexArray replaceObjectAtIndex:i withObject:@(9999)];
     }
     [self.tableview reloadData];
-    if (self.clearFilterBlock) {
-        self.clearFilterBlock();
-    }
 }
 
 - (void)confirmFilter {

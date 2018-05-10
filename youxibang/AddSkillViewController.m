@@ -331,33 +331,33 @@
 
 
 #pragma mark - tableViewDelegate/DataSource
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 6;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 1;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == 5){
+    if (indexPath.section == 5) {
         return 130;
     }
     return UITableViewAutomaticDimension;
 }
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath{
-    if (indexPath.section == 5){
+    if (indexPath.section == 5) {
         return 130;
     }
     return UITableViewAutomaticDimension;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     return 10;
 }
--(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     return [UIView new];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == 0){
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"celllll"];
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"celllll"];
@@ -366,12 +366,12 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.textLabel.font = [UIFont systemFontOfSize:15];
         }
-        if (self.originSkill){
+        if (self.originSkill) {
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",self.originSkill[@"title"]];
             self.skillId = [NSString stringWithFormat:@"%@",self.originSkill[@"id"]];
         }
         return cell;
-    }else if (indexPath.section == 5){
+    }else if (indexPath.section == 5) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cellll"];
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cellll"];
@@ -385,7 +385,7 @@
         btn.tag = 1;
         btn.imageView.contentMode = UIViewContentModeScaleAspectFill;
         
-        if (self.originSkill){
+        if (self.originSkill) {
             [[[UIImageView alloc] init] sd_setImageWithURL:[NSURL URLWithString:self.originSkill[@"bgimg"]] placeholderImage:[UIImage imageNamed:@"ico_add1"] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                 [btn setImage:image forState:0];
             }];
@@ -393,28 +393,22 @@
         return cell;
     }
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"cell%ld",indexPath.section]];
-    if (indexPath.section == 1){
-        UILabel *la = [cell viewWithTag:0];
-        la.text = @"段位";
-    }
-    if (self.originSkill){
-        if (indexPath.section == 1){
+    if (self.originSkill) {
+        if (indexPath.section == 1) {
             UITextField* tf = [cell viewWithTag: 1];
             tf.text = [NSString stringWithFormat:@"%@",self.originSkill[@"duanwei"]];
-        }else if (indexPath.section == 2){
+        }else if (indexPath.section == 2) {
             UITextView* tf = [cell viewWithTag: 1];
             tf.text = [NSString stringWithFormat:@"%@",self.originSkill[@"selfdesc"]];
-        }else if (indexPath.section == 4){
+        }else if (indexPath.section == 4) {
             UITextView* tf = [cell viewWithTag: 2];
             tf.text = [NSString stringWithFormat:@"%@",self.originSkill[@"price"]];
         }
     }
-
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView endEditing:1];
     if (indexPath.section == 0){
         [self.tableView endEditing:1];
@@ -435,33 +429,21 @@
     self.skillId = pid;
 }
 
--(void)amendHeadImg
-{
+- (void)amendHeadImg {
     UIAlertController *alertController = [[UIAlertController alloc]init];
-    
-    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        
-        NSLog(@"点击取消");
-        
-    }]];
-    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
         NSLog(@"点击相册");
         if([UIImagePickerController isSourceTypeAvailable:(UIImagePickerControllerSourceTypePhotoLibrary)]) {
             UIImagePickerController *picker = [[UIImagePickerController alloc] init];
             picker.navigationBar.tintColor = self.view.window.tintColor;
-            
             [picker setSourceType:(UIImagePickerControllerSourceTypePhotoLibrary)]; //资源类型为图片库
             [picker setAllowsEditing:YES]; //设置选择后的图片可被编辑
             [picker setDelegate:self];
             [self presentViewController:picker animated:YES completion:^{ }];
-            
         }
-        
     }]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
         NSLog(@"点击拍照");
         if ([UIImagePickerController isSourceTypeAvailable:(UIImagePickerControllerSourceTypeCamera)]) { //判断是否有摄像头
             UIImagePickerController *picker = [[UIImagePickerController alloc] init];
@@ -470,20 +452,15 @@
             [picker setDelegate:self];
             [self presentViewController:picker animated:YES completion:^{ }];
         }
-        
     }]];
-    
     [self presentViewController:alertController animated:YES completion:nil];
-    
 }
-- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
-{
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     [navigationController.navigationBar setBarStyle:(UIBarStyleBlackTranslucent)];
 }
 
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo{
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
     [picker dismissViewControllerAnimated:YES completion:^{ }]; //关闭摄像头或用户相册
-    //DBLOG(@"加载图片中...");
     
     UIImageView* tempImage = [[UIImageView alloc]initWithFrame:CGRectMake(0,0,SCREEN_WIDTH,SCREEN_WIDTH/5*2)];
     tempImage.image = [UIImageView OriginImage:image scaleToSize:CGSizeMake(SCREEN_WIDTH, image.size.height * SCREEN_WIDTH/image.size.width)];
@@ -506,63 +483,28 @@
         [btn setImage:img forState:0];
         self.img = img;
     });
-    
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
 //当用户按下return去键盘
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    
     if([text isEqualToString:@"\n"]){
         [textView  resignFirstResponder];
         return NO;
-        
     }
-    
     return YES;
     
 }
--(BOOL)textFieldShouldBeginEditing:(UITextView *)textField{
-
-//    if (textField.tag == 2 ){
-//        [UIView animateWithDuration:0.3 animations:^{
-//            
-//            CGRect frame = self.view.frame;
-//            
-//            frame.origin.y = - 50;
-//            
-//            self.view.frame = frame;
-//            
-//        }];
-//    }
+- (BOOL)textFieldShouldBeginEditing:(UITextView *)textField {
 
     return YES;
 }
 
-//结束编辑时键盘下去 视图下移动画
-
--(BOOL)textFieldShouldEndEditing:(UITextView *)textField{
-    
-//    if (textField.tag == 2 ){
-//        [UIView animateWithDuration:0.3 animations:^{
-//
-//            CGRect frame = self.view.frame;
-//
-//            frame.origin.y = 64;
-//
-//            self.view.frame = frame;
-//
-//        }];
-//    }
-
+- (BOOL)textFieldShouldEndEditing:(UITextView *)textField {
     return YES;
-    
 }
 /*
 #pragma mark - Navigation

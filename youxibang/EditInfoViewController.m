@@ -22,13 +22,11 @@
     if (self.type == 0){
         self.title = @"编辑昵称";
         self.tf.placeholder = @"编辑昵称";
-//        self.tf.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"nickname"]];
         self.tf.text = UserModel.sharedUser.nickname;
         [self.tf becomeFirstResponder];
     }else if (self.type == 3){
         self.title = @"编辑签名";
         self.tf.placeholder = @"编辑签名";
-//        self.tf.text = [NSString stringWithFormat:@"%@",self.dataInfo[@"mysign"]];
         self.tf.text = UserModel.sharedUser.mysign;
         [self.tf becomeFirstResponder];
     }else if (self.type == 4){
@@ -36,9 +34,6 @@
         self.tf.hidden = YES;
         self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
         _titleAry = [NSMutableArray array];
-//        for (NSMutableDictionary* i in self.dataInfo[@"interest"]){
-//            [_titleAry addObject:[@{@"name":[NSString stringWithFormat:@"%@",i[@"name"]],@"selected":[NSString stringWithFormat:@"%@",i[@"selected"]]} mutableCopy]];
-//        }
         for (NSMutableDictionary* i in UserModel.sharedUser.interest){
             [_titleAry addObject:[@{@"name":[NSString stringWithFormat:@"%@",i[@"name"]],@"selected":[NSString stringWithFormat:@"%@",i[@"selected"]]} mutableCopy]];
         }
@@ -52,7 +47,6 @@
     
     [btn addTarget:self action:@selector(commitInfo:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
-    
 }
 
 - (NSMutableArray*)btnAry{
@@ -69,9 +63,7 @@
     CGFloat startX = 10;
     CGFloat startY = StatusBarHeight+64;
     CGFloat buttonHeight = 40;
-    
-    for(int i = 0; i < self.titleAry.count; i++)
-    {
+    for(int i = 0; i < self.titleAry.count; i++) {
         UIButton *btn = [[UIButton alloc]init];
         
         btn.backgroundColor = [UIColor whiteColor];
@@ -90,7 +82,6 @@
         }
         
         CGSize titleSize = [_titleAry[i][@"name"] sizeWithAttributes:@{NSFontAttributeName: [UIFont fontWithName:btn.titleLabel.font.fontName size:btn.titleLabel.font.pointSize]}];
-        
         titleSize.height = 20;
         titleSize.width += 20;
         
@@ -146,9 +137,11 @@
             }
         }
     }else{
-        if ([EBUtility isBlankString:self.tf.text]){
-            [SVProgressHUD showErrorWithStatus:@"内容不能为空"];
-            return;
+        if (self.type != 3) {
+            if ([EBUtility isBlankString:self.tf.text]){
+                [SVProgressHUD showErrorWithStatus:@"内容不能为空"];
+                return;
+            }
         }
     }
     

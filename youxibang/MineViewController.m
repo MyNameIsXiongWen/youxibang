@@ -83,6 +83,10 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
+    if (self.aliPlayer) {
+        [self.aliPlayer releasePlayer];
+    }
+    self.playerView.hidden = YES;
 }
 
 //配置播放器相关UI
@@ -209,29 +213,27 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     UIButton* change = [EBUtility btnfrome:CGRectMake(SCREEN_WIDTH - 40, 15, 40, 40) andText:@"" andColor:nil andimg:nil andView:headerView];
     [change addTarget:self action:@selector(changeInfo:) forControlEvents:UIControlEventTouchUpInside];
     
-    if (userModel.is_anchor.integerValue == 1) {
-        UILabel *laudLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"%@\n赞",userModel.laud_count] andColor:[UIColor whiteColor] andView:headerView];
-        laudLabel.textAlignment = NSTextAlignmentCenter;
-        laudLabel.font = [UIFont systemFontOfSize:13.0];
-        laudLabel.numberOfLines = 2;
-        [laudLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.bottom.equalTo(headerView.mas_bottom).offset(-12);
-            make.right.equalTo(headerView.mas_right).offset(-15);
-            make.size.mas_equalTo(CGSizeMake(30, 35));
-        }];
-        UILabel *fansLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"%@\n粉丝",userModel.follow_count] andColor:[UIColor whiteColor] andView:headerView];
-        fansLabel.textAlignment = NSTextAlignmentCenter;
-        fansLabel.font = [UIFont systemFontOfSize:13.0];
-        fansLabel.numberOfLines = 2;
-        fansLabel.userInteractionEnabled = YES;
-        [fansLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerY.equalTo(laudLabel.mas_centerY);
-            make.right.equalTo(laudLabel.mas_left);
-            make.size.mas_equalTo(CGSizeMake(50, 35));
-        }];
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFansSelector)];
-        [fansLabel addGestureRecognizer:tap];
-    }
+    UILabel *laudLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"%@\n赞",userModel.laud_count] andColor:[UIColor whiteColor] andView:headerView];
+    laudLabel.textAlignment = NSTextAlignmentCenter;
+    laudLabel.font = [UIFont systemFontOfSize:13.0];
+    laudLabel.numberOfLines = 2;
+    [laudLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(headerView.mas_bottom).offset(-12);
+        make.right.equalTo(headerView.mas_right).offset(-15);
+        make.size.mas_equalTo(CGSizeMake(30, 35));
+    }];
+    UILabel *fansLabel = [EBUtility labfrome:CGRectZero andText:[NSString stringWithFormat:@"%@\n粉丝",userModel.follow_count] andColor:[UIColor whiteColor] andView:headerView];
+    fansLabel.textAlignment = NSTextAlignmentCenter;
+    fansLabel.font = [UIFont systemFontOfSize:13.0];
+    fansLabel.numberOfLines = 2;
+    fansLabel.userInteractionEnabled = YES;
+    [fansLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(laudLabel.mas_centerY);
+        make.right.equalTo(laudLabel.mas_left);
+        make.size.mas_equalTo(CGSizeMake(50, 35));
+    }];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFansSelector)];
+    [fansLabel addGestureRecognizer:tap];
     
     [photo sd_setImageWithURL:[NSURL URLWithString:userModel.photo] placeholderImage:[UIImage imageNamed:@"ico_tx_s"]];
     name.text = userModel.nickname;
@@ -661,6 +663,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     //    [self.sliderProgress setValue:0];
     self.progressView.progress = 0;
     self.currentTimeLabel.text = [self getMMSSFromSS:[NSString stringWithFormat:@"%.f",0.0]];
+    self.playerView.hidden = YES;
 }
 - (void)vodPlayer:(AliyunVodPlayer*)vodPlayer willSwitchToQuality:(AliyunVodPlayerVideoQuality)quality{
     //将要切换清晰度时触发
@@ -680,6 +683,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     //    [self.sliderProgress setValue:0];
     self.progressView.progress = 0;
     self.currentTimeLabel.text = [self getMMSSFromSS:[NSString stringWithFormat:@"%.f",0.0]];
+    self.playerView.hidden = YES;
 }
 /*
  *功能：播放过程中鉴权即将过期时提供的回调消息（过期前一分钟回调）
@@ -696,14 +700,18 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     //使用vid+STS方式播放（点播用户推荐使用）
     if (self.aliPlayer.playerState == 4) {
         [self.aliPlayer resume];
+        self.playerView.hidden = NO;
     }
     else if (self.aliPlayer.playerState == 6) {
         [self.aliPlayer replay];
+        self.playerView.hidden = NO;
     }
     else {
-        [self getVideoUploadToken];
+        if (self.aliPlayer) {
+            self.playerView.hidden = NO;
+            [self getVideoUploadToken];
+        }
     }
-    self.playerView.hidden = NO;
 }
 
 #pragma mark - seek

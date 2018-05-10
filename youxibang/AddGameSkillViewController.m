@@ -28,8 +28,9 @@
     
     //右上角按键
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 55, 25)];
-    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(0, 0, 65, 25) andText:@"完成" andColor:[UIColor whiteColor] andimg:nil andView:rv];
+    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(0, 0, 65, 25) andText:@"完成" andColor:[UIColor colorFromHexString:@"333333"] andimg:nil andView:rv];
     
+    btn.titleLabel.font = [UIFont systemFontOfSize:15.0];
     [btn addTarget:self action:@selector(commitInfo:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
     
@@ -99,10 +100,8 @@
     }
 }
 //设置分类列表
--(void)setUpLeftView
-{
-
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH /4, SCREEN_HEIGHT)];
+- (void)setUpLeftView {
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, StatusBarHeight+44, SCREEN_WIDTH /4, SCREEN_HEIGHT-(StatusBarHeight+44))];
     [self.view addSubview:view];
     view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.leftView = view;
@@ -131,26 +130,20 @@
     }
 }
 //点击分类
--(void)btnClick:(UIButton *)btn
-{
+-(void)btnClick:(UIButton *)btn {
     UIView *selview = [self.selBtn viewWithTag:100];
     selview.hidden = YES;
     self.selBtn.selected = NO;
     UIView *view = [btn viewWithTag:100];
-//    btn.selected = YES;
     view.hidden = NO;
     self.selBtn = btn;
     [self downloadInfo:[NSString stringWithFormat:@"%@",self.titleAry[btn.tag][@"id"]]];
 }
-- (void)setUpRightView{
+- (void)setUpRightView {
     UICollectionViewFlowLayout* layout = [[UICollectionViewFlowLayout alloc] init];
-//    [layout setHeaderReferenceSize:CGSizeMake(SCREEN_WIDTH *3/4, 0)];
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        //        [layout setHeaderReferenceSize:CGSizeMake(SCREEN_WIDTH, 390)];
-    }
     layout.minimumInteritemSpacing = 20;
     layout.minimumLineSpacing = 15;
-    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH /4, 0, SCREEN_WIDTH *3/4, SCREEN_HEIGHT -44) collectionViewLayout:layout];
+    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/4, 0, SCREEN_WIDTH *3/4, SCREEN_HEIGHT) collectionViewLayout:layout];
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     self.collectionView.backgroundColor = [UIColor whiteColor];
@@ -165,22 +158,16 @@
 }
 #pragma mark - collectionDelegate/DataSource
 
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 1;
 }
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.dataAry.count;
 }
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
-{
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     return UIEdgeInsetsMake(10, 10, 10, 10);
 }
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-//    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-//        return CGSizeMake((SCREEN_WIDTH - 50)/2, (SCREEN_WIDTH - 50) *3 /5);
-//    }
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     return CGSizeMake((SCREEN_WIDTH *3 /4 - 60)/3, 100);
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
@@ -188,7 +175,7 @@
     [cell setInfoWith:self.dataAry[indexPath.row]];
     return cell;
 }
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.selectCell.layer.borderColor = [UIColor whiteColor].CGColor;
     
     SkillCollectionViewCell* cell = [collectionView cellForItemAtIndexPath:indexPath];

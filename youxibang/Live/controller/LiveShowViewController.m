@@ -271,11 +271,17 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
     }
     else if (btn.tag == 3) {
         if (!self.filterView) {
-            self.filterView = [[LiveFilterView alloc] initWithFrame:CGRectMake(0, StatusBarHeight+44+40, SCREEN_WIDTH, SCREEN_HEIGHT-(StatusBarHeight+44)-40) WithFilterArray:self.filterArray AndSelectedIndexArray:self.selectedIndexArray];
+            self.filterView = [[LiveFilterView alloc] initWithFrame:CGRectMake(0, StatusBarHeight+44+40, SCREEN_WIDTH, SCREEN_HEIGHT-(StatusBarHeight+44)-40-150) WithFilterArray:self.filterArray AndSelectedIndexArray:self.selectedIndexArray];
             [self.filterView show];
             [btn setImage:[UIImage imageNamed:@"live_filter_selected"] forState:0];
             [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
             WEAKSELF
+            self.filterView.dismissFilterBlock = ^{
+                [weakSelf.filterView dismiss];
+                weakSelf.filterView = nil;
+                [weakSelf.filtButton setImage:[UIImage imageNamed:@"live_filter_unselected"] forState:0];
+                [weakSelf.filtButton setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
+            };
             self.filterView.confirmFilterBlock = ^(NSMutableArray *array) {
                 _selectedIndexArray = array;
                 NSArray *tempDataArray0 = [[weakSelf.filterArray[0] allValues] lastObject];
@@ -288,6 +294,9 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
                         type = array[2];
                     }
                 }
+                else {
+                    type = nil;
+                }
                 if ([array[1] integerValue] != 9999) {
                     if ([array[1] integerValue] == 0) {
                         exp = nil;
@@ -296,6 +305,9 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
                         exp = [tempDataArray1 objectAtIndex:[array[1] integerValue]];
                     }
                 }
+                else {
+                    exp = nil;
+                }
                 if ([array[0] integerValue] != 9999) {
                     if ([array[0] integerValue] == 0) {
                         anchor_type = nil;
@@ -303,6 +315,9 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
                     else {
                         anchor_type = [tempDataArray0 objectAtIndex:[array[0] integerValue]];
                     }
+                }
+                else {
+                    anchor_type = nil;
                 }
                 [weakSelf.filterView dismiss];
                 weakSelf.filterView = nil;

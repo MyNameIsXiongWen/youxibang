@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^ClearFilterBlock)(void);
+typedef void(^DismissFilterBlock)(void);
 typedef void(^ConfirmFilterBlock)(NSMutableArray *array);
 
 @interface LiveFilterView : UIView <UITableViewDelegate, UITableViewDataSource> {
@@ -15,7 +15,7 @@ typedef void(^ConfirmFilterBlock)(NSMutableArray *array);
 }
 
 @property (nonatomic, strong) UITableView *tableview;
-@property (copy, nonatomic) ClearFilterBlock clearFilterBlock;
+@property (copy, nonatomic) DismissFilterBlock dismissFilterBlock;
 @property (copy, nonatomic) ConfirmFilterBlock confirmFilterBlock;
 @property (nonatomic, strong) UIView *blackView;
 @property (nonatomic, strong) NSArray *filterArray;

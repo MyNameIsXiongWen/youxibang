@@ -95,7 +95,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [rightBtn setTitle:@"保存" forState:UIControlStateNormal];
     rightBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
-    [rightBtn setTitleColor:[UIColor colorFromHexString:@"437fed"] forState:UIControlStateNormal];
+    [rightBtn setTitleColor:[UIColor colorFromHexString:@"333333"] forState:UIControlStateNormal];
     rightBtn.bounds = CGRectMake(0, 0, 40, 30);
     [rightBtn addTarget:self action:@selector(saveCreate) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
@@ -112,9 +112,11 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     for (int i=1; i<=50; i++) {
         [leftSalaryArray addObject:[NSString stringWithFormat:@"%d",i]];
     }
+    [leftSalaryArray insertObject:@"面议" atIndex:0];
     for (int i=2; i<=51; i++) {
         [rightSalaryArray addObject:[NSString stringWithFormat:@"%d",i]];
     }
+    [rightSalaryArray insertObject:@"面议" atIndex:0];
 }
 
 //获取选择项
@@ -523,7 +525,12 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     else {
         NSString *left = [leftSalaryArray objectAtIndex:[pickerView selectedRowInComponent:0]];
         NSString *right = [rightSalaryArray objectAtIndex:[pickerView selectedRowInComponent:1]];
-        wish_salaryString = [NSString stringWithFormat:@"%@000-%@000",left,right];
+        if ([pickerView selectedRowInComponent:0] == 0) {
+            wish_salaryString = @"面议";
+        }
+        else {
+            wish_salaryString = [NSString stringWithFormat:@"%@000-%@000",left,right];
+        }
     }
 }
 
@@ -591,15 +598,27 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     }
     else {
         if (component == 0) {
-            if (row > [pickerView selectedRowInComponent:1]) {
+            if (row == 0) {
                 [pickerView reloadComponent:1];
-                [pickerView selectRow:row inComponent:1 animated:YES];
+                [pickerView selectRow:0 inComponent:1 animated:YES];
+            }
+            else {
+                if (row > [pickerView selectedRowInComponent:1]) {
+                    [pickerView reloadComponent:1];
+                    [pickerView selectRow:row inComponent:1 animated:YES];
+                }
             }
         }
         else {
-            if ([pickerView selectedRowInComponent:0] > row) {
+            if (row == 0) {
                 [pickerView reloadComponent:0];
-                [pickerView selectRow:row inComponent:0 animated:YES];
+                [pickerView selectRow:0 inComponent:0 animated:YES];
+            }
+            else {
+                if ([pickerView selectedRowInComponent:0] > row) {
+                    [pickerView reloadComponent:0];
+                    [pickerView selectRow:row inComponent:0 animated:YES];
+                }
             }
         }
     }

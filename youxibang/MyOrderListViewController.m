@@ -34,8 +34,9 @@
     
     //筛选按钮
     UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 25, 25)];
-    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(0, 0, 20, 20) andText:@"" andColor:[UIColor whiteColor] andimg:[UIImage imageNamed:@"ico_order_set"] andView:rv];
+    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(0, 0, 20, 20) andText:@"" andColor:[UIColor colorFromHexString:@"333333"] andimg:[UIImage imageNamed:@"ico_order_set"] andView:rv];
     
+    btn.titleLabel.font = [UIFont systemFontOfSize:15.0];
     [btn addTarget:self action:@selector(siftInfo:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
     self.currentPage = 1;
