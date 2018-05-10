@@ -51,7 +51,8 @@
     if (paytype.integerValue == 3) {
         UserModel *user = UserModel.sharedUser;
         if ([user.is_paypwd isEqualToString:@"0"]){
-            SetPayPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spp"];
+            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            SetPayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"spp"];
             [self.navigationController pushViewController:vc animated:1];
             return;
         }
@@ -67,7 +68,8 @@
             [self payTipForLive:dict];
         };
         alert.resultIndex = ^(NSInteger index) {
-            RetrievePayPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"rpp"];
+            UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            RetrievePayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"rpp"];
             [self.navigationController pushViewController:vc animated:1];
         };
         [alert showAlertView];

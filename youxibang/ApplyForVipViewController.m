@@ -252,7 +252,6 @@
 }
 
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    
     return YES;
 }
 

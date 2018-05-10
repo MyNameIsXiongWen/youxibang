@@ -191,33 +191,6 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     //设置播放器代理
     self.aliPlayer.delegate = self;
     self.aliPlayer.circlePlay = YES;
-    
-    self.playerView = self.aliPlayer.playerView;
-    self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    //添加播放器视图到需要展示的界面上
-    [self.view addSubview:self.playerView];
-    self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-    self.progressView.frame = CGRectMake(40, SCREEN_HEIGHT-40, SCREEN_WIDTH-80, 20);
-    self.progressView.progressTintColor = UIColor.whiteColor;
-    self.progressView.trackTintColor = UIColor.grayColor;
-    [self.playerView addSubview:self.progressView];
-    self.sliderProgress = [[UISlider alloc] initWithFrame:self.progressView.frame];
-    self.sliderProgress.maximumTrackTintColor = UIColor.whiteColor;
-    self.sliderProgress.minimumTrackTintColor = UIColor.blueColor;
-//    [self.playerView addSubview:self.sliderProgress];
-    self.currentTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, SCREEN_HEIGHT-40, 40, 20)];
-    self.currentTimeLabel.font = [UIFont systemFontOfSize:10.0];
-    self.currentTimeLabel.textAlignment = NSTextAlignmentRight;
-    self.currentTimeLabel.textColor = UIColor.whiteColor;
-    self.totalTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH-50, SCREEN_HEIGHT-40, 40, 20)];
-    self.totalTimeLabel.font = [UIFont systemFontOfSize:10.0];
-    self.totalTimeLabel.textColor = UIColor.whiteColor;
-    [self.playerView addSubview:self.currentTimeLabel];
-    [self.playerView addSubview:self.totalTimeLabel];
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPlayerView)];
-    [self.playerView addGestureRecognizer:tap];
-    self.playerView.hidden = YES;
 }
 
 //查询权限  是否能查看微信/聊天
@@ -436,7 +409,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:self.dataInfo[@"user_id"] forKey:@"target_id"];
+    [dict setObject:self.dataInfo[@"id"] forKey:@"target_id"];
     [dict setObject:@"3" forKey:@"type"];
     [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@article/laud",HttpURLString];
@@ -1267,6 +1240,31 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     }
     else {
         if (self.aliPlayer) {
+            self.playerView = self.aliPlayer.playerView;
+            self.playerView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+            //添加播放器视图到需要展示的界面上
+            [self.view addSubview:self.playerView];
+            self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+            self.progressView.frame = CGRectMake(40, SCREEN_HEIGHT-40, SCREEN_WIDTH-80, 20);
+            self.progressView.progressTintColor = UIColor.whiteColor;
+            self.progressView.trackTintColor = UIColor.grayColor;
+            [self.playerView addSubview:self.progressView];
+            self.sliderProgress = [[UISlider alloc] initWithFrame:self.progressView.frame];
+            self.sliderProgress.maximumTrackTintColor = UIColor.whiteColor;
+            self.sliderProgress.minimumTrackTintColor = UIColor.blueColor;
+            //    [self.playerView addSubview:self.sliderProgress];
+            self.currentTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, SCREEN_HEIGHT-40, 40, 20)];
+            self.currentTimeLabel.font = [UIFont systemFontOfSize:10.0];
+            self.currentTimeLabel.textAlignment = NSTextAlignmentRight;
+            self.currentTimeLabel.textColor = UIColor.whiteColor;
+            self.totalTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH-50, SCREEN_HEIGHT-40, 40, 20)];
+            self.totalTimeLabel.font = [UIFont systemFontOfSize:10.0];
+            self.totalTimeLabel.textColor = UIColor.whiteColor;
+            [self.playerView addSubview:self.currentTimeLabel];
+            [self.playerView addSubview:self.totalTimeLabel];
+            
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPlayerView)];
+            [self.playerView addGestureRecognizer:tap];
             self.playerView.hidden = NO;
             [self getVideoUploadToken];
         }
