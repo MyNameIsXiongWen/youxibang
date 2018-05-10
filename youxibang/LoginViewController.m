@@ -6,7 +6,6 @@
 //
 
 #import "LoginViewController.h"
-#import "JKCountDownButton.h"
 #import "MainTabBarController.h"
 #import "ForgotPasswordViewController.h"
 #import "SignViewController.h"
@@ -19,12 +18,14 @@
 @interface LoginViewController ()<UITextFieldDelegate,TencentSessionDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *phoneNumber;//电话号码
 @property (weak, nonatomic) IBOutlet UITextField *code;//密码
-@property (weak, nonatomic) IBOutlet JKCountDownButton *codeBtn;//验证码按键
+@property (weak, nonatomic) IBOutlet UIButton *codeBtn;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (copy,nonatomic) NSString* threeToken;//第三方token
 
 @property (strong,nonatomic) TencentOAuth* tencentOAuth;//腾讯框架属性
 @property (weak, nonatomic) IBOutlet UIButton *wechatBtn;//微信登录按键
 @property (weak, nonatomic) IBOutlet UIButton *qqBtn;//qq登录按键
+@property(nonatomic,assign)int seconds;
 @end
 
 @implementation LoginViewController
@@ -67,7 +68,14 @@
             [self dismissViewControllerAnimated:1 completion:nil];
         }
         else {
-            [self.navigationController popViewControllerAnimated:1];
+            if (self.PushToMainTabbar) {
+                MainTabBarController *mainTab = [[MainTabBarController alloc] init];
+                AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                delegate.window.rootViewController = mainTab;
+            }
+            else {
+                [self.navigationController popViewControllerAnimated:1];
+            }
         }
     }
     else {
@@ -134,11 +142,12 @@
     // Dispose of any resources that can be recreated.
 }
 //获取验证码按键
-- (IBAction)getCode:(JKCountDownButton *)sender {
-    if ( [EBUtility isMobileNumber:self.phoneNumber.text] == NO) {
-        [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号码"];
+- (IBAction)getCode:(id)sender {
+    if ([EBUtility isMobileNumber:self.phoneNumber.text] == NO) {
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入正确的手机号码" andDuration:2.0];
         return;
     }
+    self.codeBtn.userInteractionEnabled = NO;
     [self gainCodeRequest:self.phoneNumber.text];
 }
 
@@ -150,25 +159,37 @@
         NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]];
         NSLog(@"验证码输出 %@--%@",object,msg);
         if (code == 1) {
-            [SVProgressHUD showSuccessWithStatus:msg];
-            self.codeBtn.enabled = NO;
-            [self.codeBtn startWithSecond:60];
+            self.seconds = 60;
+            self.codeBtn.backgroundColor = [UIColor colorFromHexString:@"cccccc"];
+            NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timecaculate:) userInfo:nil repeats:YES];
+            [timer fire];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"验证码发送成功" andDuration:2.0];
             
-            [self.codeBtn didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
-                NSString *title = [NSString stringWithFormat:@"剩余%d秒",second];
-                return title;
-            }];
-            [self.codeBtn didFinished:^NSString *(JKCountDownButton *countDownButton, int second) {
-                countDownButton.enabled = YES;
-                return @"获取验证码";
-            }];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.code becomeFirstResponder];
+            });
         }else {
-            [SVProgressHUD showErrorWithStatus:msg];
-            
+            self.codeBtn.userInteractionEnabled = YES;
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
         }
     } failoperation:^(NSError *error) {
         NSLog(@"errr %@",error);
     }];
+}
+
+-(void)timecaculate:(NSTimer*)timer {
+    NSString *str =[NSString stringWithFormat:@"%ds后重试",self.seconds];
+    self.seconds -= 1;
+    [self.codeBtn setTitle:@"" forState:UIControlStateNormal];
+    self.timeLabel.text = str;
+    self.timeLabel.hidden = NO;
+    if (self.seconds <=0) {
+        [timer invalidate];
+        self.timeLabel.hidden = YES;
+        self.codeBtn.userInteractionEnabled = YES;
+        self.codeBtn.backgroundColor = [UIColor colorFromHexString:@"457fea"];
+        [self.codeBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
+    }
 }
 
 //登录按钮
@@ -208,8 +229,6 @@
         req.scope = @"snsapi_userinfo";
         req.state = @"AiShangBo";
         [WXApi sendReq:req];
-    }else {
-        [SVProgressHUD showErrorWithStatus:@"未安装微信"];
     }
 }
 
@@ -267,13 +286,6 @@
                 [[NIMSDK sharedSDK] setServerSetting:setting];
                 [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",user[@"yxuser"]]] completion:nil];
                 [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",user[@"yxuser"]] token:[NSString stringWithFormat:@"%@",user[@"yxpwd"]] completion:^(NSError *error) {
-                    if (!error) {
-                        NSLog(@"登录成功");
-                        
-                    }else{
-                        NSLog(@"登录失败");
-                        
-                    }
                 }];
                 [self backWithLogin:YES];
             }else if (code == 8){//验证码首次登录，设置密码
@@ -290,7 +302,7 @@
                 vc.unionid = [NSString stringWithFormat:@"%@",dic[@"unionid"]];
                 [self.navigationController pushViewController:vc animated:1];
             }else{
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
             }
         }
     } failoperation:^(NSError *error) {

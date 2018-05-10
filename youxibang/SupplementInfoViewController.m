@@ -62,11 +62,11 @@
 //完成
 - (IBAction)finishBtn:(id)sender {
     if ([EBUtility isBlankString:self.name.text]){
-        [SVProgressHUD showErrorWithStatus:@"昵称不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"昵称不能为空" andDuration:2.0];
         return;
     }
     if ([EBUtility isBlankString:self.birthday]){
-        [SVProgressHUD showErrorWithStatus:@"生日不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"生日不能为空" andDuration:2.0];
         return;
     }
     NSString* sex;
@@ -114,9 +114,10 @@
                 vc.phoneNumberString = self.phoneNum;
                 vc.passwordString = self.password;
                 vc.codeOrPassword = NO;
+                vc.PushToMainTabbar = YES;
                 [self.navigationController pushViewController:vc animated:1];
             }else{
-                [SVProgressHUD showErrorWithStatus:str];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:str andDuration:2.0];
             }
         }
     } failoperation:^(NSError *error) {
@@ -181,66 +182,16 @@
         [self.photo setImage:newImage forState:0]; //设置头像
         self.photoImg = newImage;
     });
-
 }
 
 //当用户按下return去键盘
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
-//开始编辑时 视图上移 如果输入框不被键盘遮挡则不上移。
-
-//- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-//
-//    CGFloat rects = self.view.frame.size.height - (textField.frame.origin.y + textField.frame.size.height + 216 +50);
-//
-//    NSLog(@"aa%f",rects);
-//
-//    if (rects <= 0) {
-//
-//        [UIView animateWithDuration:0.3 animations:^{
-//
-//            CGRect frame = self.view.frame;
-//
-//            frame.origin.y = rects;
-//
-//            self.view.frame = frame;
-//
-//        }];
-//
-//    }
-//
-//    return YES;
-//
-//}
-
-//结束编辑时键盘下去 视图下移动画
-
-//-(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
-//
-//    [UIView animateWithDuration:0.3 animations:^{
-//
-//        CGRect frame = self.view.frame;
-//
-//        frame.origin.y = 64;
-//
-//        self.view.frame = frame;
-//
-//    }];
-//
-//
-//
-//    return YES;
-//
-//}
 //空白去键盘
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:YES];
 }
 

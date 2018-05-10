@@ -123,7 +123,9 @@
 - (void)completePay:(NSNotification *)notification{
     [self.navigationController popViewControllerAnimated:YES];
     [SVProgressHUD showSuccessWithStatus:@"支付成功"];
-    
+    if (self.paySuccessBlock) {
+        self.paySuccessBlock();
+    }
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {

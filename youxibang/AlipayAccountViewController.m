@@ -46,8 +46,8 @@
 
 //设置支付密码或修改支付密码
 - (void)addPayPassword:(UIButton*)sender{
-    NSMutableDictionary* dic = [UserNameTool readPersonalData];
-    NSString* i = [NSString stringWithFormat:@"%@",[dic objectForKey:@"is_paypwd"]];
+    UserModel *userModel = UserModel.sharedUser;
+    NSString* i = [NSString stringWithFormat:@"%@",userModel.is_paypwd];
     if (i.intValue == 0){
         SetPayPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spp"];
         [self.navigationController pushViewController:vc animated:1];

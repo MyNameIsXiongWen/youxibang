@@ -238,7 +238,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
                 }
             }
             else {
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
             }
         }
     } failoperation:^(NSError *error) {
@@ -320,7 +320,12 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 */
 
 - (IBAction)clickReviewBtn:(id)sender {
-    [self.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    if (self.reviewArray.count > 0) {
+        [self.tableview scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
+    else {
+        [self getNewsDetailRequest];
+    }
 }
 
 - (IBAction)clickLaudBtn:(id)sender {

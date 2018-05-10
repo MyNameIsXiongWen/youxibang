@@ -34,7 +34,6 @@
     [oldDic addEntriesFromDictionary:dic];
     [[NSUserDefaults standardUserDefaults] setObject:oldDic forKey:@"personalInfo"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-
 }
 
 + (NSMutableDictionary *)readPersonalData {
@@ -76,7 +75,6 @@
             if (code == 1) {
                 NSMutableDictionary* dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
                 [UserModel keyarchiveUserModelWithDict:dataInfo];
-                [UserNameTool updatePersonalData:dataInfo];
                 if (completion){
                     completion();
                 }

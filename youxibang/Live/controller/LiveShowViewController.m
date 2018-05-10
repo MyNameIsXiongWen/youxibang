@@ -133,7 +133,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
                 }
                 [self.collectionView reloadData];
             }else {
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
             }
         }
     } failoperation:^(NSError *error) {

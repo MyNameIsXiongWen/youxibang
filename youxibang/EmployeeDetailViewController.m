@@ -377,7 +377,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 #pragma mark - 分享
 - (void)shareBtn:(UIButton *)sender {
-    NSString *anchor_url = [NSString stringWithFormat:@"http://m.feirantech.cn/mobile/share/index#/anchorDetail?token%@&anchorId=%@&skip=phone",DataStore.sharedDataStore.token,self.employeeId];
+    NSString *anchor_url = [NSString stringWithFormat:@"%@index#/anchorDetail?token%@&anchorId=%@&skip=phone",SHARE_WEBURL,DataStore.sharedDataStore.token,self.employeeId];
     self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:anchor_url ShareTitle:@"我是主播" WithShareDescription:@"这是我的主播魅力名片，我为自己代言，欢迎来围观"];
     [self.shareView show];
 }
@@ -978,6 +978,9 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     else if (index == 1) {
         VipWebViewController *con = [VipWebViewController new];
         con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
+        con.paySuccessBlock = ^{
+            hadRequestLimitOfWechat_IM = NO;
+        };
         [self.navigationController pushViewController:con animated:YES];
     }
 }

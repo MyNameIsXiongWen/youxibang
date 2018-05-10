@@ -7,8 +7,11 @@
 
 #import <UIKit/UIKit.h>
 
+typedef void(^PaySuccessBlock)(void);
+
 @interface VipWebViewController : UIViewController
 
 @property (copy, nonatomic) NSString *loadUrlString;
+@property (nonatomic, copy) PaySuccessBlock paySuccessBlock;
 
 @end

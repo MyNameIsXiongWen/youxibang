@@ -37,8 +37,8 @@
         [i addTarget:self action:@selector(selectSumMoney:) forControlEvents:UIControlEventTouchUpInside];
     }
     
-    NSMutableDictionary* dic = [UserNameTool readPersonalData];
-    NSMutableAttributedString *mAttStr = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"余额%@元",(dic[@"user_money"]) ? (dic[@"user_money"]) : @"0"]];
+    UserModel *userModel = UserModel.sharedUser;
+    NSMutableAttributedString *mAttStr = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"余额%@元",userModel.user_money ? : @"0"]];
     [mAttStr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:20] range:NSMakeRange(2, mAttStr.length - 3)];
     [mAttStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(2, mAttStr.length - 3)];
     self.balanceLab.attributedText = mAttStr;
@@ -48,9 +48,6 @@
         self.subtitleLab.text = @"提现至支付宝";
         self.payView.hidden = YES;
         [self.commitBtn setTitle:@"提现" forState:0];
-        if ([NSString stringWithFormat:@"%@",dic[@"user_money"]].intValue <= 0){
-            [_commitBtn setTitle:@"预支工资" forState:0];
-        }
         UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [rightBtn setTitle:@"账户管理" forState:UIControlStateNormal];
         rightBtn.titleLabel.font = [UIFont systemFontOfSize:15.0];
@@ -91,15 +88,14 @@
 }
 //提现
 - (IBAction)topUp:(id)sender {
-    
     if (self.type == 1){
         NSString* account = self.tf.text;
         if (account.intValue < 30){
-            [SVProgressHUD showErrorWithStatus:@"金额必须大于0"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能少于30元" andDuration:2.0];
             return;
         }
-        NSMutableDictionary* dic = [UserNameTool readPersonalData];
-        NSString* i = [NSString stringWithFormat:@"%@",dic[@"is_paypwd"]];
+        UserModel *userModel = UserModel.sharedUser;
+        NSString* i = [NSString stringWithFormat:@"%@",userModel.is_paypwd];
         if ([i isEqualToString:@"0"]){
             SetPayPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spp"];
             [self.navigationController pushViewController:vc animated:1];
@@ -117,8 +113,8 @@
         [alert showAlertView];
     }else{
         NSString* account = self.tf.text;
-        if (account.intValue <= 0){
-            [SVProgressHUD showErrorWithStatus:@"金额不能小于30"];
+        if (account.intValue < 1){
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"充值金额不能少于1元" andDuration:2.0];
             return;
         }
         NSString* otype;

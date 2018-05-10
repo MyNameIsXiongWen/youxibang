@@ -7,13 +7,14 @@
 
 #import "SignViewController.h"
 #import "SetPasswordViewController.h"
-#import "JKCountDownButton.h"
 #import "LoginViewController.h"
 
 @interface SignViewController ()<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *phone;//电话
 @property (weak, nonatomic) IBOutlet UITextField *code;//密码
-@property (weak, nonatomic) IBOutlet JKCountDownButton *codeBtn;//验证码
+@property(nonatomic,assign)int seconds;
+@property (weak, nonatomic) IBOutlet UIButton *codeBtn;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 
 @end
 
@@ -35,11 +36,12 @@
     [self.navigationController pushViewController:vc animated:1];
 }
 //获取验证码
-- (IBAction)getCode:(JKCountDownButton *)sender {
+- (IBAction)getCode:(id)sender {
     if ( [EBUtility isMobileNumber:self.phone.text] ==NO) {
-        [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号码"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入正确的手机号码" andDuration:2.0];
         return;
     }
+    self.codeBtn.userInteractionEnabled = NO;
     [self gainCodeRequest:self.phone.text];
 }
 
@@ -53,26 +55,38 @@
         NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]];
         NSLog(@"验证码输出 %@--%@",object,msg);
         if (code == 1) {
-            [SVProgressHUD showSuccessWithStatus:msg];
-            self.codeBtn.enabled = NO;
-            [self.codeBtn startWithSecond:60];
+            self.seconds = 60;
+            self.codeBtn.backgroundColor = [UIColor colorFromHexString:@"cccccc"];
+            NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timecaculate:) userInfo:nil repeats:YES];
+            [timer fire];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"验证码发送成功" andDuration:2.0];
             
-            [self.codeBtn didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
-                NSString *title = [NSString stringWithFormat:@"剩余%d秒",second];
-                return title;
-            }];
-            [self.codeBtn didFinished:^NSString *(JKCountDownButton *countDownButton, int second) {
-                countDownButton.enabled = YES;
-                return @"获取验证码";
-            }];
-        }else
-        {
-            [SVProgressHUD showErrorWithStatus:msg];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.code becomeFirstResponder];
+            });
+        }else {
+            self.codeBtn.userInteractionEnabled = YES;
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
         }
     } failoperation:^(NSError *error) {
         NSLog(@"errr %@",error);
         
     }];
+}
+
+-(void)timecaculate:(NSTimer*)timer {
+    NSString *str =[NSString stringWithFormat:@"%ds后重试",self.seconds];
+    self.seconds -= 1;
+    [self.codeBtn setTitle:@"" forState:UIControlStateNormal];
+    self.timeLabel.text = str;
+    self.timeLabel.hidden = NO;
+    if (self.seconds <=0) {
+        [timer invalidate];
+        self.timeLabel.hidden = YES;
+        self.codeBtn.userInteractionEnabled = YES;
+        self.codeBtn.backgroundColor = [UIColor colorFromHexString:@"457fea"];
+        [self.codeBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
+    }
 }
 
 //下一步
@@ -114,9 +128,10 @@
             vc.phoneNumberString = self.phone.text;
             vc.codeString = self.code.text;
             vc.codeOrPassword = YES;
+            vc.PushToMainTabbar = YES;
             [self.navigationController pushViewController:vc animated:1];
         }else{
-            [SVProgressHUD showErrorWithStatus:msg];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
@@ -126,14 +141,11 @@
 }
 //当用户按下return去键盘
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:YES];
 }
 /*

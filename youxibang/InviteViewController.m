@@ -89,7 +89,7 @@
 }
 
 - (IBAction)clickInviteBtn:(id)sender {
-    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:[NSString stringWithFormat:@"%@?invitation=%@",SHARE_WEBURL,UserModel.sharedUser.invitecode] ShareTitle:SHARE_TITLE WithShareDescription:SHARE_DESCRIPTION];
+    self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:[NSString stringWithFormat:@"%@share?invitation=%@",SHARE_WEBURL,UserModel.sharedUser.invitecode] ShareTitle:SHARE_TITLE WithShareDescription:SHARE_DESCRIPTION];
     [self.shareView show];
 }
 

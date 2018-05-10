@@ -27,12 +27,12 @@
     
     self.tableView.tableFooterView = [UIView new];
     
-    NSMutableDictionary* dic = [UserNameTool readPersonalData];
-    NSString* i = [NSString stringWithFormat:@"%@",[dic objectForKey:@"is_vip"]];
+    UserModel *userModel = UserModel.sharedUser;
+    NSString* i = [NSString stringWithFormat:@"%@",userModel.is_vip];
     if ([i isEqualToString:@"2"]){
         self.sucView.hidden = NO;
         UILabel* lab = [self.sucView viewWithTag:1];
-        lab.text = [NSString stringWithFormat:@"%@",[dic objectForKey:@"is_vipstr"]];
+        lab.text = [NSString stringWithFormat:@"%@",userModel.is_vipstr];
     }
 }
 

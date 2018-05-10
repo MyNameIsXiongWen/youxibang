@@ -53,7 +53,7 @@
         else if (self.type == 2) {
             [self.photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.orderInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_head"]];
             self.name.text = [NSString stringWithFormat:@"%@",self.orderInfo[@"nickname"]];
-            self.nameTopConstraint.constant = 37;
+            self.nameTopConstraint.constant = 34;
             self.content.hidden = YES;
             self.awardLab.text = [NSString stringWithFormat:@"为 %@ 打赏",self.orderInfo[@"nickname"]];
         }
@@ -67,11 +67,6 @@
 }
 
 - (void)completePay:(NSNotification *)notification{
-//    CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"打赏完成，即将跳转到个人页面。" AndType:0];
-//    alert.resultIndex = ^(NSInteger index) {
-//        [self.navigationController popToRootViewControllerAnimated:1];
-//    };
-//    [alert showAlertView];
     [self.navigationController popViewControllerAnimated:YES];
     [SVProgressHUD showSuccessWithStatus:@"打赏成功"];
     
@@ -211,14 +206,14 @@
             [dict setObject:@"2" forKey:@"paytype"];
             [self payAwardingMoney:dict];
         }else if (self.y_eBtn.selected){
-            NSMutableDictionary* dic = [UserNameTool readPersonalData];
-            NSString* i = [NSString stringWithFormat:@"%@",dic[@"is_paypwd"]];
+            UserModel *userModel = UserModel.sharedUser;
+            NSString* i = [NSString stringWithFormat:@"%@",userModel.is_paypwd];
             if ([i isEqualToString:@"0"]){
                 SetPayPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spp"];
                 [self.navigationController pushViewController:vc animated:1];
                 return;
             }
-            NSString* balance = [NSString stringWithFormat:@"%@",(dic[@"user_money"]) ? (dic[@"user_money"]) : @"0"];
+            NSString* balance = [NSString stringWithFormat:@"%@",userModel.user_money ? : @"0"];
             if (account.intValue > balance.intValue){
                 [SVProgressHUD showErrorWithStatus:@"余额不足"];
                 return;

@@ -29,6 +29,7 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
     // Do any additional setup after loading the view from its nib.
     self.title = @"我的金币";
     self.tableview.rowHeight = 70;
+    self.tableview.tableFooterView = UIView.new;
     self.tableview.tableHeaderView = [self configTableviewHeaderview];
     [self.tableview registerNib:[UINib nibWithNibName:@"SigninTableViewCell" bundle:nil] forCellReuseIdentifier:SIGNTABLEVIEW_ID];
     if (DataStore.sharedDataStore.token) {

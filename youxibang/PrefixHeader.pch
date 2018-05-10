@@ -43,12 +43,17 @@
 #import "UserModel.h"
 #import <MJExtension.h>
 #import <Colours.h>
+#import "SYPromptBoxView.h"
 
 #define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
 #define HttpImageString @""
-//#define HttpURLString @"http://jx.zimogame.com/index.php/api/"
+#define HttpURLString @"http://jx.zimogame.com/index.php/api/"
 //#define HttpURLString @"http://192.168.2.166:8888/api/"
-#define HttpURLString @"https://m.feirantech.cn/api/"
+//#define HttpURLString @"https://m.feirantech.cn/api/"
+
+#define SHARE_WEBURL @"http://jx.zimogame.com/mobile/share/"
+//#define SHARE_WEBURL @"http://m.feirantech.cn/mobile/share/"
+
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
 #define ADAPTATIONRATIO SCREEN_HEIGHT / 667.0
@@ -75,7 +80,7 @@ static NSString *const FIRST_INTO = @"first_into";
 #define SINA_REDIRECT_URL @"https://api.weibo.com/oauth2/default.html"
 #define SHARE_TITLE @"小姐姐邀你来赚钱了哦，和我肩并肩冲吧"
 #define SHARE_DESCRIPTION @"爱上播，主播的资源之家。有技能，就挣钱，一起来挣钱吧。"
-#define SHARE_WEBURL @"http://m.feirantech.cn/mobile/share/share"
+
 #define JPUSH_KEY @"fbd6c9a36808409ae6359ff9"
 #define NIM_APP_ID @"d27ffe90d087aaeb5c579f7485a2dcb6"
 

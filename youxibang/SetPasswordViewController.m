@@ -23,7 +23,7 @@
     self.title = @"设置密码";
     self.password.secureTextEntry = YES;
     self.secPassword.secureTextEntry = YES;
-    if (self.inviteCode) {
+    if (self.inviteCode.length > 0) {
         self.invitationCode.text = self.inviteCode;
         self.invitationCode.enabled = NO;
     }
@@ -43,7 +43,7 @@
             SupplementInfoViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"si"];
             vc.phoneNum = self.phoneNum;
             vc.password = self.password.text;
-            if (self.inviteCode) {
+            if (self.inviteCode.length > 0) {
                 vc.leadercode = self.inviteCode;
             }
             else {
@@ -58,22 +58,19 @@
             }
             [self.navigationController pushViewController:vc animated:1];
         }else{
-            [SVProgressHUD showErrorWithStatus:@"请输入密码为6-15位数字或字母"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码为6-15位数字或字母" andDuration:2.0];
         }
     }else{
-        [SVProgressHUD showErrorWithStatus:@"两次输入的密码不一致"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"两次输入的密码不一致" andDuration:2.0];
     }
 }
 //当用户按下return去键盘
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:YES];
 }
 /*

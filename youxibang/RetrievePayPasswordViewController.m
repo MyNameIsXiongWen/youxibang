@@ -22,8 +22,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"找回支付密码";
-    NSDictionary* dic = [UserNameTool readPersonalData];
-    self.userPhone.text = dic[@"mobile"];
+    self.userPhone.text = DataStore.sharedDataStore.mobile;
     self.userPhone.userInteractionEnabled = NO;
     self.code.delegate = self;
 }

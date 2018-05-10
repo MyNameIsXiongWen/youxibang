@@ -6,7 +6,6 @@
 //
 
 #import "ForgotPasswordViewController.h"
-#import "JKCountDownButton.h"
 #import "LoginViewController.h"
 
 @interface ForgotPasswordViewController ()<UITextFieldDelegate>
@@ -14,7 +13,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *code;
 @property (weak, nonatomic) IBOutlet UITextField *password;
 @property (weak, nonatomic) IBOutlet UITextField *secPassword;
-@property (weak, nonatomic) IBOutlet JKCountDownButton *codeBtn; 
+@property(nonatomic,assign)int seconds;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+@property (weak, nonatomic) IBOutlet UIButton *codeBtn;
 
 @end
 
@@ -37,30 +38,15 @@
     // Dispose of any resources that can be recreated.
 }
 //获取验证码
-- (IBAction)getCode:(JKCountDownButton *)sender {
+- (IBAction)getCode:(id)sender {
     if ( [EBUtility isMobileNumber:self.phone.text] ==NO) {
-        [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号码"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入正确的手机号码" andDuration:2.0];
         return;
     }
-    
-//    sender.enabled = NO;
-//    //button type要 设置成custom 否则会闪动
-//    [sender startWithSecond:60];
-//
-//    [sender didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
-//        NSString *title = [NSString stringWithFormat:@"剩余%d秒",second];
-//        return title;
-//    }];
-//    [sender didFinished:^NSString *(JKCountDownButton *countDownButton, int second) {
-//        countDownButton.enabled = YES;
-//        return @"获取验证码";
-//    }];
-    
+    self.codeBtn.userInteractionEnabled = NO;
     [self gainCodeRequest:self.phone.text];
 }
-- (void)gainCodeRequest:(NSString *)phoneString
-{
-    
+- (void)gainCodeRequest:(NSString *)phoneString {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:phoneString forKey:@"mobile"];
     
@@ -70,53 +56,66 @@
         NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]];
         NSLog(@"验证码输出 %@--%@",object,msg);
         if (code == 1) {
-            [SVProgressHUD showSuccessWithStatus:msg];
-            self.codeBtn.enabled = NO;
-            [self.codeBtn startWithSecond:60];
+            self.seconds = 60;
+            self.codeBtn.backgroundColor = [UIColor colorFromHexString:@"cccccc"];
+            NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timecaculate:) userInfo:nil repeats:YES];
+            [timer fire];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"验证码发送成功" andDuration:2.0];
             
-            [self.codeBtn didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
-                NSString *title = [NSString stringWithFormat:@"剩余%d秒",second];
-                return title;
-            }];
-            [self.codeBtn didFinished:^NSString *(JKCountDownButton *countDownButton, int second) {
-                countDownButton.enabled = YES;
-                return @"获取验证码";
-            }];
-        }else
-        {
-            [SVProgressHUD showErrorWithStatus:msg];
-            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.code becomeFirstResponder];
+            });
+        }else {
+            self.codeBtn.userInteractionEnabled = YES;
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
         }
     } failoperation:^(NSError *error) {
         NSLog(@"errr %@",error);
         
     }];
 }
+
+-(void)timecaculate:(NSTimer*)timer {
+    NSString *str =[NSString stringWithFormat:@"%ds后重试",self.seconds];
+    self.seconds -= 1;
+    [self.codeBtn setTitle:@"" forState:UIControlStateNormal];
+    self.timeLabel.text = str;
+    self.timeLabel.hidden = NO;
+    if (self.seconds <=0) {
+        [timer invalidate];
+        self.timeLabel.hidden = YES;
+        self.codeBtn.userInteractionEnabled = YES;
+        self.codeBtn.backgroundColor = [UIColor colorFromHexString:@"457fea"];
+        [self.codeBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
+    }
+}
+
 //提交
 - (IBAction)commit:(id)sender {
     [self.view endEditing:YES];
-    if ([EBUtility isBlankString:self.code.text]){
-        [SVProgressHUD showErrorWithStatus:@"请输入验证码"];
+    if ([EBUtility isBlankString:self.phone.text]){
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入手机号码" andDuration:2.0];
         return;
     }
     if ([EBUtility isBlankString:self.code.text]){
         [SVProgressHUD showErrorWithStatus:@"请输入验证码"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入验证码" andDuration:2.0];
         return;
     }
     if ([EBUtility isBlankString:self.password.text]){
-        [SVProgressHUD showErrorWithStatus:@"请输入密码"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码" andDuration:2.0];
         return;
     }
     if ([EBUtility isBlankString:self.secPassword.text]){
-        [SVProgressHUD showErrorWithStatus:@"请再次输入密码"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请再次输入密码" andDuration:2.0];
         return;
     }
     if (![self.password.text isEqualToString:self.secPassword.text]){
-        [SVProgressHUD showErrorWithStatus:@"两次输入的密码不一致"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"两次输入的密码不一致" andDuration:2.0];
         return;
     }
     if (![EBUtility validatePassword:self.password.text]){
-        [SVProgressHUD showErrorWithStatus:@"请输入密码为6-15位数字或字母"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码为6-15位数字或字母" andDuration:2.0];
         return;
     }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
@@ -140,7 +139,7 @@
             LoginViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"loginPWD"];
             [self.navigationController pushViewController:vc animated:1];
         }else{
-            [SVProgressHUD showErrorWithStatus:msg];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
         }
     } failoperation:^(NSError *error) {
         
@@ -152,12 +151,9 @@
 }
 //当用户按下return去键盘
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES];

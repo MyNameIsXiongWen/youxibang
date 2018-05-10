@@ -22,8 +22,8 @@
     // Do any additional setup after loading the view.
     self.title = @"消息提醒";
     
-    NSMutableDictionary* dic = [UserNameTool readPersonalData];
-    NSString* i = [NSString stringWithFormat:@"%@",[dic objectForKey:@"is_strangercall"]];
+    UserModel *userModel = UserModel.sharedUser;
+    NSString* i = [NSString stringWithFormat:@"%@",userModel.is_strangercall];
     self.sw3.on = i.integerValue;
     
 }

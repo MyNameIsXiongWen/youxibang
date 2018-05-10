@@ -168,9 +168,8 @@
         [dict setObject:@"1" forKey:@"paytype"];
         [self commitOrder:dict];
     }else if ([self.way isEqualToString:@"3"]){
-        NSMutableDictionary* dic = [UserNameTool readPersonalData];
-        NSString* i = [NSString stringWithFormat:@"%@",dic[@"is_paypwd"]];
-        if ([i isEqualToString:@"0"]){
+        UserModel *userModel = UserModel.sharedUser;
+        if ([userModel.is_paypwd isEqualToString:@"0"]){
             SetPayPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"spp"];
             [self.navigationController pushViewController:vc animated:1];
             return;
@@ -345,9 +344,8 @@
         return cell;
     }else if(indexPath.section == 3){//余额cell  判断余额是否足够
         PayOrderTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"yepay"];
-        
-        NSMutableDictionary* dic = [UserNameTool readPersonalData];
-        NSString* i = [NSString stringWithFormat:@"%@",(dic[@"user_money"]) ? (dic[@"user_money"]) : @"0"];
+        UserModel *userModel = UserModel.sharedUser;
+        NSString* i = [NSString stringWithFormat:@"%@",userModel.user_money ? : @"0"];
         UILabel* lab = [cell viewWithTag:1];
         lab.text = [NSString stringWithFormat:@"¥%@",i];
         
@@ -405,8 +403,8 @@
     
     if (indexPath.section == 1 || indexPath.section == 2 || indexPath.section == 3 ){//判断余额是否充足
         if (indexPath.section == 3){
-            NSMutableDictionary* dic = [UserNameTool readPersonalData];
-            NSString* i = [NSString stringWithFormat:@"%@",(dic[@"user_money"]) ? (dic[@"user_money"]) : @"0"];
+            UserModel *userModel = UserModel.sharedUser;
+            NSString* i = [NSString stringWithFormat:@"%@",userModel.user_money ? : @"0"];
             if ([self.type isEqualToString:@"OrderDetailViewController"]){
                 if (((NSString*)self.dataInfo[@"deposit"]).intValue > i.intValue){
                     return;

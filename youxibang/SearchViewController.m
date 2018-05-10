@@ -117,13 +117,13 @@ static NSString *const HOMESEARCH_TABLEVIEW_ID = @"homesearch_tableview_id";
                 }
                 [self.tableView reloadData];
             }else if (code == 2) {
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"暂无更多数据" andDuration:2.0];
                 if (self.dataAry.count == 0) {
                     self.isHistoryRecord = YES;
                     [self.tableView reloadData];
                 }
             }else{
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
             }
         }
     } failoperation:^(NSError *error) {
@@ -245,6 +245,9 @@ static NSString *const HOMESEARCH_TABLEVIEW_ID = @"homesearch_tableview_id";
 #pragma mark - otherDelegate/DataSource
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
+    if ([EBUtility isBlankString:textField.text]) {
+        return NO;
+    }
     [textField resignFirstResponder];
     for (NSString *str in self.historyRecord) {
         if ([textField.text isEqualToString:str]) {

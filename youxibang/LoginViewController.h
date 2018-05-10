@@ -14,5 +14,6 @@
 @property (nonatomic,copy) NSString *phoneNumberString;
 @property (nonatomic,copy) NSString *passwordString;
 @property (nonatomic,copy) NSString *codeString;
+@property (nonatomic,assign) BOOL PushToMainTabbar;
 
 @end

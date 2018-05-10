@@ -63,6 +63,7 @@
             UIDatePicker* picker = [[UIDatePicker alloc]initWithFrame:CGRectZero];
             picker.datePickerMode = UIDatePickerModeDate;
             picker.backgroundColor = [UIColor groupTableViewBackgroundColor];
+            picker.locale = [NSLocale localeWithLocaleIdentifier:@"zh"];
             self.picker = picker;
             picker.maximumDate = [NSDate date];
             picker.minimumDate = [NSDate dateWithTimeIntervalSince1970:0];

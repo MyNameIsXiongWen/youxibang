@@ -118,7 +118,7 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
                 }
                 [self.tableview reloadData];
             }else{
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
             }
         }
     } failoperation:^(NSError *error) {

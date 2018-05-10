@@ -33,6 +33,7 @@
         self.companyLabel.text = [NSString stringWithFormat:@"经纪公司：%@",dic[@"brokerage_agency"]];
         self.expectSalaryLabel.text = [NSString stringWithFormat:@"期望薪资：%@",dic[@"wish_salary"]];
         self.liveSpecialtyLabel.text = [NSString stringWithFormat:@"主播特点：%@",dic[@"self_evaluate"]];
+        self.liveSpecialtyLabel.numberOfLines = 2;
         self.wechatLabel.text = [NSString stringWithFormat:@"微信：%@",dic[@"wechat"]];
         self.livePlatformLabel.text = [NSString stringWithFormat:@"所属平台：%@",dic[@"platform"]];
         self.liveExperienceLabel.text = [NSString stringWithFormat:@"直播经验：%@",dic[@"exp"]];

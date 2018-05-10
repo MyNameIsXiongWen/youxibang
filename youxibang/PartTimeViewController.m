@@ -169,9 +169,9 @@
                     [self.dataAry addObjectsFromArray:object[@"data"]];
                     [self.tableView reloadData];
                 }else if (code == 2) {
-                    [SVProgressHUD showErrorWithStatus:@"暂无更多数据"];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"暂无更多数据" andDuration:2.0];
                 }else{
-                    [SVProgressHUD showErrorWithStatus:msg];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
                 }
             }
             
@@ -210,9 +210,9 @@
                     [self.dataAry addObjectsFromArray:object[@"data"]];
                     [self.tableView reloadData];
                 }else if (code == 2) {
-                    [SVProgressHUD showErrorWithStatus:@"暂无更多数据"];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"暂无更多数据" andDuration:2.0];
                 }else{
-                    [SVProgressHUD showErrorWithStatus:msg];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
                 }
             }
             

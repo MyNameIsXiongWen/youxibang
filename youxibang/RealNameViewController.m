@@ -27,11 +27,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"实名认证";
-    NSMutableDictionary* dic = [UserNameTool readPersonalData];
-    if ([NSString stringWithFormat:@"%@",dic[@"is_realauth"]].integerValue == 2){
+    UserModel *userModel = UserModel.sharedUser;
+    if ([NSString stringWithFormat:@"%@",userModel.is_realauth].integerValue == 2){
         self.sucView.hidden = NO;
         UILabel* lab = [self.sucView viewWithTag:1];
-        lab.text = [NSString stringWithFormat:@"%@",[dic objectForKey:@"is_realauthstr"]];
+        lab.text = [NSString stringWithFormat:@"%@",userModel.is_realauthstr];
     }
 //    self.phone.text = [DataStore sharedDataStore].mobile;
 //    self.phone.userInteractionEnabled = NO;
