@@ -148,6 +148,7 @@
 		5E5DF4E3203ACAA500211F7F /* MessagePromptViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5DF4E2203ACAA500211F7F /* MessagePromptViewController.m */; };
 		5E619FD7203E86860011186E /* WalletMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E619FD6203E86860011186E /* WalletMessageViewController.m */; };
 		5E619FDD203E8F210011186E /* SystemMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E619FDC203E8F210011186E /* SystemMessageViewController.m */; };
+		8709E6A720A57B0A00F15DD1 /* AliPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8709E6A620A57B0A00F15DD1 /* AliPlayerViewController.m */; };
 		873838F5209418A4000A9BF5 /* NewsReviewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 873838F3209418A4000A9BF5 /* NewsReviewTableViewCell.m */; };
 		873838F6209418A4000A9BF5 /* NewsReviewTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 873838F4209418A4000A9BF5 /* NewsReviewTableViewCell.xib */; };
 		873838F920941CF9000A9BF5 /* NewsReviewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 873838F820941CF9000A9BF5 /* NewsReviewModel.m */; };
@@ -536,6 +537,8 @@
 		5E619FD6203E86860011186E /* WalletMessageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalletMessageViewController.m; sourceTree = "<group>"; };
 		5E619FDB203E8F210011186E /* SystemMessageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemMessageViewController.h; sourceTree = "<group>"; };
 		5E619FDC203E8F210011186E /* SystemMessageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SystemMessageViewController.m; sourceTree = "<group>"; };
+		8709E6A520A57B0A00F15DD1 /* AliPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AliPlayerViewController.h; sourceTree = "<group>"; };
+		8709E6A620A57B0A00F15DD1 /* AliPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AliPlayerViewController.m; sourceTree = "<group>"; };
 		873838F2209418A4000A9BF5 /* NewsReviewTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewsReviewTableViewCell.h; sourceTree = "<group>"; };
 		873838F3209418A4000A9BF5 /* NewsReviewTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewsReviewTableViewCell.m; sourceTree = "<group>"; };
 		873838F4209418A4000A9BF5 /* NewsReviewTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsReviewTableViewCell.xib; sourceTree = "<group>"; };
@@ -1587,6 +1590,8 @@
 				875936912091E8A300591D33 /* LiveCreateMyEvaluateViewController.h */,
 				875936922091E8A300591D33 /* LiveCreateMyEvaluateViewController.m */,
 				875936932091E8A300591D33 /* LiveCreateMyEvaluateViewController.xib */,
+				8709E6A520A57B0A00F15DD1 /* AliPlayerViewController.h */,
+				8709E6A620A57B0A00F15DD1 /* AliPlayerViewController.m */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -2345,6 +2350,7 @@
 				187362FD201031450045EF9E /* DSWebViewController.m in Sources */,
 				187362E8201031450045EF9E /* UIImageView+Extension.m in Sources */,
 				8759364E2090643400591D33 /* LiveCharmCollectionViewCell.m in Sources */,
+				8709E6A720A57B0A00F15DD1 /* AliPlayerViewController.m in Sources */,
 				875936542090643400591D33 /* LiveFilterCollectionViewCell.m in Sources */,
 				18F6D053202315DE0001917B /* LoanDelegateViewController.m in Sources */,
 				87416AB0209953F100482C26 /* LiveCharmPhotoPayView.m in Sources */,

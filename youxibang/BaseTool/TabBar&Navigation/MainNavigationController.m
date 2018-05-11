@@ -9,9 +9,7 @@
 #import "MainNavigationController.h"
 
 @interface MainNavigationController ()
-{
-    BOOL state;
-}
+
 @end
 
 @implementation MainNavigationController
@@ -19,39 +17,44 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self setUpNavi];
+    self.navigationBar.barStyle = UIBarStyleDefault;
+    self.navigationBar.backgroundColor = [UIColor whiteColor];
+    self.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor colorFromHexString:@"333333"] forKey:NSForegroundColorAttributeName];
 }
+
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     if ([UIDevice currentDevice].systemVersion.floatValue < 10.0) return;
     if ([navigationController isKindOfClass:[UIImagePickerController class]] &&
         ((UIImagePickerController *)navigationController).sourceType == UIImagePickerControllerSourceTypeCamera) {
-        [[UIApplication sharedApplication] setStatusBarHidden:NO];
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
+        
+        if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+            [self prefersStatusBarHidden];
+            [self preferredStatusBarStyle];
+            [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+        }
     }
 }
 
--(void)setUpNavi {
-    self.navigationBar.barStyle = UIBarStyleDefault;
-    self.navigationBar.backgroundColor = [UIColor whiteColor];
-    self.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor colorFromHexString:@"333333"] forKey:NSForegroundColorAttributeName];
-    for (UIViewController *vc in self.childViewControllers) {
-        UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
-        img.image = [UIImage imageNamed:@"back_black"];
-        UIButton *leftBtn = [[UIButton alloc]initWithFrame:CGRectMake(-15, 0, 40, 40)];
-        [leftBtn addSubview:img];
-        [leftBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-        vc.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
-        vc.hidesBottomBarWhenPushed = YES;
+//实现隐藏方法
+- (BOOL)prefersStatusBarHidden {
+    return NO;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    NSString *classString = NSStringFromClass(self.childViewControllers.lastObject.class);
+    if ([classString isEqualToString:@"MineViewController"]) {
+        return UIStatusBarStyleLightContent;
     }
+    return UIStatusBarStyleDefault;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 -(void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    state = NO;
-    if ((self.childViewControllers.count > 0 && !state) ) {
+    if ((self.childViewControllers.count > 0) ) {
         UIView* view = [[UIView alloc]initWithFrame: CGRectMake(0, 0, 50, 40)];
         UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
         img.image = [UIImage imageNamed:@"back_black"];
@@ -65,21 +68,8 @@
     [super pushViewController:viewController animated:animated];
 }
 
-
 -(void)back {
-//    state = NO;
-//    if (self.childViewControllers.count == 3) {
-//        for (UIViewController *vc in self.childViewControllers) {
-//            if ([NSStringFromClass(vc.class) isEqualToString:@"MineViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"MessageViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"HomeViewController"] ||[NSStringFromClass(vc.class) isEqualToString:@"NewsViewController"]) {
-//                state = YES;
-//            }
-//            self.childViewControllers[0].tabBarController.tabBar.hidden = NO;
-//        }
-//        if (!state)
-//            [self setUpNavi];
-//    }
     [self popViewControllerAnimated:YES];
 }
-
 
 @end
