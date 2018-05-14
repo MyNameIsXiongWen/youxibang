@@ -11,8 +11,9 @@
 #import "NewPhoneViewController.h"
 #import "ForgotPasswordViewController.h"
 
-@interface SystemSettingViewController ()<UITableViewDelegate,UITableViewDataSource>
-@property (nonatomic,copy)NSString* fileCachePath;
+@interface SystemSettingViewController () <UITableViewDelegate,UITableViewDataSource>
+
+@property (nonatomic, copy) NSString* fileCachePath;
 @end
 
 @implementation SystemSettingViewController
@@ -25,7 +26,6 @@
     self.tableView.dataSource = self;
     self.tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 64);
-    
     self.title = @"系统设置";
 }
 
@@ -33,8 +33,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (void)exitUser:(UIButton*)sender{
-    
+- (void)exitUser:(UIButton*)sender {
     //云信登出账号
     [[[NIMSDK sharedSDK] loginManager] logout:^(NSError *error) {
         
@@ -53,17 +52,13 @@
     [self.navigationController pushViewController:vc animated:1];
 }
 
--(CGFloat) getCacheSize
-{
+- (CGFloat) getCacheSize {
     //获取文件管理器对象
     NSFileManager * fileManger = [NSFileManager defaultManager];
-    
     //获取缓存沙盒路径
     NSString * cachePath =  [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
-    
     //先定义一个缓存目录总大小的变量
     NSInteger fileTotalSize = 0;
-    
     if ([fileManger fileExistsAtPath:cachePath]) {
         // 目录下的文件计算大小
         NSArray *childrenFile = [fileManger subpathsAtPath:cachePath];
@@ -79,7 +74,7 @@
     
     return 0;
 }
-- (void)cleanCaches:(NSString *)path{
+- (void)cleanCaches:(NSString *)path {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if ([fileManager fileExistsAtPath:path]) {
         NSArray *childrenFiles = [fileManager subpathsAtPath:path];
@@ -95,32 +90,32 @@
 }
 
 #pragma mark - tableViewDelegate/DataSource
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 6;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     return UITableViewAutomaticDimension;
 }
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath{
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     
     return UITableViewAutomaticDimension;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     return 60;
 }
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     UIView* fv = [EBUtility viewfrome:CGRectMake(0, 0, SCREEN_WIDTH, 60) andColor:[UIColor groupTableViewBackgroundColor] andView:nil];
     UIButton* exit = [EBUtility btnfrome:CGRectMake(0, 20, SCREEN_WIDTH, 40) andText:@"退出账号" andColor:[UIColor blackColor] andimg:nil andView:fv];
     exit.backgroundColor = [UIColor whiteColor];
     [exit addTarget:self action:@selector(exitUser:) forControlEvents:UIControlEventTouchUpInside];
     return fv;
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSArray* ary = @[@"修改手机号",@"密码管理",@"消息提醒",@"给我评分",@"清除缓存",@"版本号"];//,@"产品反馈"
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
@@ -142,30 +137,25 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.row == 0){//更改电话
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    if (indexPath.row == 0) {//更改电话
         NewPhoneViewController* vc = [sb instantiateViewControllerWithIdentifier:@"np"];
         [self.navigationController pushViewController:vc animated:1];
-    }else if (indexPath.row == 1){//更改密码
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    }else if (indexPath.row == 1) {//更改密码
         ForgotPasswordViewController *vc = [sb instantiateViewControllerWithIdentifier:@"fpw"];
         vc.titleText = @"修改密码";
         [self.navigationController pushViewController:vc animated:1];
-    }else if (indexPath.row == 2){//消息设置
-        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    }else if (indexPath.row == 2) {//消息设置
         MessagePromptViewController* vc = [sb instantiateViewControllerWithIdentifier:@"mpv"];
-        
         [self.navigationController pushViewController:vc animated:1];
-    }else if (indexPath.row == 3){//评分
+    }else if (indexPath.row == 3) {//评分
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1352635838&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
-    }else if (indexPath.row == 4){
+    }else if (indexPath.row == 4) {
         //删除缓存目录下所有缓存文件
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask,YES);
         NSString *cachesDir = [paths lastObject];
         [self cleanCaches:cachesDir];
-        
         UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:indexPath];
         cell.detailTextLabel.text = @"0.00M";
     }

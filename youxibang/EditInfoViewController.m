@@ -24,12 +24,12 @@
         self.tf.placeholder = @"编辑昵称";
         self.tf.text = UserModel.sharedUser.nickname;
         [self.tf becomeFirstResponder];
-    }else if (self.type == 3){
+    }else if (self.type == 4){
         self.title = @"编辑签名";
         self.tf.placeholder = @"编辑签名";
         self.tf.text = UserModel.sharedUser.mysign;
         [self.tf becomeFirstResponder];
-    }else if (self.type == 4){
+    }else if (self.type == 5){
         self.title = @"兴趣爱好";
         self.tf.hidden = YES;
         self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
@@ -140,7 +140,7 @@
 
 - (void)commitInfo:(UIButton*)sender{
     NSString* interest = @"";
-    if (self.type == 4){
+    if ([self.title isEqualToString:@"兴趣爱好"]){
         for (int i = 0;i < self.btnAry.count - 1; i++){
             UIButton* btn = self.btnAry[i];
             if (btn.selected){
@@ -148,11 +148,9 @@
             }
         }
     }else{
-        if (self.type != 3) {
-            if ([EBUtility isBlankString:self.tf.text]){
-                [SVProgressHUD showErrorWithStatus:@"内容不能为空"];
-                return;
-            }
+        if ([EBUtility isBlankString:self.tf.text]){
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"内容不能为空" andDuration:2.0];
+            return;
         }
     }
     
@@ -161,13 +159,13 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图）
-    if (self.type == 0){
+    if ([self.title isEqualToString:@"编辑昵称"]){
         [dict setObject:@"2" forKey:@"typeid"];
         [dict setObject:self.tf.text forKey:@"nickname"];
-    }else if (self.type == 3){
+    }else if ([self.title isEqualToString:@"编辑签名"]){
         [dict setObject:@"3" forKey:@"typeid"];
         [dict setObject:self.tf.text forKey:@"mysign"];
-    }else if (self.type == 4){
+    }else if ([self.title isEqualToString:@"兴趣爱好"]){
         [dict setObject:@"4" forKey:@"typeid"];
         [dict setObject:interest forKey:@"interest"];
     }
@@ -179,11 +177,11 @@
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {
-                if (self.type == 0){
+                if ([self.title isEqualToString:@"编辑昵称"]){
                     UserModel.sharedUser.nickname = self.tf.text;
-                }else if (self.type == 3){
+                }else if ([self.title isEqualToString:@"编辑签名"]){
                     UserModel.sharedUser.mysign = self.tf.text;
-                }else if (self.type == 4){
+                }else if ([self.title isEqualToString:@"兴趣爱好"]){
                     NSMutableArray *tempArray = NSMutableArray.array;
                     for (int i = 0;i < self.btnAry.count - 1; i++){
                         UIButton* btn = self.btnAry[i];

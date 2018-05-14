@@ -51,8 +51,8 @@
 //#define HttpURLString @"http://192.168.2.166:8888/api/"
 //#define HttpURLString @"https://m.feirantech.cn/api/"
 
-#define SHARE_WEBURL @"http://mobile.ishangbo.com/mobile/share/"
-//#define SHARE_WEBURL @"http://m.feirantech.cn/mobile/share/"
+//#define SHARE_WEBURL @"http://mobile.ishangbo.com/mobile/share/"
+#define SHARE_WEBURL @"http://m.feirantech.cn/mobile/share/"
 
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height

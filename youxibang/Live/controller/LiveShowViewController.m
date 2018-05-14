@@ -33,7 +33,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
 @property (strong, nonatomic) NSMutableArray *dataArray;
 @property (strong, nonatomic) LiveFilterView *filterView;
 
-@property (strong, nonatomic) NSArray *filterArray;
+@property (strong, nonatomic) NSMutableArray *filterArray;
 @property (strong, nonatomic) NSMutableArray *selectedIndexArray;
 
 @end
@@ -44,11 +44,12 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
     
 }
 
-- (NSArray *)filterArray {
+- (NSMutableArray *)filterArray {
     if (!_filterArray) {
         _filterArray = @[
-//  @{@"是否在线":@[@"全部",@"在线",@"离线"]},
- @{@"主播类型":@[@"全部",@"电竞",@"电商",@"体育",@"教育",@"游戏",@"户外",@"其他"]},@{@"直播经验":@[@"全部",@"1年",@"2年",@"3年",@"4年以上"]},@{@"直播类型":@[@"全部",@"全职",@"兼职"]}];
+  @{@"主播类型":@[@"全部",@"电竞",@"电商",@"体育",@"教育",@"游戏",@"户外",@"其他"]},
+  @{@"直播经验":@[@"全部",@"1年",@"2年",@"3年",@"4年以上"]},
+  @{@"直播类型":@[@"全部",@"全职",@"兼职"]}].mutableCopy;
     }
     return _filterArray;
 }
@@ -82,6 +83,7 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
     [self getLiveListRequest];
     distanceType = 0;
     ageType = 0;
+    [self getSelectTypeRequestWithType:2];
 }
 
 - (void)configCollectionView {
@@ -143,6 +145,30 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
     }];
 }
 
+//获取选择项
+- (void)getSelectTypeRequestWithType:(NSInteger)type {
+    NSDictionary *dic = @{@"type":@"anchor_type"};
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@currency/get_conf",HttpURLString] Paremeters:dic successOperation:^(id object) {
+        if (isKindOfNSDictionary(object)){
+            NSInteger code = [object[@"errcode"] integerValue];
+            NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
+            NSLog(@"输出 %@--%@",object,msg);
+            if (code == 1) {
+                NSMutableArray *tempArray = object[@"data"];
+                [tempArray insertObject:@"全部" atIndex:0];
+                NSDictionary *typeDic = @{@"主播类型":tempArray};
+                [self.filterArray replaceObjectAtIndex:0 withObject:typeDic];
+            }else{
+                [SVProgressHUD showErrorWithStatus:msg];
+            }
+        }
+    } failoperation:^(NSError *error) {
+        [SVProgressHUD dismiss];
+        [SVProgressHUD setDefaultMaskType:1];
+        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    }];
+}
+
 #pragma mark - collectionview refresh
 //头部刷新方法
 - (void)refreshHead {
@@ -171,10 +197,6 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.dataArray.count;
 }
-
-//- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-//    return UIEdgeInsetsMake(10, 10, 10, 10);
-//}
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     return CGSizeMake((SCREEN_WIDTH - 10)/2, (SCREEN_WIDTH - 10)/2+45);

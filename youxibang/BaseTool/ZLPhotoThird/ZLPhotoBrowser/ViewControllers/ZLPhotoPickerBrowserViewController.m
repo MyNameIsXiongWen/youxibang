@@ -545,6 +545,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
             else {
                 scrollView.visualEffectView.hidden = YES;
             }
+//            scrollView.visualEffectView.hidden = YES;
         }
         scrollView.sheet = self.sheet;
         // 为了监听单击photoView事件

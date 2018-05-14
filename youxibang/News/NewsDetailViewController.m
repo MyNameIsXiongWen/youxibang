@@ -109,8 +109,8 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
-    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
-    [SVProgressHUD show];
+//    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+//    [SVProgressHUD show];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {

@@ -9,4 +9,6 @@
 
 @interface AliPlayerViewController : UIViewController
 
+@property (copy, nonatomic) NSString *videoIdString;
+
 @end

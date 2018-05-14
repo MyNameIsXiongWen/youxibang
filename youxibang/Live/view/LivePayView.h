@@ -17,6 +17,7 @@ typedef void(^ConfirmSelecrBlock)(NSInteger index);
 @property (nonatomic, copy) ConfirmSelecrBlock confirmSelecrBlock;
 @property (nonatomic, strong) UIView *blackView;
 @property (nonatomic, assign) BOOL showBuyVip;
+@property (nonatomic, copy) NSString *titleString;
 - (void)show;
 - (void)dismiss;
 

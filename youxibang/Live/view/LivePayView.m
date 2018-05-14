@@ -41,7 +41,7 @@
     [self.blackView addGestureRecognizer:tap];
     
     UIImageView *bkgImgView = [EBUtility imgfrome:self.bounds andImg:[UIImage imageNamed:@"live_pay_bkg"] andView:self];
-    UILabel *titleLabel = [EBUtility labfrome:CGRectMake(0, 100, self.frame.size.width, 25) andText:@"查看主播的全部资料或聊天" andColor:[UIColor colorFromHexString:@"333333"] andView:self];
+    UILabel *titleLabel = [EBUtility labfrome:CGRectMake(0, 100, self.frame.size.width, 25) andText:self.titleString andColor:[UIColor colorFromHexString:@"333333"] andView:self];
     titleLabel.font = [UIFont systemFontOfSize:17.0];
     UILabel *lineLabel = [EBUtility labfrome:CGRectMake(0, 150, self.frame.size.width, 0.5) andText:@"" andColor:nil andView:self];
     lineLabel.backgroundColor = [UIColor colorFromHexString:@"b2b2b2"];

@@ -15,6 +15,7 @@
 
 @interface VipWebViewController () <UIWebViewDelegate, WXApiDelegate> {
     NSString *payType;
+    NSString *vipType;
 }
 
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
@@ -123,6 +124,7 @@
 }
 
 - (void)completePay:(NSNotification *)notification{
+    UserModel.sharedUser.vip_grade = vipType;
     [self.navigationController popViewControllerAnimated:YES];
     [SVProgressHUD showSuccessWithStatus:@"支付成功"];
     if (self.paySuccessBlock) {
@@ -167,7 +169,8 @@
                 NSArray *params = [parameter componentsSeparatedByString:@"&"];
                 
                 if ([self respondsToSelector:sel]) {
-                    [self alipayWithTargetId:params.firstObject Account:params[1] PayType:params.lastObject];
+                    vipType = params.lastObject;
+                    [self alipayWithTargetId:params.firstObject Account:params[1] PayType:params[2]];
                 }
             }
         }

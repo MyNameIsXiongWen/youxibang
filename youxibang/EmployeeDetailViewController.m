@@ -39,6 +39,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     NSString *price;//查看资料或聊天的价格
     NSDictionary *adDataInfo;//查询会员是否能够点击（应对审核）
     BOOL hadRequestLimitOfWechat_IM;//是都请求过是否有查看微信号和聊天的权限
+    BOOL isCanPlayVideo;//是否有播放视频的权限(只针对非会员，因为会员可以看视频)
 }
 
 @property (nonatomic,strong) UIView *nav;//渐显view
@@ -195,6 +196,9 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {//有权限 聊天/查看微信
                 isCanTalk = YES;
+                if ([object[@"data"] integerValue] == 0) {
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"当天会员权限已用完" andDuration:2.0];
+                }
             }
             else if (code == 0) {//没权限 聊天/查看微信
                 price = object[@"data"];
@@ -443,8 +447,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 existBgimg = YES;
             }
         }
-        if (isKindOfNSString(self.dataInfo[@"video_img"])) {
-            if ([self.dataInfo[@"video_img"] length] > 0) {
+        if (isKindOfNSString(self.dataInfo[@"video_img"]) && isKindOfNSString(self.dataInfo[@"video"])) {
+            if ([self.dataInfo[@"video_img"] length] > 0 && [self.dataInfo[@"video"] length] > 0) {
                 existVideo = YES;
             }
         }
@@ -612,7 +616,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 make.size.mas_equalTo(CGSizeMake(0, 20));
             }];
         }
-        time.text = [NSString stringWithFormat:@"  %@  ",self.dataInfo[@"last_login"]];
+        time.text = [NSString stringWithFormat:@" %@   ",self.dataInfo[@"last_login"]];
         fansCount = [self.dataInfo[@"follow_count"] intValue];
         fans.text = [NSString stringWithFormat:@"%d粉丝",fansCount];
         
@@ -806,6 +810,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 else {
                     [weakSelf configZLPhotoPickerBrowserWithArray:weakSelf.charmPhotoArray Index:index];
                 }
+//                [weakSelf configZLPhotoPickerBrowserWithArray:weakSelf.charmPhotoArray Index:index];
             };
             return cell;
         }
@@ -881,6 +886,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 #pragma mark - 付款/微信/聊天
 - (void)showPayViewWithPrice:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
     LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284-45) Price:money];
+    freeView.titleString = @"查看主播的全部资料或聊天";
     freeView.showBuyVip = NO;
     if (isKindOfNSDictionary(adDataInfo)) {
         if ([adDataInfo[@"link_lock"] integerValue] == 1) {
@@ -930,7 +936,14 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         VipWebViewController *con = [VipWebViewController new];
         con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
         con.paySuccessBlock = ^{
-            hadRequestLimitOfWechat_IM = NO;
+            if (type.integerValue == 5) {
+                AliPlayerViewController *playCon = [AliPlayerViewController new];
+                playCon.videoIdString = self.dataInfo[@"video"];
+                [self.navigationController pushViewController:playCon animated:YES];
+            }
+            else if (type.integerValue == 3) {
+                hadRequestLimitOfWechat_IM = NO;
+            }
         };
         [self.navigationController pushViewController:con animated:YES];
     }
@@ -1010,11 +1023,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             NSLog(@"输出 %@--%@",object,msg);
             if (code == 1) {
                 [SVProgressHUD showSuccessWithStatus:@"支付成功"];
-                if (type.intValue == 3) {
-                    isCanTalk = YES;
-                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
-                }
-                else if (type.intValue == 2) {
+                if (type.intValue == 2) {
                     for (int i=0; i<self.charmPhotoArray.count; i++) {
                         LiveCharmPhotoModel *model = self.charmPhotoArray[i];
                         if ([model.id isEqualToString:targetId]) {
@@ -1024,6 +1033,16 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                         }
                     }
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
+                }
+                else if (type.intValue == 3) {
+                    isCanTalk = YES;
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+                }
+                else if (type.intValue == 5) {
+                    isCanPlayVideo = YES;
+                    AliPlayerViewController *playCon = [AliPlayerViewController new];
+                    playCon.videoIdString = self.dataInfo[@"video"];
+                    [self.navigationController pushViewController:playCon animated:YES];
                 }
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
@@ -1041,15 +1060,42 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index {
     BOOL existVideo = NO;
     if (self.dataInfo) {
-        if (isKindOfNSString(self.dataInfo[@"video_img"])) {
-            if ([self.dataInfo[@"video_img"] length] > 0) {
+        if (isKindOfNSString(self.dataInfo[@"video_img"]) && isKindOfNSString(self.dataInfo[@"video"])) {
+            if ([self.dataInfo[@"video_img"] length] > 0 && [self.dataInfo[@"video"] length] > 0) {
                 existVideo = YES;
             }
         }
     }
     if (existVideo) {
         if (index == 0) {
+            if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+                UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+                [self.navigationController pushViewController:vc animated:1];
+                return;
+            }
+            if (UserModel.sharedUser.vip_grade.integerValue == 0) {
+                if (!isCanPlayVideo) {
+                    LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284) Price:self.dataInfo[@"video_price"]];
+                    freeView.titleString = @"是否继续观看视频？";
+                    freeView.showBuyVip = YES;
+                    WEAKSELF
+                    typeof(freeView) __weak weakFreeView = freeView;
+                    weakFreeView.confirmSelecrBlock = ^(NSInteger index) {
+                        [weakFreeView dismiss];
+                        [weakSelf clickLivePayViewWithIndex:index Price:self.dataInfo[@"video_price"] Type:@"5" TargetId:self.dataInfo[@"id"]];
+                    };
+                    [freeView show];
+                }
+                else {
+                    AliPlayerViewController *playCon = [AliPlayerViewController new];
+                    playCon.videoIdString = self.dataInfo[@"video"];
+                    [self.navigationController pushViewController:playCon animated:YES];
+                }
+                return;
+            }
             AliPlayerViewController *playCon = [AliPlayerViewController new];
+            playCon.videoIdString = self.dataInfo[@"video"];
             [self.navigationController pushViewController:playCon animated:YES];
         }
         else {

@@ -20,7 +20,7 @@
 //最大录制视频时间
 #define VideoMaximumDuration 10
 //最大上传视频大小M
-#define VideoMaximumMemory 10
+#define VideoMaximumMemory 5
 //图片URL路径
 #define ImageUrlPath [NSTemporaryDirectory() stringByAppendingString:@"image.png"]
 
@@ -276,7 +276,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 2) {
-        return 5;
+        return 6;
     }
     return 1;
 }
@@ -347,15 +347,15 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
             }
         }
         interest = [temp componentsJoinedByString:@","];
-        NSArray* title = @[@"昵称",@"生日",@"性别",@"签名",@"兴趣爱好"];
-        NSArray* img = @[@"ico_nc",@"ico_sr",@"ico_xb",@"ico_qm",@"ico_ah"];
-        NSArray* detail = @[UserModel.sharedUser.nickname?:@"",UserModel.sharedUser.birthday?:@"",UserModel.sharedUser.sexstr?:@"",UserModel.sharedUser.mysign?:@"",interest];
+        NSArray* title = @[@"昵称",@"ID",@"生日",@"性别",@"签名",@"兴趣爱好"];
+        NSArray* img = @[@"ico_nc",@"ico_id",@"ico_sr",@"ico_xb",@"ico_qm",@"ico_ah"];
+        NSArray* detail = @[UserModel.sharedUser.nickname?:@"",DataStore.sharedDataStore.userid?:@"",UserModel.sharedUser.birthday?:@"",UserModel.sharedUser.sexstr?:@"",UserModel.sharedUser.mysign?:@"",interest];
         MineTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:PERSONAL_TABLEVIEW_IDENTIFIER];
         cell.leftLabel.text = title[indexPath.row];
         cell.rightLabel.text = detail[indexPath.row];
         cell.iconImageView.image = [UIImage imageNamed:img[indexPath.row]];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        if (indexPath.row == 1 || indexPath.row == 2){
+        if (indexPath.row == 1 || indexPath.row == 2 || indexPath.row == 3){
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.rightLabelTrailingConstraint.constant = 15;
         }
@@ -370,7 +370,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView endEditing:1];
     if (indexPath.section == 2) {
-        if (indexPath.row == 0 || indexPath.row == 3 || indexPath.row == 4){
+        if (indexPath.row == 0 || indexPath.row == 4 || indexPath.row == 5){
             EditInfoViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ei"];
             vc.delegate = self;
             vc.type = indexPath.row;

@@ -112,7 +112,7 @@
         {
             //开始播放
             [self.aliPlayer start];
-            self.aliPlayer.quality = AliyunVodPlayerVideoHD;
+            self.aliPlayer.quality = AliyunVodPlayerVideoLD;
             
             AliyunVodPlayerVideo *videoModel = [self.aliPlayer getAliyunMediaInfo];
             if (videoModel) {
@@ -245,7 +245,7 @@
             NSString *str = [response objectForKey:@"message"];
             if (msg == 1) {
                 NSDictionary *tokenDictionary = (NSDictionary *)response;
-                [self.aliPlayer prepareWithVid:UserModel.sharedUser.video
+                [self.aliPlayer prepareWithVid:self.videoIdString
                                    accessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"]
                                accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"]
                                  securityToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"]];

@@ -86,8 +86,8 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     if (userModel.bgimg.count > 0) {
         existBgimg = YES;
     }
-    if (isKindOfNSString(userModel.video)) {
-        if (userModel.video.length > 0) {
+    if (isKindOfNSString(userModel.video) && isKindOfNSString(userModel.video_img)) {
+        if (userModel.video.length > 0 && userModel.video_img.length > 0) {
             existVideo = YES;
         }
     }
@@ -285,14 +285,15 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index{
     BOOL existVideo = NO;
     UserModel *userModel = UserModel.sharedUser;
-    if (isKindOfNSString(userModel.video)) {
-        if (userModel.video.length > 0) {
+    if (isKindOfNSString(userModel.video) && isKindOfNSString(userModel.video_img)) {
+        if (userModel.video.length > 0 && userModel.video_img.length > 0) {
             existVideo = YES;
         }
     }
     if (existVideo) {
         if (index == 0) {
             AliPlayerViewController *playCon = [AliPlayerViewController new];
+            playCon.videoIdString = UserModel.sharedUser.video;
             [self.navigationController pushViewController:playCon animated:YES];
         }
         else {
