@@ -398,7 +398,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 
 - (UITableViewCell *)displayTableViewCell:(NSIndexPath *)indexPath {
     UserModel *usermodel = UserModel.sharedUser;
-    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"订单中心",@"我的技能",@"我是主播",@"订单中心",@"有奖邀请",@"联系客服",@"系统设置"]];
+    NSArray* ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"订单中心",@"我的技能",@"我是主播",@"有奖邀请",@"联系客服",@"系统设置"]];
     NSArray* imgAry = @[@[@"ico_myqb",@""],@[@""],@[@"ico_gold",@"ico_renwu",@"ico_order_center",@"ico_gamebaby",@"ico_anchor",@"ico_yqm1",@"ico_kf",@"ico_setting"]];
     if (usermodel.is_anchor.integerValue == 1) {
         ary = @[@[@"我的钱包",@""],@[@""],@[@"我的金币",@"我的任务",@"订单中心",@"我是主播",@"有奖邀请",@"联系客服",@"系统设置"]];
