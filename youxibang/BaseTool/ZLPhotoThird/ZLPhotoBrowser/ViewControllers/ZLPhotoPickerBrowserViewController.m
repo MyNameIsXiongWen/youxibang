@@ -15,6 +15,7 @@
 #import "RetrievePayPasswordViewController.h"
 #import "LiveCharmPhotoPayView.h"
 #import "LoginViewController.h"
+#import "TopUpAndWithdrawViewController.h"
 
 static NSString *_cellIdentifier = @"collectionViewCell";
 
@@ -601,6 +602,20 @@ static NSString *_cellIdentifier = @"collectionViewCell";
                 UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 SetPayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"spp"];
                 [weakSelf.navigationController pushViewController:vc animated:1];
+                return;
+            }
+            if (user.user_money.floatValue < money.floatValue) {
+                UIAlertController *alertcon = [UIAlertController alertControllerWithTitle:@"当前余额不足，是否前去充值" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancelaction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *confiraction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
+                    vc.type = 0;
+                    [self.navigationController pushViewController:vc animated:1];
+                }];
+                [alertcon addAction:confiraction];
+                [alertcon addAction:cancelaction];
+                [self presentViewController:alertcon animated:YES completion:nil];
                 return;
             }
             //弹起支付密码alert

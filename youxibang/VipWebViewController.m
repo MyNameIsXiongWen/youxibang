@@ -12,6 +12,7 @@
 #import "WXApi.h"
 #import "WXApiObject.h"
 #import <AlipaySDK/AlipaySDK.h>
+#import "TopUpAndWithdrawViewController.h"
 
 @interface VipWebViewController () <UIWebViewDelegate, WXApiDelegate> {
     NSString *payType;
@@ -58,8 +59,18 @@
             return;
         }
         NSString* balance = [NSString stringWithFormat:@"%@",user.user_money?:@"0"];
-        if (account.intValue > balance.intValue){
-            [SVProgressHUD showErrorWithStatus:@"余额不足"];
+        if (balance.floatValue < account.floatValue) {
+            UIAlertController *alertcon = [UIAlertController alertControllerWithTitle:@"当前余额不足，是否前去充值" message:nil preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *cancelaction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+            UIAlertAction *confiraction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
+                vc.type = 0;
+                [self.navigationController pushViewController:vc animated:1];
+            }];
+            [alertcon addAction:confiraction];
+            [alertcon addAction:cancelaction];
+            [self presentViewController:alertcon animated:YES completion:nil];
             return;
         }
         CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];

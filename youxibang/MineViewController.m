@@ -23,6 +23,7 @@
 #import "VipWebViewController.h"
 #import "InviteViewController.h"
 #import "SigninViewController.h"
+#import "LoginViewController.h"
 #import "AliPlayerViewController.h"
 
 @interface MineViewController ()<UITableViewDataSource,UITableViewDelegate,TopUpTableViewCellDelegate, SDCycleScrollViewDelegate> {
@@ -292,6 +293,12 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     }
     if (existVideo) {
         if (index == 0) {
+            if (!DataStore.sharedDataStore.token) {
+                UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+                [self.navigationController pushViewController:vc animated:1];
+                return;
+            }
             AliPlayerViewController *playCon = [AliPlayerViewController new];
             playCon.videoIdString = UserModel.sharedUser.video;
             [self.navigationController pushViewController:playCon animated:YES];

@@ -24,6 +24,7 @@
 #import "ShareView.h"
 #import "VipWebViewController.h"
 #import "AliPlayerViewController.h"
+#import "TopUpAndWithdrawViewController.h"
 
 static NSString *const LIVECHARM_TABLEVIEW_ID = @"livecharm_tableview_id";
 static NSString *const LIVEINFORMATION_TABLEVIEW_ID = @"liveinformation_tableview_id";
@@ -915,7 +916,20 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选取支付方式" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
         UIAlertAction *pay = [UIAlertAction actionWithTitle:@"余额支付" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
+            if (user.user_money.floatValue < money.floatValue) {
+                UIAlertController *alertcon = [UIAlertController alertControllerWithTitle:@"当前余额不足，是否前去充值" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancelaction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *confiraction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
+                    vc.type = 0;
+                    [self.navigationController pushViewController:vc animated:1];
+                }];
+                [alertcon addAction:confiraction];
+                [alertcon addAction:cancelaction];
+                [self presentViewController:alertcon animated:YES completion:nil];
+                return;
+            }
             //弹起支付密码alert
             CustomAlertView* customAlert = [[CustomAlertView alloc] initWithType:6];
             customAlert.resultDate = ^(NSString *date) {
@@ -937,6 +951,12 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
         con.paySuccessBlock = ^{
             if (type.integerValue == 5) {
+                if (!DataStore.sharedDataStore.token) {
+                    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+                    [self.navigationController pushViewController:vc animated:1];
+                    return;
+                }
                 AliPlayerViewController *playCon = [AliPlayerViewController new];
                 playCon.videoIdString = self.dataInfo[@"video"];
                 [self.navigationController pushViewController:playCon animated:YES];
@@ -982,6 +1002,20 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 SetPayPasswordViewController* vc = [sb instantiateViewControllerWithIdentifier:@"spp"];
                 [weakSelf.navigationController pushViewController:vc animated:1];
+                return;
+            }
+            if (user.user_money.floatValue < money.floatValue) {
+                UIAlertController *alertcon = [UIAlertController alertControllerWithTitle:@"当前余额不足，是否前去充值" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancelaction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *confiraction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
+                    vc.type = 0;
+                    [self.navigationController pushViewController:vc animated:1];
+                }];
+                [alertcon addAction:confiraction];
+                [alertcon addAction:cancelaction];
+                [self presentViewController:alertcon animated:YES completion:nil];
                 return;
             }
             //弹起支付密码alert

@@ -8,7 +8,7 @@
 
 #import "MainNavigationController.h"
 
-@interface MainNavigationController ()
+@interface MainNavigationController () <UIGestureRecognizerDelegate>
 
 @end
 
@@ -55,6 +55,9 @@
 
 -(void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
     if ((self.childViewControllers.count > 0) ) {
+        if ([self respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+            self.interactivePopGestureRecognizer.delegate = self;
+        }
         UIView* view = [[UIView alloc]initWithFrame: CGRectMake(0, 0, 50, 40)];
         UIImageView* img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 10, 20)];
         img.image = [UIImage imageNamed:@"back_black"];
@@ -66,6 +69,10 @@
         viewController.hidesBottomBarWhenPushed = YES;
     }
     [super pushViewController:viewController animated:animated];
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    return YES;
 }
 
 -(void)back {

@@ -11,6 +11,7 @@
 #import "WXApi.h"
 #import "WXApiObject.h"
 #import <AlipaySDK/AlipaySDK.h>
+#import "TopUpAndWithdrawViewController.h"
 
 @interface AwardViewController () <WXApiDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *awardLab;
@@ -48,7 +49,7 @@
             [self.photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.orderInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_head"]];
             self.name.text = [NSString stringWithFormat:@"%@",self.orderInfo[@"nickname"]];
             self.content.text = [NSString stringWithFormat:@"%@  %@*%@小时",self.orderInfo[@"title"],self.orderInfo[@"perprice"],self.orderInfo[@"hours"]];
-            self.awardLab.text = [NSString stringWithFormat:@"为%@打赏",self.orderInfo[@"nickname"]];
+            self.awardLab.text = [NSString stringWithFormat:@"为 %@ 打赏",self.orderInfo[@"nickname"]];
         }
         else if (self.type == 2) {
             [self.photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.orderInfo[@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_head"]];
@@ -61,7 +62,7 @@
             [self.photo sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",self.orderInfo[@"info"][@"photo"]]] placeholderImage:[UIImage imageNamed:@"ico_head"]];
             self.name.text = [NSString stringWithFormat:@"%@",self.orderInfo[@"info"][@"nickname"]];
             self.content.text = [NSString stringWithFormat:@"%@  ¥%@*%@小时",self.orderInfo[@"gamename"],self.orderInfo[@"perprice"],self.orderInfo[@"hours"]];
-            self.awardLab.text = [NSString stringWithFormat:@"为%@打赏",self.orderInfo[@"info"][@"nickname"]];
+            self.awardLab.text = [NSString stringWithFormat:@"为 %@ 打赏",self.orderInfo[@"info"][@"nickname"]];
         }
     }
 }
@@ -166,8 +167,18 @@
                 return;
             }
             NSString* balance = [NSString stringWithFormat:@"%@",user.user_money?:@"0"];
-            if (account.intValue > balance.intValue){
-                [SVProgressHUD showErrorWithStatus:@"余额不足"];
+            if (balance.floatValue < account.floatValue) {
+                UIAlertController *alertcon = [UIAlertController alertControllerWithTitle:@"当前余额不足，是否前去充值" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancelaction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *confiraction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
+                    vc.type = 0;
+                    [self.navigationController pushViewController:vc animated:1];
+                }];
+                [alertcon addAction:confiraction];
+                [alertcon addAction:cancelaction];
+                [self presentViewController:alertcon animated:YES completion:nil];
                 return;
             }
             CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
@@ -214,8 +225,18 @@
                 return;
             }
             NSString* balance = [NSString stringWithFormat:@"%@",userModel.user_money ? : @"0"];
-            if (account.intValue > balance.intValue){
-                [SVProgressHUD showErrorWithStatus:@"余额不足"];
+            if (balance.floatValue < account.floatValue) {
+                UIAlertController *alertcon = [UIAlertController alertControllerWithTitle:@"当前余额不足，是否前去充值" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *cancelaction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction *confiraction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    TopUpAndWithdrawViewController* vc = [sb instantiateViewControllerWithIdentifier:@"tuaw"];
+                    vc.type = 0;
+                    [self.navigationController pushViewController:vc animated:1];
+                }];
+                [alertcon addAction:confiraction];
+                [alertcon addAction:cancelaction];
+                [self presentViewController:alertcon animated:YES completion:nil];
                 return;
             }
             CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
