@@ -67,10 +67,8 @@
                 bot.hidden = YES;
             }
         }else{
-            
-            [SVProgressHUD showErrorWithStatus:@"请输入6位密码"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入6位密码" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         }
-        
     }else{
         if ([self.tf.text isEqualToString:self.password]){
             
@@ -109,18 +107,14 @@
                     }
                 }
             } failoperation:^(NSError *error) {
-                
                 [SVProgressHUD dismiss];
-                [SVProgressHUD setDefaultMaskType:1];
-                [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
             }];
-            
         }else{
-            [SVProgressHUD showErrorWithStatus:@"两次密码输入不一致"];
+            [SVProgressHUD dismiss];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"两次密码输入不一致" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }
-       
     }
-    
 }
 
 - (void)didReceiveMemoryWarning {

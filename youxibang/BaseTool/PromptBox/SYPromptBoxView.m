@@ -31,10 +31,19 @@
 }
 
 - (void)setPromptViewMessage:(NSString *)message
-                 andDuration:(NSTimeInterval)duration{
+                 andDuration:(NSTimeInterval)duration
+              PromptLocation:(PromptBoxLocation)location {
     NSDictionary *dic = @{NSFontAttributeName:[UIFont systemFontOfSize:14.0]};
     CGSize labelSize = [message boundingRectWithSize:CGSizeMake(SCREEN_WIDTH - 70, 40) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:dic context:nil].size;
-    self.frame = CGRectMake((SCREEN_WIDTH - labelSize.width - 30) * 0.5, SCREEN_HEIGHT - 80, labelSize.width + 30, 30);
+    if (location == PromptBoxLocationBottom) {
+        self.frame = CGRectMake((SCREEN_WIDTH - labelSize.width - 30) * 0.5, SCREEN_HEIGHT - 100, labelSize.width + 30, 30);
+    }
+    else if (location == PromptBoxLocationCenter) {
+        self.frame = CGRectMake((SCREEN_WIDTH - labelSize.width - 30) * 0.5, (SCREEN_HEIGHT - 30)/2, labelSize.width + 30, 30);
+    }
+    else {
+        self.frame = CGRectMake((SCREEN_WIDTH - labelSize.width - 30) * 0.5, 80, labelSize.width + 30, 30);
+    }
     self.alpha = 1;
     UIWindow *window = [[UIApplication sharedApplication].windows lastObject];
     [window addSubview:self];

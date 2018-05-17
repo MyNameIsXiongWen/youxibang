@@ -101,8 +101,7 @@
         [self paymentParameters:object];
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -145,11 +144,11 @@
                                       }.mutableCopy;
         NSString* account = self.tf.text;
         if ([EBUtility isBlankString:account]){
-            [SVProgressHUD showErrorWithStatus:@"金额不能为空"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"金额不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         if (account.intValue <= 0){
-            [SVProgressHUD showErrorWithStatus:@"金额不能小于0"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"金额不能小于0" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         [dict setObject:account forKey:@"account"];
@@ -199,11 +198,11 @@
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         NSString* account = self.tf.text;
         if ([EBUtility isBlankString:account]){
-            [SVProgressHUD showErrorWithStatus:@"金额不能为空"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"金额不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         if (account.intValue <= 0){
-            [SVProgressHUD showErrorWithStatus:@"金额不能小于0"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"金额不能小于0" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
@@ -263,8 +262,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 

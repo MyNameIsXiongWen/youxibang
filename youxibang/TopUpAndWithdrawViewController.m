@@ -90,16 +90,16 @@
 - (IBAction)topUp:(id)sender {
     if (self.type == 1){
         if (UserModel.sharedUser.user_money.intValue < 30) {
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"账户余额不够最低提现金额" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"账户余额不够最低提现金额" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         NSString* account = self.tf.text;
         if (account.intValue < 30){
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能低于30元" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能低于30元" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         if (UserModel.sharedUser.user_money.intValue < account.intValue){
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能高于账户余额" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"提现金额不能高于账户余额" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         UserModel *userModel = UserModel.sharedUser;
@@ -112,7 +112,6 @@
         CustomAlertView* alert = [[CustomAlertView alloc] initWithType:6];
         alert.resultDate = ^(NSString *date) {
             [self drawMoney:date];
-            
         };
         alert.resultIndex = ^(NSInteger index) {
             RetrievePayPasswordViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"rpp"];
@@ -122,7 +121,7 @@
     }else{
         NSString* account = self.tf.text;
         if (account.intValue < 1){
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"充值金额不能少于1元" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"充值金额不能少于1元" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         NSString* otype;
@@ -150,9 +149,7 @@
                 
                 if (code == 1) {
                     if (self.wxBtn.selected){
-                        
                         PayReq *request = [[PayReq alloc] init];
-                        
                         request.partnerId = [NSString stringWithFormat:@"%@",object[@"data"][@"partnerid"]];
                         request.prepayId = [NSString stringWithFormat:@"%@",object[@"data"][@"prepayid"]];
                         request.package = [NSString stringWithFormat:@"%@",object[@"data"][@"package"]];
@@ -162,28 +159,23 @@
                         [WXApi sendReq:request];
                     }else if (self.zfbBtn.selected){
                         [[AlipaySDK defaultService] payOrder:[NSString stringWithFormat:@"%@",object[@"data"]] fromScheme:@"alipayYouxibang" callback:^(NSDictionary *resultDic) {
-
                         }];
                     }
                 }else{
-                    [SVProgressHUD showErrorWithStatus:msg];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                 }
             }
-            
         } failoperation:^(NSError *error) {
             
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }
 }
 
 - (void)drawMoney:(NSString*)pw{
-
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
     [dict setObject:self.tf.text forKey:@"account"];
@@ -196,11 +188,8 @@
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
-            
             if (code == 1) {
-//                [SVProgressHUD showSuccessWithStatus:msg];
                 LoanDelegateViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ld"];
-
                 [self.navigationController pushViewController:vc animated:1];
             }else if (code == 2) {
                 [SVProgressHUD showInfoWithStatus:msg];
@@ -225,28 +214,21 @@
                 [alert showAlertView];
             }
         }
-        
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
-
 }
 
 - (void)completePay:(NSNotification *)notification{
-
     CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"支付完成，即将跳转到个人页面。" AndType:0];
     alert.resultIndex = ^(NSInteger index) {
-        
         [self.navigationController popToRootViewControllerAnimated:1];
     };
     [alert showAlertView];
-
 }
 #pragma mark - otherDelegate/DataSource
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
     for (UIButton* i in self.sumBtnAry){
         i.selected = NO;
     }
@@ -254,40 +236,14 @@
 }
 //当用户按下return去键盘
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    
     return YES;
-    
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.tf resignFirstResponder];
 }
 
-//微信支付回调
-//-(void)onResp:(BaseResp*)resp{
-//    if ([resp isKindOfClass:[PayResp class]]){
-//        PayResp *response=(PayResp *)resp;
-//        if (response.errCode == WXSuccess){
-//            NSLog(@"支付成功");
-//            NSNotification *notification = [NSNotification notificationWithName:@"completePay" object:nil userInfo:nil];
-//            [[NSNotificationCenter defaultCenter] postNotification:notification];
-//        }else{
-//            NSLog(@"支付失败，retcode=%d",resp.errCode);
-//        }
-////        switch(response.errCode){
-////            caseWXSuccess:
-////                //服务器端查询支付通知或查询API返回的结果再提示成功
-////                NSLog(@"支付成功");
-////                [self completePay];
-////                break;
-////            default:
-////                NSLog(@"支付失败，retcode=%d",resp.errCode);
-////                break;
-////        }
-//    }
-//}
 /*
 #pragma mark - Navigation
 

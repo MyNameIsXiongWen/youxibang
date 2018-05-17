@@ -239,8 +239,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络延迟，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -259,8 +258,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络延迟，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -561,8 +559,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络延迟，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //上传视频地址
@@ -584,8 +581,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络延迟，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -627,7 +623,8 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 
 - (void)uploadFailedWithCode:(NSString *)code message:(NSString *)message {
     NSLog(@"%@-------%@",code,message);
-    [SVProgressHUD showErrorWithStatus:@"上传失败"];
+    [SVProgressHUD dismiss];
+    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"上传失败" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
 }
 
 - (void)uploadProgressWithUploadedSize:(long long)uploadedSize totalSize:(long long)totalSize {
@@ -680,8 +677,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络延迟，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 

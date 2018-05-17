@@ -62,11 +62,11 @@
 //完成
 - (IBAction)finishBtn:(id)sender {
     if ([EBUtility isBlankString:self.name.text]){
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"昵称不能为空" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"昵称不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([EBUtility isBlankString:self.birthday]){
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"生日不能为空" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"生日不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     NSString* sex;
@@ -117,13 +117,12 @@
                 vc.PushToMainTabbar = YES;
                 [self.navigationController pushViewController:vc animated:1];
             }else{
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:str andDuration:2.0];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:str andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             }
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络延迟，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
     }];
     
 }

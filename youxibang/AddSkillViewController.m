@@ -35,15 +35,7 @@
 
 //提交
 - (IBAction)commitInfo:(id)sender {
-    //这里是测试播放器
-//    [self.session setCategory:AVAudioSessionCategoryPlayback error:nil];
-//
-//    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:url] error:nil];
-//
-//    [self.player play];
-    
     if (self.originSkill){//编辑技能接口与创建是不同的
-
         UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:1]];
         UITextField* grade = [cell viewWithTag: 1];
         
@@ -54,15 +46,19 @@
         UITextView* des = [cell viewWithTag: 1];
         
         if ([EBUtility isBlankString:grade.text]){
-            [SVProgressHUD showErrorWithStatus:@"请填写段位"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写段位" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         if ([EBUtility isBlankString:price.text]){
-            [SVProgressHUD showErrorWithStatus:@"请填写每小时单价"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写每小时单价" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         if ([EBUtility isBlankString:des.text]){
-            [SVProgressHUD showErrorWithStatus:@"请填写技能描述"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写技能描述" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+            return;
+        }
+        if (!self.recordFileUrl) {
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请录制语音" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
@@ -77,10 +73,7 @@
         [dict setObject:price.text forKey:@"price"];
         [dict setObject:[NSString stringWithFormat:@"%@",self.originSkill[@"source"]] forKey:@"source"];
         
-        NSString* url = nil;
-        if (self.recordFileUrl){
-            url = [self audioPCMtoMP3];
-        }
+        NSString* url = [self audioPCMtoMP3];
         [[NetWorkEngine shareNetWorkEngine] postFileFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/editskill.html",HttpURLString] Paremeters:dict Image:self.img File:url successOperation:^(id object) {
             [SVProgressHUD dismiss];
             [SVProgressHUD setDefaultMaskType:1];
@@ -96,21 +89,17 @@
                     [SVProgressHUD showErrorWithStatus:msg];
                 }
             }
-            
         } failoperation:^(NSError *error) {
-            
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
-
     }else{
         if ([EBUtility isBlankString:self.skillId]){
-            [SVProgressHUD showErrorWithStatus:@"请选择技能"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请选择技能" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         if (!self.img){
-            [SVProgressHUD showErrorWithStatus:@"请上传技能图片"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请上传技能图片" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:1]];
@@ -123,24 +112,24 @@
         UITextView* des = [cell viewWithTag: 1];
         
         if ([EBUtility isBlankString:grade.text]){
-            [SVProgressHUD showErrorWithStatus:@"请填写段位"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写段位" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         if ([EBUtility isBlankString:price.text]){
-            [SVProgressHUD showErrorWithStatus:@"请填写每小时单价"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写每小时单价" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         if ([EBUtility isBlankString:des.text]){
-            [SVProgressHUD showErrorWithStatus:@"请填写技能描述"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写技能描述" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+            return;
+        }
+        if (!self.recordFileUrl) {
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请录制语音" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
         [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
         [SVProgressHUD show];
-        NSString* url;
-        if (self.recordFileUrl){
-            url = [self audioPCMtoMP3];
-        }
-        
+        NSString* url = [self audioPCMtoMP3];
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         
         [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
@@ -169,8 +158,7 @@
         } failoperation:^(NSError *error) {
             
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
 
     }

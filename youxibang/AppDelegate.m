@@ -93,7 +93,7 @@
                 DataStore.sharedDataStore.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
                 DataStore.sharedDataStore.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
                 DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
-                
+                [self getVideoUploadToken];
                 [UserNameTool saveLoginData:dic];
                 
                 //jpush
@@ -124,14 +124,13 @@
                 [UserNameTool reloadPersonalData:^{
                 }];
             }else{
-//                [SVProgressHUD showErrorWithStatus:msg];
+//                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             }
         }
     } failoperation:^(NSError *error) {
         NSLog(@"errr %@",error);
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
-//        [SVProgressHUD showErrorWithStatus:@"网络有误，请稍后再试"];
     }];
 }
 
@@ -316,6 +315,24 @@
     else {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"SHARENOTIFICATION" object:@"fail"];
     }
+}
+
+- (void)getVideoUploadToken {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
+        if (isKindOfNSDictionary(response)) {
+            NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
+            NSString *str = [response objectForKey:@"message"];
+            if (msg == 1) {
+                NSDictionary *tokenDictionary = (NSDictionary *)response;
+                [[NSUserDefaults standardUserDefaults] setObject:tokenDictionary forKey:@"AliPlayerToken"];
+            }else{
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:str andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+            }
+        }
+    } failoperation:^(NSError *error) {
+    }];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

@@ -198,7 +198,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             if (code == 1) {//有权限 聊天/查看微信
                 isCanTalk = YES;
                 if ([object[@"data"] integerValue] == 0) {
-                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"当天会员权限已用完" andDuration:2.0];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"当天会员权限已用完" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
                 }
             }
             else if (code == 0) {//没权限 聊天/查看微信
@@ -210,8 +210,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -266,8 +265,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             }
         } failoperation:^(NSError *error) {
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }
     else {//主播信息
@@ -309,8 +307,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             }
         } failoperation:^(NSError *error) {
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }
 }
@@ -425,8 +422,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -689,8 +685,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -982,7 +977,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             }
         }
     } failoperation:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -1084,8 +1079,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -1108,29 +1102,32 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                 [self.navigationController pushViewController:vc animated:1];
                 return;
             }
+            BOOL playvideo = YES;
             if (UserModel.sharedUser.vip_grade.integerValue == 0) {
                 if (!isCanPlayVideo) {
-                    LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284) Price:self.dataInfo[@"video_price"]];
-                    freeView.titleString = @"是否继续观看视频？";
-                    freeView.showBuyVip = YES;
-                    WEAKSELF
-                    typeof(freeView) __weak weakFreeView = freeView;
-                    weakFreeView.confirmSelecrBlock = ^(NSInteger index) {
-                        [weakFreeView dismiss];
-                        [weakSelf clickLivePayViewWithIndex:index Price:self.dataInfo[@"video_price"] Type:@"5" TargetId:self.dataInfo[@"id"]];
-                    };
-                    [freeView show];
-                }
-                else {
-                    AliPlayerViewController *playCon = [AliPlayerViewController new];
-                    playCon.videoIdString = self.dataInfo[@"video"];
-                    [self.navigationController pushViewController:playCon animated:YES];
+                    if (![DataStore.sharedDataStore.userid isEqualToString:self.dataInfo[@"user_id"]]) {
+                        playvideo = NO;
+                    }
                 }
                 return;
             }
-            AliPlayerViewController *playCon = [AliPlayerViewController new];
-            playCon.videoIdString = self.dataInfo[@"video"];
-            [self.navigationController pushViewController:playCon animated:YES];
+            if (playvideo) {
+                AliPlayerViewController *playCon = [AliPlayerViewController new];
+                playCon.videoIdString = self.dataInfo[@"video"];
+                [self.navigationController pushViewController:playCon animated:YES];
+            }
+            else {
+                LivePayView *freeView = [[LivePayView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-261)/2, (SCREEN_HEIGHT-284)/2, 261, 284) Price:self.dataInfo[@"video_price"]];
+                freeView.titleString = @"是否继续观看视频？";
+                freeView.showBuyVip = YES;
+                WEAKSELF
+                typeof(freeView) __weak weakFreeView = freeView;
+                weakFreeView.confirmSelecrBlock = ^(NSInteger index) {
+                    [weakFreeView dismiss];
+                    [weakSelf clickLivePayViewWithIndex:index Price:self.dataInfo[@"video_price"] Type:@"5" TargetId:self.dataInfo[@"id"]];
+                };
+                [freeView show];
+            }
         }
         else {
             [self configZLPhotoPickerBrowserWithArray:self.dataInfo[@"bgimg"] Index:index-1];

@@ -97,7 +97,7 @@
 //    　　　　qq=$QQ号码
     UITextField* qq = [self.tableView viewWithTag:22];
     if ([EBUtility isBlankString:qq.text]){
-        [SVProgressHUD showErrorWithStatus:@"qq为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"qq为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }else{
         [self.dic setObject:qq.text forKey:@"qq"];
@@ -107,7 +107,7 @@
 //    　　　　mobilepwd=$运营商服务密码
     UITextField* mobilepwd = [self.tableView viewWithTag:42];
     if ([EBUtility isBlankString:mobilepwd.text]){
-        [SVProgressHUD showErrorWithStatus:@"运营商服务密码为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"qq为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }else{
         [self.dic setObject:mobilepwd.text forKey:@"mobilepwd"];
@@ -118,7 +118,7 @@
 //    　　　　contacts1=$联系人1姓名
     UITextField* contacts1 = [self.tableView viewWithTag:60];
     if ([EBUtility isBlankString:contacts1.text]){
-        [SVProgressHUD showErrorWithStatus:@"联系人1姓名为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"qq为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }else{
         [self.dic setObject:contacts1.text forKey:@"contacts1"];
@@ -126,7 +126,7 @@
 //    　　　　contactstel1=$联系人1电话
     UITextField* contactstel1 = [self.tableView viewWithTag:61];
     if ([EBUtility isBlankString:contactstel1.text]){
-        [SVProgressHUD showErrorWithStatus:@"联系人1电话为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"qq为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }else{
         [self.dic setObject:contactstel1.text forKey:@"contactstel1"];
@@ -134,7 +134,7 @@
 //    　　　　relation1=$联系人1与用户的关系
     UITextField* relation1 = [self.tableView viewWithTag:62];
     if ([EBUtility isBlankString:relation1.text]){
-        [SVProgressHUD showErrorWithStatus:@"联系人1与用户的关系"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"qq为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }else{
         [self.dic setObject:relation1.text forKey:@"relation1"];
@@ -142,7 +142,7 @@
     //    　　　　contacts2=$联系人2姓名
     UITextField* contacts2 = [self.tableView viewWithTag:63];
     if ([EBUtility isBlankString:contacts2.text]){
-        [SVProgressHUD showErrorWithStatus:@"联系人2姓名为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"qq为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }else{
         [self.dic setObject:contacts2.text forKey:@"contacts2"];
@@ -150,7 +150,7 @@
     //    　　　　contactstel2=$联系人2电话
     UITextField* contactstel2 = [self.tableView viewWithTag:64];
     if ([EBUtility isBlankString:contactstel2.text]){
-        [SVProgressHUD showErrorWithStatus:@"联系人2电话为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"联系人2电话为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }else{
         [self.dic setObject:contactstel2.text forKey:@"contactstel2"];
@@ -158,22 +158,22 @@
     //    　　　　relation2=$联系人2与用户的关系
     UITextField* relation2 = [self.tableView viewWithTag:65];
     if ([EBUtility isBlankString:relation2.text]){
-        [SVProgressHUD showErrorWithStatus:@"联系人2与用户的关系"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"联系人2与用户的关系" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }else{
         [self.dic setObject:relation2.text forKey:@"relation2"];
     }
     
     if (!self.IDcardFan){
-        [SVProgressHUD showErrorWithStatus:@"未上传身份证反面"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"未上传身份证反面" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!self.IDcardZheng){
-        [SVProgressHUD showErrorWithStatus:@"未上传身份证正面"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"未上传身份证正面" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!self.zhimaxinyong){
-        [SVProgressHUD showErrorWithStatus:@"未上传芝麻信用截图"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"未上传芝麻信用截图" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
 
@@ -197,8 +197,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 - (IBAction)addImage:(UIButton *)sender {

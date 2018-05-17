@@ -26,8 +26,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self configMediaPlayer];
-    [self startVideoPlay];
+    NSDictionary *tokenDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"AliPlayerToken"];
+    if (!tokenDictionary) {
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"播放器授权过期，请重新登录" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    else {
+        [self configMediaPlayer];
+        [self startVideoPlay];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -87,7 +94,11 @@
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPlayerView)];
         [self.playerView addGestureRecognizer:tap];
-        [self getVideoUploadToken];
+        NSDictionary *tokenDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"AliPlayerToken"];
+        [self.aliPlayer prepareWithVid:self.videoIdString
+                           accessKeyId:tokenDictionary[@"data"][@"Credentials"][@"AccessKeyId"]
+                       accessKeySecret:tokenDictionary[@"data"][@"Credentials"][@"AccessKeySecret"]
+                         securityToken:tokenDictionary[@"data"][@"Credentials"][@"SecurityToken"]];
     }
 }
 
@@ -197,6 +208,7 @@
  */
 - (void)vodPlayerPlaybackAddressExpiredWithVideoId:(NSString *)videoId quality:(AliyunVodPlayerVideoQuality)quality videoDefinition:(NSString*)videoDefinition{
     //鉴权有效期为2小时，在这个回调里面可以提前请求新的鉴权，stop上一次播放，prepare新的地址，seek到当前位置
+    [self getVideoUploadToken];
 }
 
 #pragma mark - seek

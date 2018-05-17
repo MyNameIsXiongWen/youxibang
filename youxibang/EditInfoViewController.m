@@ -106,13 +106,13 @@
                 UIButton *btn =UIButton.new;
                 btn.tag = _titleAry.count-1;
                 [self selectInterestingBtn:btn];
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"兴趣爱好不能超过20字符" andDuration:2.0];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"兴趣爱好不能超过20字符" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             }
             else if (content.length == 0) {
                 UIButton *btn =UIButton.new;
                 btn.tag = _titleAry.count-1;
                 [self selectInterestingBtn:btn];
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"兴趣爱好不能为空" andDuration:2.0];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"兴趣爱好不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             }
             else {
                 [self.titleAry insertObject:[@{@"name":alert.textFields[0].text,@"selected":@"0"} mutableCopy] atIndex:self.titleAry.count - 1];
@@ -149,8 +149,10 @@
         }
     }else{
         if ([EBUtility isBlankString:self.tf.text]){
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"内容不能为空" andDuration:2.0];
-            return;
+            if ([self.title isEqualToString:@"编辑昵称"]) {
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"昵称不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+                return;
+            }
         }
     }
     
@@ -197,8 +199,7 @@
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 

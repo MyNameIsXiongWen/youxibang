@@ -30,11 +30,11 @@
 //提交
 - (IBAction)confrimBtn:(UIButton*)sender {
     if ([EBUtility isBlankString:self.accountTf.text]){
-        [SVProgressHUD showErrorWithStatus:@"账号不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"账号不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([EBUtility isBlankString:self.nameTf.text]){
-        [SVProgressHUD showErrorWithStatus:@"真实姓名不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"真实姓名不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
@@ -72,8 +72,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
     
 }

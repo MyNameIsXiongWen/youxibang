@@ -51,14 +51,14 @@
         UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
         UITextField* tf = [cell viewWithTag:1];
         if ([EBUtility isBlankString:tf.text]){
-            [SVProgressHUD showErrorWithStatus:@"内容不能为空"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"内容不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
             return;
         }
         [ary addObject:tf];
     }
     
     if (!(self.photoZ && self.photoF)){
-        [SVProgressHUD showErrorWithStatus:@"请上传证件照"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请上传证件照" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }
 //    　　　　realname=$真实姓名
 //
@@ -115,8 +115,7 @@
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络延迟，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 - (IBAction)addPhoto:(UIButton *)sender {

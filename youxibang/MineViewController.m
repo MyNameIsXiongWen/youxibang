@@ -249,7 +249,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         }
         
     } failoperation:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -450,7 +450,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
                 [self pushToOrder];
             }else if (indexPath.row == 3){//实名认证或者个人技能
                 if ([NSString stringWithFormat:@"%@",UserModel.sharedUser.is_realauth].integerValue == 2) {
-                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"您的实名认证正在审核中" andDuration:2.0];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"您的实名认证正在审核中" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                 }
                 else if ([NSString stringWithFormat:@"%@",UserModel.sharedUser.is_realauth].integerValue == 1) {
                     [self pushToMySkill];

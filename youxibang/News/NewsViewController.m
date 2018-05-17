@@ -116,15 +116,30 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
                 else {
                     [self.dataArray addObjectsFromArray:[NewsModel mj_objectArrayWithKeyValuesArray:object[@"data"][@"article"]]];
                 }
+                if (self.dataArray.count > 0 && [object[@"data"][@"article"] count] ==0) {
+                    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 30)];
+                    footerView.backgroundColor = UIColor.clearColor;
+                    UILabel *footerLabel = [EBUtility labfrome:footerView.bounds andText:@"然后，就没有然后了～" andColor:[UIColor colorFromHexString:@"444444"] andView:footerView];
+                    footerLabel.font = [UIFont systemFontOfSize:11.0];
+                    self.tableview.tableFooterView = footerView;
+                }
+                else {
+                    self.tableview.tableFooterView = UIView.new;
+                }
+                if ([object[@"data"][@"article"] count] ==0) {
+                    self.tableview.mj_footer.hidden = YES;
+                }
+                else {
+                    self.tableview.mj_footer.hidden = NO;
+                }
                 [self.tableview reloadData];
             }else{
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             }
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 

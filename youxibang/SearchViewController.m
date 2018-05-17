@@ -116,20 +116,23 @@ static NSString *const HOMESEARCH_TABLEVIEW_ID = @"homesearch_tableview_id";
                     [self.dataAry addObjectsFromArray:object[@"data"]];
                 }
                 [self.tableView reloadData];
-            }else if (code == 2) {
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"暂无更多数据" andDuration:2.0];
+            }else{
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                 if (self.dataAry.count == 0) {
                     self.isHistoryRecord = YES;
                     [self.tableView reloadData];
                 }
-            }else{
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+                if ([object[@"data"] count] ==0 ) {
+                    self.tableView.mj_footer.hidden = YES;
+                }
+                else {
+                    self.tableView.mj_footer.hidden = NO;
+                }
             }
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //清除历史记录

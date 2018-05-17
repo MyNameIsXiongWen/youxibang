@@ -90,15 +90,14 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         [self.navigationController popViewControllerAnimated:1];
     }];
 }
 //提交
 - (IBAction)cO:(UIButton *)sender {
     if ([EBUtility isBlankString:self.startTime]){
-        [SVProgressHUD showErrorWithStatus:@"请填写开始时间"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写开始时间" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     //备注
@@ -142,8 +141,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //加减小时数

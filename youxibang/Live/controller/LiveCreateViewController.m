@@ -149,8 +149,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -198,39 +197,38 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
 //上传主播资料
 - (void)saveCreate {
     if (!areaString) {
-        [SVProgressHUD showErrorWithStatus:@"请选择城市"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请选择城市" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!typeString) {
-        [SVProgressHUD showErrorWithStatus:@"请选择直播类型"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请选择直播类型" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!platformString) {
-        [SVProgressHUD showErrorWithStatus:@"请选择平台"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请选择平台" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!room_numberString) {
-        [SVProgressHUD showErrorWithStatus:@"请填写房间号"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写房间号" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!wechatString) {
-        [SVProgressHUD showErrorWithStatus:@"请填写微信号"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写微信号" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!wish_salaryString) {
-        [SVProgressHUD showErrorWithStatus:@"请选择期望薪资"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请选择期望薪资" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!brokerage_agencyString) {
-        [SVProgressHUD showErrorWithStatus:@"请填写经纪公司"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写经纪公司" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     NSMutableDictionary *dic = @{@"token":[DataStore sharedDataStore].token,
@@ -310,8 +308,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -849,8 +846,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
             }
         } failoperation:^(NSError *error) {
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }
 }
@@ -876,8 +872,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
             }
         } failoperation:^(NSError *error) {
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }
 }

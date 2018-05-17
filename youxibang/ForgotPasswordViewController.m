@@ -31,6 +31,14 @@
     
     self.password.secureTextEntry = YES;
     self.secPassword.secureTextEntry = YES;
+    [self.phone addTarget:self action:@selector(textFieldValueChange:) forControlEvents:UIControlEventEditingChanged];
+}
+
+- (void)textFieldValueChange:(UITextField *)textfield {
+    if (textfield.text.length >= 11) {
+        textfield.text = [textfield.text substringToIndex:11];
+        return;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -40,7 +48,7 @@
 //获取验证码
 - (IBAction)getCode:(id)sender {
     if ( [EBUtility isMobileNumber:self.phone.text] ==NO) {
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入正确的手机号码" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入正确的手机号码" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     self.codeBtn.userInteractionEnabled = NO;
@@ -60,14 +68,14 @@
             self.codeBtn.backgroundColor = [UIColor colorFromHexString:@"cccccc"];
             NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timecaculate:) userInfo:nil repeats:YES];
             [timer fire];
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"验证码发送成功" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"验证码发送成功" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self.code becomeFirstResponder];
             });
         }else {
             self.codeBtn.userInteractionEnabled = YES;
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         }
     } failoperation:^(NSError *error) {
         NSLog(@"errr %@",error);
@@ -94,28 +102,27 @@
 - (IBAction)commit:(id)sender {
     [self.view endEditing:YES];
     if ([EBUtility isBlankString:self.phone.text]){
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入手机号码" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入手机号码" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([EBUtility isBlankString:self.code.text]){
-        [SVProgressHUD showErrorWithStatus:@"请输入验证码"];
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入验证码" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入验证码" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([EBUtility isBlankString:self.password.text]){
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([EBUtility isBlankString:self.secPassword.text]){
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请再次输入密码" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请再次输入密码" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (![self.password.text isEqualToString:self.secPassword.text]){
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"两次输入的密码不一致" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"两次输入的密码不一致" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (![EBUtility validatePassword:self.password.text]){
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码为6-15位数字或字母" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码为6-15位数字或字母" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
@@ -139,13 +146,11 @@
             LoginViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"loginPWD"];
             [self.navigationController pushViewController:vc animated:1];
         }else{
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         }
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
     
 }

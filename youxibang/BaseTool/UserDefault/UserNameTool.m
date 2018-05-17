@@ -79,7 +79,7 @@
                     completion();
                 }
             }else{
-                [SVProgressHUD showErrorWithStatus:msg];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             }
         }
     } failoperation:^(NSError *error) {

@@ -55,7 +55,7 @@
 
 - (void)downloadData{
     if (!self.orderId){
-        [SVProgressHUD showErrorWithStatus:@"错误的订单号"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"错误的订单号" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         [self.navigationController popViewControllerAnimated:1];
     }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
@@ -86,8 +86,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 #pragma mark - tableViewDelegate/DataSource

@@ -72,8 +72,6 @@
 }
 - (void)refreshHead {
     self.currentPage = 1;
-    [self.dataAry removeAllObjects];
-    [self.tableView reloadData];
     [self downloadInfo];
     [self.tableView.mj_header endRefreshing];
 }
@@ -91,45 +89,37 @@
     }else {
         [dict setObject:@"2" forKey:@"typeid"];
     }
-    
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/bannerlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
         if (isKindOfNSDictionary(object)){
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
-            
             if (code == 1) {
                 self.bannerAry = [NSMutableArray arrayWithArray:object[@"data"]];
                 [self.tableView reloadData];
-            }else{
             }
         }
         
     } failoperation:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
-    
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Currency/gmlists.html",HttpURLString] Paremeters:nil successOperation:^(id object) {
         if (isKindOfNSDictionary(object)){
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
-            
             if (code == 1) {
                 self.gameAry = [NSMutableArray arrayWithArray:object[@"data"]];
-                
-            }else{
             }
         }
-        
     } failoperation:^(NSError *error) {
-        [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //下载，筛选
 - (void)downloadInfo{
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
     if (self.ptOrBaby){
 //        p＝$页面（必填）
 //        psize＝$每页显示条数 0 默认
@@ -137,9 +127,6 @@
 //        sex=$性别 0 所有 1 男 2 女
 //        orderby=$排序（非必填） 排序方式 0 默认 1 价格由高到底 2 价格由低到高 3 接单次数由高低 4 接单次数由低到高
 //        borth=$生日（非必填）出生日期 0 所有  1 80后 2 90后 3 00后
-        [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
-        [SVProgressHUD show];
-        
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         [dict setObject:self.gid forKey:@"gameid"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.orderby] forKey:@"orderby"];
@@ -164,28 +151,40 @@
                 NSInteger code = [object[@"errcode"] integerValue];
                 NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
                 NSLog(@"输出 %@--%@",object,msg);
-                
                 if (code == 1) {
-                    [self.dataAry addObjectsFromArray:object[@"data"]];
+                    if (self.currentPage == 1) {
+                        self.dataAry = object[@"data"];
+                    }
+                    else {
+                        [self.dataAry addObjectsFromArray:object[@"data"]];
+                    }
                     [self.tableView reloadData];
-                }else if (code == 2) {
-                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"暂无更多数据" andDuration:2.0];
                 }else{
-                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+                    if (self.dataAry.count > 0 && [object[@"data"] count] ==0) {
+                        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 30)];
+                        footerView.backgroundColor = UIColor.clearColor;
+                        UILabel *footerLabel = [EBUtility labfrome:footerView.bounds andText:@"然后，就没有然后了～" andColor:[UIColor colorFromHexString:@"444444"] andView:footerView];
+                        footerLabel.font = [UIFont systemFontOfSize:11.0];
+                        self.tableView.tableFooterView = footerView;
+                    }
+                    else {
+                        self.tableView.tableFooterView = UIView.new;
+                    }
+                    if ([object[@"data"] count] ==0) {
+                        self.tableView.mj_footer.hidden = YES;
+                    }
+                    else {
+                        self.tableView.mj_footer.hidden = NO;
+                    }
                 }
             }
-            
         } failoperation:^(NSError *error) {
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }else{
-        [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
-        [SVProgressHUD show];
-        
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        
         [dict setObject:self.gid forKey:@"gid"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.orderby] forKey:@"orderby"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.pricerange] forKey:@"pricerange"];
@@ -205,24 +204,39 @@
                 NSInteger code = [object[@"errcode"] integerValue];
                 NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
                 NSLog(@"输出 %@--%@",object,msg);
-                
                 if (code == 1) {
-                    [self.dataAry addObjectsFromArray:object[@"data"]];
+                    if (self.currentPage == 1) {
+                        self.dataAry = object[@"data"];
+                    }
+                    else {
+                        [self.dataAry addObjectsFromArray:object[@"data"]];
+                    }
                     [self.tableView reloadData];
-                }else if (code == 2) {
-                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"暂无更多数据" andDuration:2.0];
                 }else{
-                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+                    if (self.dataAry.count > 0 && [object[@"data"] count] ==0) {
+                        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 30)];
+                        footerView.backgroundColor = UIColor.clearColor;
+                        UILabel *footerLabel = [EBUtility labfrome:footerView.bounds andText:@"然后，就没有然后了～" andColor:[UIColor colorFromHexString:@"444444"] andView:footerView];
+                        footerLabel.font = [UIFont systemFontOfSize:11.0];
+                        self.tableView.tableFooterView = footerView;
+                    }
+                    else {
+                        self.tableView.tableFooterView = UIView.new;
+                    }
+                    if ([object[@"data"] count] ==0) {
+                        self.tableView.mj_footer.hidden = YES;
+                    }
+                    else {
+                        self.tableView.mj_footer.hidden = NO;
+                    }
                 }
             }
-            
         } failoperation:^(NSError *error) {
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }
-    
 }
 //headerview，避免刷新的时候将其初始化，所以变成属性
 - (UIView*)headerView{
@@ -312,7 +326,6 @@
             alert.resultDate = ^(NSString *date) {
                 sender.selected = NO;
                 [sender setTitle:timeAry[date.intValue] forState:0];
-                
                 self.orderby = date.intValue;
                 [self refreshHead];
             };
@@ -326,10 +339,8 @@
             alert.resultDate = ^(NSString *date) {
                 sender.selected = NO;
                 [sender setTitle:priceAry[date.intValue] forState:0];
-                
                 self.pricerange = date.intValue + 1;
                 [self refreshHead];
-                
             };
             alert.resultRemove = ^(NSString *str) {
                 sender.selected = NO;
@@ -337,8 +348,6 @@
             [alert showAlertView];
         }
     }
-    
-    
 }
 #pragma mark - tableViewDelegate/DataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{

@@ -92,14 +92,13 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //上传截图
 - (void)upData:(UIButton*)sender{
     if (!self.img1 && !self.img2){
-        [SVProgressHUD showErrorWithStatus:@"请上传截图"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请上传截图" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     NSMutableArray* imgAry = [NSMutableArray array];
@@ -141,8 +140,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 - (void)didReceiveMemoryWarning {

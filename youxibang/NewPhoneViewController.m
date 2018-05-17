@@ -34,7 +34,7 @@
 - (IBAction)getCode:(JKCountDownButton *)sender {
     [self.view endEditing:YES];
     if ( [EBUtility isMobileNumber:self.oldPhone.text] ==NO) {
-        [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号码"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入正确的手机号码" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         return;
     }
     
@@ -116,8 +116,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //当用户按下return去键盘

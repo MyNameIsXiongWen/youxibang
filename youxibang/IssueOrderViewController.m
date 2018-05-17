@@ -67,8 +67,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //提交
@@ -76,17 +75,17 @@
     UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     UITextField* title = [cell viewWithTag:1];
     if ([EBUtility isBlankString:title.text]){
-        [SVProgressHUD showErrorWithStatus:@"标题不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"标题不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([EBUtility isBlankString:self.gameId]){
-        [SVProgressHUD showErrorWithStatus:@"品类不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"品类不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0]];
     UITextField* price = [cell viewWithTag:1];
     if ([EBUtility isBlankString:price.text]){
-        [SVProgressHUD showErrorWithStatus:@"单价不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"单价不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     RemarksTextViewTableViewCell *cell1 = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:6 inSection:0]];
@@ -134,8 +133,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //调整小时数

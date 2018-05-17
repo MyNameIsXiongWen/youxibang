@@ -58,10 +58,10 @@
             }
             [self.navigationController pushViewController:vc animated:1];
         }else{
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码为6-15位数字或字母" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入密码为6-15位数字或字母" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         }
     }else{
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"两次输入的密码不一致" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"两次输入的密码不一致" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
     }
 }
 //当用户按下return去键盘

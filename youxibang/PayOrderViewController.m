@@ -46,9 +46,8 @@
 }
 
 - (void)downloadInfo{
-
     if ([EBUtility isBlankString:self.orderId]){
-        [SVProgressHUD showErrorWithStatus:@"订单编号为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"订单编号为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         [self.navigationController popViewControllerAnimated:1];
     }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
@@ -82,8 +81,7 @@
         } failoperation:^(NSError *error) {
             
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
             [self.navigationController popViewControllerAnimated:1];
         }];
     }else if ([self.type isEqualToString:@"OrderViewController"]){//直接向宝贝下单
@@ -111,8 +109,7 @@
         } failoperation:^(NSError *error) {
             
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
             [self.navigationController popViewControllerAnimated:1];
         }];
     }else if ([self.type isEqualToString:@"OrderSelectViewController"]){//宝贝抢单后选择宝贝付款
@@ -140,8 +137,7 @@
         } failoperation:^(NSError *error) {
             
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
             [self.navigationController popViewControllerAnimated:1];
         }];
     }
@@ -229,8 +225,7 @@
         
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 

@@ -39,7 +39,12 @@
         self.liveExperienceLabel.text = [NSString stringWithFormat:@"直播经验：%@",dic[@"exp"]];
         
         NSMutableString *wechat = [[NSMutableString alloc] initWithString:[NSString stringWithFormat:@"微信：%@",dic[@"wechat"]]];
-        [wechat replaceCharactersInRange:NSMakeRange(4, wechat.length-1-4) withString:@"****"];
+        if (wechat.length > 5) {
+            [wechat replaceCharactersInRange:NSMakeRange(4, wechat.length-1-4) withString:@"****"];
+        }
+        else {
+            wechat = [[NSMutableString alloc] initWithString:@"****"];
+        }
         self.wechatLabel.text = wechat;
         if (istalk) {
             self.wechatLabel.text = [NSString stringWithFormat:@"微信：%@",dic[@"wechat"]];

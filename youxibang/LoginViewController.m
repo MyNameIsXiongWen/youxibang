@@ -15,7 +15,8 @@
 #import "HomeViewController.h"
 #import "AppDelegate.h"
 
-@interface LoginViewController ()<UITextFieldDelegate,TencentSessionDelegate>
+@interface LoginViewController () <UITextFieldDelegate, TencentSessionDelegate, UIGestureRecognizerDelegate>
+
 @property (weak, nonatomic) IBOutlet UITextField *phoneNumber;//电话号码
 @property (weak, nonatomic) IBOutlet UITextField *code;//密码
 @property (weak, nonatomic) IBOutlet UIButton *codeBtn;
@@ -50,6 +51,14 @@
     
     if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
         self.navigationController.interactivePopGestureRecognizer.delegate = self;
+    }
+    [self.phoneNumber addTarget:self action:@selector(textFieldValueChange:) forControlEvents:UIControlEventEditingChanged];
+}
+
+- (void)textFieldValueChange:(UITextField *)textfield {
+    if (textfield.text.length >= 11) {
+        textfield.text = [textfield.text substringToIndex:11];
+        return;
     }
 }
 
@@ -152,7 +161,7 @@
 //获取验证码按键
 - (IBAction)getCode:(id)sender {
     if ([EBUtility isMobileNumber:self.phoneNumber.text] == NO) {
-        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入正确的手机号码" andDuration:2.0];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入正确的手机号码" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     self.codeBtn.userInteractionEnabled = NO;
@@ -171,14 +180,14 @@
             self.codeBtn.backgroundColor = [UIColor colorFromHexString:@"cccccc"];
             NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timecaculate:) userInfo:nil repeats:YES];
             [timer fire];
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"验证码发送成功" andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"验证码发送成功" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self.code becomeFirstResponder];
             });
         }else {
             self.codeBtn.userInteractionEnabled = YES;
-            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         }
     } failoperation:^(NSError *error) {
         NSLog(@"errr %@",error);
@@ -276,7 +285,7 @@
                 DataStore.sharedDataStore.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
                 DataStore.sharedDataStore.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
                 DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
-                
+                [self getVideoUploadToken];
                 [UserNameTool reloadPersonalData:nil];
                 
                 [JPUSHService setAlias:DataStore.sharedDataStore.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
@@ -310,14 +319,13 @@
                 vc.unionid = [NSString stringWithFormat:@"%@",dic[@"unionid"]];
                 [self.navigationController pushViewController:vc animated:1];
             }else{
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             }
         }
     } failoperation:^(NSError *error) {
         NSLog(@"errr %@",error);
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络有误，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -338,7 +346,7 @@
 }
 //没有网络
 - (void)tencentDidNotNetWork {
-    [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
 }
 //获取回调的用户信息
 - (void)getUserInfoResponse:(APIResponse *)response {
@@ -362,6 +370,24 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:YES];
+}
+
+- (void)getVideoUploadToken {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
+        if (isKindOfNSDictionary(response)) {
+            NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
+            NSString *str = [response objectForKey:@"message"];
+            if (msg == 1) {
+                NSDictionary *tokenDictionary = (NSDictionary *)response;
+                [[NSUserDefaults standardUserDefaults] setObject:tokenDictionary forKey:@"AliPlayerToken"];
+            }else{
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:str andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+            }
+        }
+    } failoperation:^(NSError *error) {
+    }];
 }
 
 @end

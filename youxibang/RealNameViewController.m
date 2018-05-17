@@ -79,19 +79,19 @@
 
 - (IBAction)commitInfo:(id)sender {
     if (!self.photoZ){
-        [SVProgressHUD showErrorWithStatus:@"请上传身份证正面"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请上传身份证正面" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if (!self.photoF){
-        [SVProgressHUD showErrorWithStatus:@"请上传身份证反面"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请上传身份证反面" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([EBUtility isBlankString:self.name.text]) {
-        [SVProgressHUD showErrorWithStatus:@"姓名不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"姓名不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([EBUtility isBlankString:self.idCard.text]) {
-        [SVProgressHUD showErrorWithStatus:@"身份证号码不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"身份证号码不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     
@@ -116,34 +116,24 @@
             }if (msg == 2) {
                 self.sucView.hidden = NO;
             }else{
-                [SVProgressHUD showErrorWithStatus:str];
+                [[SYPromptBoxView sharedInstance] setPromptViewMessage:str andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             }
         }
     } failoperation:^(NSError *error) {
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络延迟，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络延迟，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
-    
 }
 - (IBAction)uploadPhoto:(UIButton *)sender {
-
     self.editingphotoNum = sender.tag;
     [self amendHeadImg];
 }
--(void)amendHeadImg
-{
+- (void)amendHeadImg {
     UIAlertController *alertController = [[UIAlertController alloc]init];
-    
     [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        
         NSLog(@"点击取消");
-        
     }]];
-    
-    
     [alertController addAction:[UIAlertAction actionWithTitle:@"相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
         NSLog(@"点击相册");
         if([UIImagePickerController isSourceTypeAvailable:(UIImagePickerControllerSourceTypePhotoLibrary)]) {
             UIImagePickerController *picker = [[UIImagePickerController alloc] init];
@@ -158,10 +148,8 @@
             //                UIImagePickerControllerSourceTypeCamera,
             //                UIImagePickerControllerSourceTypeSavedPhotosAlbum
         }
-        
     }]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
         NSLog(@"点击拍照");
         if ([UIImagePickerController isSourceTypeAvailable:(UIImagePickerControllerSourceTypeCamera)]) { //判断是否有摄像头
             UIImagePickerController *picker = [[UIImagePickerController alloc] init];
@@ -170,18 +158,14 @@
             [picker setDelegate:self];
             [self presentViewController:picker animated:YES completion:^{ }];
         }
-        
     }]];
-    
     [self presentViewController:alertController animated:YES completion:nil];
-    
 }
-- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
-{
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     [navigationController.navigationBar setBarStyle:(UIBarStyleBlackTranslucent)];
 }
 
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo{
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo {
     [picker dismissViewControllerAnimated:YES completion:^{ }]; //关闭摄像头或用户相册
     
     //DBLOG(@"加载图片中...");
@@ -196,14 +180,11 @@
     }else{
         self.photoF = newImage;
     }
-
     dispatch_async(dispatch_get_main_queue(), ^{
         
         UIButton* btn = [self.backgroundContainerView viewWithTag:self.editingphotoNum];
         [btn setImage:newImage forState:0];//设置头像
-        
     });
-    
 }
 
 //当用户按下return去键盘
@@ -212,7 +193,7 @@
     [textField resignFirstResponder];
     return YES;
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:1];
     [self.backgroundContainerView endEditing:1];
 }

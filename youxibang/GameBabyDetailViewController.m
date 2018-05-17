@@ -113,8 +113,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
     
 }
@@ -144,8 +143,7 @@
     } failoperation:^(NSError *error) {
         
 //        [SVProgressHUD dismiss];
-//        [SVProgressHUD setDefaultMaskType:1];
-//        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+//        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //下载评论列表
@@ -173,10 +171,7 @@
         }
         
     } failoperation:^(NSError *error) {
-        
-//        [SVProgressHUD dismiss];
-//        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 
@@ -223,6 +218,9 @@
             animation.animationRepeatCount = audioDurationSeconds/0.65f ? audioDurationSeconds/0.65f : 1;
             [animation startAnimating];
             self.animationImg = animation;
+        }
+        else {
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"暂未录制语音" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         }
     }
     

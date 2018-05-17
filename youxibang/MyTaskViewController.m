@@ -81,7 +81,6 @@
     [dict setObject:@"10" forKey:@"psize"];
   
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/mypartlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
-
         if (isKindOfNSDictionary(object)){
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
@@ -92,16 +91,17 @@
                 [self.dataAry addObjectsFromArray:object[@"data"]];
                 [self.tableView reloadData];
             }else{
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+                if (![msg isEqualToString:@"数据为空"]) {
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+                }
                 if (self.currentPage == 1){
                     self.placeHoldView.hidden = NO;
                 }
             }
         }
-        
     } failoperation:^(NSError *error) {
         self.placeHoldView.hidden = NO;
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //取消任务接口   type 1 雇主取消任务    2 宝贝取消抢单
@@ -133,8 +133,7 @@
     } failoperation:^(NSError *error) {
         self.placeHoldView.hidden = NO;
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 

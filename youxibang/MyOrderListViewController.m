@@ -114,7 +114,9 @@
                 }
                 [self.tableView reloadData];
             }else{
-                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0];
+                if (![msg isEqualToString:@"数据为空"]) {
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
+                }
                 if (self.currentPage == 1){
                     self.placeHoldView.hidden = NO;
                 }
@@ -123,8 +125,7 @@
         
     } failoperation:^(NSError *error) {
         self.placeHoldView.hidden = NO;
-
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //聚合操作  type 1、雇主催单，2、撤销申请，3、同意退单，4、撤销仲裁，5、（未开始）取消订单，6、拒绝退单，7、申请验收
@@ -156,8 +157,7 @@
     } failoperation:^(NSError *error) {
         self.placeHoldView.hidden = NO;
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 

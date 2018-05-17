@@ -42,11 +42,11 @@
 - (IBAction)commit:(id)sender {
 
     if ([EBUtility isBlankString:self.tv.text ]){
-        [SVProgressHUD showErrorWithStatus:@"描述不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"描述不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     if ([self.tv.text isEqualToString:@"问题描述"]){
-        [SVProgressHUD showErrorWithStatus:@"描述不能为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"描述不能为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -78,8 +78,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView{

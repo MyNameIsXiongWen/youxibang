@@ -63,8 +63,7 @@
     } failoperation:^(NSError *error) {
         
         [SVProgressHUD dismiss];
-        [SVProgressHUD setDefaultMaskType:1];
-        [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
 }
 //底部view
@@ -97,7 +96,7 @@
 //提交
 - (void)submitRevoke{
     if ([EBUtility isBlankString:self.orderId]){
-        [SVProgressHUD showErrorWithStatus:@"订单号为空"];
+        [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"订单号为空" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         [self.navigationController popViewControllerAnimated:1];
         return;
     }
@@ -107,7 +106,7 @@
         RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
         UITextView* tv = [cell viewWithTag:100];
         if ([EBUtility isBlankString:tv.text]){
-            [SVProgressHUD showErrorWithStatus:@"请填写原因"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写原因" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }else{
             reason = tv.text;
@@ -127,11 +126,11 @@
                 [dict setObject:@"0" forKey:@"deposit"];
             }else{
                 if (deposit.text.intValue < 0){
-                    [SVProgressHUD showErrorWithStatus:@"请输入0以上的整数"];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入0以上的整数" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                     return;
                 }
                 if (deposit.text.intValue > [NSString stringWithFormat:@"%@",self.dataInfo[@"deposit"]].intValue){
-                    [SVProgressHUD showErrorWithStatus:@"保证金用不能超过预付费用"];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"保证金用不能超过预付费用" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                     return;
                 }
                 [dict setObject:[NSNumber numberWithInt:deposit.text.intValue] forKey:@"deposit"];
@@ -142,11 +141,11 @@
                 [dict setObject:@"0" forKey:@"totalprice"];
             }else{
                 if (totalprice.text.intValue < 0){
-                    [SVProgressHUD showErrorWithStatus:@"请输入0以上的整数"];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入0以上的整数" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                     return;
                 }
                 if (totalprice.text.intValue > [NSString stringWithFormat:@"%@",self.dataInfo[@"realmoney"]].intValue){
-                    [SVProgressHUD showErrorWithStatus:@"陪练费用不能超过预付费用"];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"陪练费用不能超过预付费用" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                     return;
                 }
                 [dict setObject:[NSNumber numberWithInt:totalprice.text.intValue] forKey:@"totalprice"];
@@ -158,11 +157,11 @@
                 [dict setObject:@"0" forKey:@"totalprice"];
             }else{
                 if (totalprice.text.intValue < 0){
-                    [SVProgressHUD showErrorWithStatus:@"请输入0以上的整数"];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请输入0以上的整数" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                     return;
                 }
                 if (totalprice.text.intValue > [NSString stringWithFormat:@"%@",self.dataInfo[@"realmoney"]].intValue){
-                    [SVProgressHUD showErrorWithStatus:@"陪练费用不能超过预付费用"];
+                    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"陪练费用不能超过预付费用" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                     return;
                 }
                 [dict setObject:[NSNumber numberWithInt:totalprice.text.intValue] forKey:@"totalprice"];
@@ -172,7 +171,7 @@
         RemarksTextViewTableViewCell* cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:1]];
         UITextView* tv = [cell viewWithTag:100];
         if ([EBUtility isBlankString:tv.text]){
-            [SVProgressHUD showErrorWithStatus:@"请填写原因"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写原因" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }else{
             reason = tv.text;
@@ -210,8 +209,7 @@
         } failoperation:^(NSError *error) {
             
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }else{//提交异常
         [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
@@ -235,10 +233,8 @@
             }
             
         } failoperation:^(NSError *error) {
-            
             [SVProgressHUD dismiss];
-            [SVProgressHUD setDefaultMaskType:1];
-            [SVProgressHUD showErrorWithStatus:@"网络信号差，请稍后再试"];
+            [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }
     

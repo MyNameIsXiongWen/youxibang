@@ -8,10 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum : NSUInteger {
+    PromptBoxLocationBottom,
+    PromptBoxLocationCenter,
+    PromptBoxLocationTop,
+} PromptBoxLocation;
+
 @interface SYPromptBoxView : UIView
 
 + (instancetype)sharedInstance ;
 - (void)setPromptViewMessage:(NSString *)message
-                 andDuration:(NSTimeInterval)duration;
+                 andDuration:(NSTimeInterval)duration
+              PromptLocation:(PromptBoxLocation)location;
 
 @end
