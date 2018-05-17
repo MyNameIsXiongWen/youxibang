@@ -442,9 +442,10 @@
 }
 
 - (void)logout:(NSDictionary*)dic{
-    [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@",dic[@"message"]]];
-    NSNotification *notification = [NSNotification notificationWithName:@"Logout" object:nil userInfo:nil];
-    [[NSNotificationCenter defaultCenter] postNotification:notification];
+//    [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@",dic[@"message"]]];
+    [[SYPromptBoxView sharedInstance] setPromptViewMessage:dic[@"message"] andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
+//    NSNotification *notification = [NSNotification notificationWithName:@"Logout" object:nil userInfo:nil];
+//    [[NSNotificationCenter defaultCenter] postNotification:notification];
 }
 
 -(void)reachabilitysuccessOperation:(Success)success

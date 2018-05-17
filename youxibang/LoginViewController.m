@@ -102,7 +102,14 @@
             delegate.window.rootViewController = mainTab;
         }
         else if ([NSStringFromClass(vc.class) isEqualToString:@"LoginViewController"]) {
-            [self dismissViewControllerAnimated:1 completion:nil];
+            if (self.PushToMainTabbar) {
+                MainTabBarController *mainTab = [[MainTabBarController alloc] init];
+                AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                delegate.window.rootViewController = mainTab;
+            }
+            else {
+                [self dismissViewControllerAnimated:1 completion:nil];
+            }
         }
         else {
             [self.navigationController popViewControllerAnimated:1];
@@ -126,6 +133,16 @@
     [leftBtn addSubview:img];
     [leftBtn addTarget:self action:@selector(leftBarButtonSelector) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
+    
+    if (DataStore.sharedDataStore.mobile) {
+        self.phoneNumber.text = DataStore.sharedDataStore.mobile;
+    }
+    if (self.phoneNumberString) {
+        self.phoneNumber.text = self.phoneNumberString;
+    }
+    if (self.passwordString || self.codeString) {
+        self.code.text = self.phoneNumberString?:self.codeString;
+    }
     if (self.phoneNumberString && (self.passwordString || self.codeString)) {
         if (!self.codeOrPassword){
             NSMutableDictionary *dict = [NSMutableDictionary dictionary];

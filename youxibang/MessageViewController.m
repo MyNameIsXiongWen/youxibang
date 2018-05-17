@@ -44,14 +44,11 @@
     NSMutableArray* ary = [NSMutableArray array];
     for (NIMRecentSession *i in self.recentSessions) {
         [ary addObject:i.session.sessionId];
-
     }
     [[NIMSDK sharedSDK].userManager fetchUserInfos:ary completion:^(NSArray<NIMUser *> * _Nullable users, NSError * _Nullable error) {
         //获取系统通知等
         [self downloadData];
     }];
-    
-
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -66,9 +63,7 @@
 -(void)refreshFooter{
     self.currentPage ++;
     [self downloadData];
-    
     [self.tableView.mj_footer endRefreshing];
-    
 }
 //获取系统消息等
 - (void)downloadData{
@@ -117,7 +112,7 @@
     }];
     [UserNameTool cleanloginData];
     [DataStore sharedDataStore].userid = nil;
-    [DataStore sharedDataStore].mobile = nil;
+//    [DataStore sharedDataStore].mobile = nil;
     [DataStore sharedDataStore].yxuser = nil;
     [DataStore sharedDataStore].yxpwd = nil;
     [DataStore sharedDataStore].token = nil;

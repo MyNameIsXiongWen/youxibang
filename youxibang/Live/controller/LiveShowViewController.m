@@ -296,11 +296,13 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
             [btn setImage:[UIImage imageNamed:@"live_filter_selected"] forState:0];
             [btn setTitleColor:[UIColor colorFromHexString:@"457fea"] forState:0];
             WEAKSELF
-            self.filterView.dismissFilterBlock = ^{
+            self.filterView.dismissFilterBlock = ^(NSMutableArray *array) {
                 [weakSelf.filterView dismiss];
                 weakSelf.filterView = nil;
-                [weakSelf.filtButton setImage:[UIImage imageNamed:@"live_filter_unselected"] forState:0];
-                [weakSelf.filtButton setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
+                if ([array[0] integerValue] == 9999 && [array[1] integerValue] == 9999 && [array[2] integerValue] == 9999) {
+                    [weakSelf.filtButton setImage:[UIImage imageNamed:@"live_filter_unselected"] forState:0];
+                    [weakSelf.filtButton setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
+                }
             };
             self.filterView.confirmFilterBlock = ^(NSMutableArray *array) {
                 _selectedIndexArray = array;
@@ -342,6 +344,10 @@ static NSString *const COLLECTIONVIEW_IDENTIFIER = @"collectionview_id";
                 [weakSelf.filterView dismiss];
                 weakSelf.filterView = nil;
                 [weakSelf getLiveListRequest];
+                if ([array[0] integerValue] == 9999 && [array[1] integerValue] == 9999 && [array[2] integerValue] == 9999) {
+                    [weakSelf.filtButton setImage:[UIImage imageNamed:@"live_filter_unselected"] forState:0];
+                    [weakSelf.filtButton setTitleColor:[UIColor colorFromHexString:@"333333"] forState:0];
+                }
             };
             return;
         }

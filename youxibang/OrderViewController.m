@@ -30,7 +30,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.tableView.scrollEnabled = NO;
+    self.tableView.scrollEnabled = YES;
     UIView *v = [[UIView alloc]init];
     v.backgroundColor = [UIColor clearColor];
     self.tableView.tableFooterView = v;
@@ -56,7 +56,6 @@
         
         [self calculatePrice];
     }
-    
 }
 //下载个人信息
 - (void)downloadInfo{

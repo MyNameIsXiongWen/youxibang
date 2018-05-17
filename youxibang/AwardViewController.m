@@ -68,6 +68,9 @@
 }
 
 - (void)completePay:(NSNotification *)notification{
+    if (self.awardSuccessBlock) {
+        self.awardSuccessBlock();
+    }
     [self.navigationController popViewControllerAnimated:YES];
     [SVProgressHUD showSuccessWithStatus:@"打赏成功"];
     
@@ -260,7 +263,6 @@
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Payment/rewardpay.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
         [self paymentParameters:object];
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
         [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];

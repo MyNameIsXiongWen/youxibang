@@ -33,10 +33,9 @@
     self.tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(refreshFooter)];
     
     //筛选按钮
-    UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 25, 25)];
-    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(0, 0, 20, 20) andText:@"" andColor:[UIColor colorFromHexString:@"333333"] andimg:[UIImage imageNamed:@"ico_order_set"] andView:rv];
-    
-    btn.titleLabel.font = [UIFont systemFontOfSize:15.0];
+    UIView* rv = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 40, 40)];
+    UIButton* btn = [EBUtility greenBtnfrome:CGRectMake(0, 0, 40, 40) andText:@"" andColor:nil andimg:[UIImage imageNamed:@"live_filter_unselected"] andView:rv];
+    btn.imageEdgeInsets = UIEdgeInsetsMake(5, 10, -5, -10);
     [btn addTarget:self action:@selector(siftInfo:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rv];
     self.currentPage = 1;
@@ -56,10 +55,6 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-//    [self refreshHead];
 }
 
 - (void)siftInfo:(UIButton*)sender {
@@ -114,11 +109,27 @@
                 }
                 [self.tableView reloadData];
             }else{
-                if (![msg isEqualToString:@"数据为空"]) {
+                if (![msg isEqualToString:@"暂无数据"]) {
                     [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
                 }
                 if (self.currentPage == 1){
                     self.placeHoldView.hidden = NO;
+                }
+                if (self.dataAry.count > 0 && [object[@"data"] count] ==0) {
+                    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 30)];
+                    footerView.backgroundColor = UIColor.clearColor;
+                    UILabel *footerLabel = [EBUtility labfrome:footerView.bounds andText:@"然后，就没有然后了～" andColor:[UIColor colorFromHexString:@"444444"] andView:footerView];
+                    footerLabel.font = [UIFont systemFontOfSize:11.0];
+                    self.tableView.tableFooterView = footerView;
+                }
+                else {
+                    self.tableView.tableFooterView = UIView.new;
+                }
+                if ([object[@"data"] count] ==0) {
+                    self.tableView.mj_footer.hidden = YES;
+                }
+                else {
+                    self.tableView.mj_footer.hidden = NO;
                 }
             }
         }
@@ -163,37 +174,34 @@
 
 
 #pragma mark - tableViewDelegate/DataSource
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return self.dataAry.count;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 1;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return UITableViewAutomaticDimension;
 }
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath{
-    
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     return UITableViewAutomaticDimension;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if (self.placeHoldView.hidden == NO && section == 0){
         return SCREEN_HEIGHT;
     }
     return 10;
 }
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     if (self.placeHoldView.hidden == NO && section == 0){
         return self.placeHoldView;
     }
     return [UIView new];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     OrderListTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     [cell setViewWithDic:self.dataAry[indexPath.section]];
     cell.row = indexPath.section;
@@ -246,45 +254,79 @@
             [self getRequestWithType:@"2" AndOrderSn:self.dataAry[row][@"order_sn"]];
         };
         [alert showAlertView];
-        
     }else if ([name isEqualToString:@"同意退单"]){
         CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"是否确定同意退单？" AndType:2];
         alert.resultIndex = ^(NSInteger index) {
             [self getRequestWithType:@"3" AndOrderSn:self.dataAry[row][@"order_sn"]];
         };
         [alert showAlertView];
-        
     }else if ([name isEqualToString:@"拒绝退单"]){
         CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"是否确定拒绝退单？" AndType:2];
         alert.resultIndex = ^(NSInteger index) {
             [self getRequestWithType:@"6" AndOrderSn:self.dataAry[row][@"order_sn"]];
         };
         [alert showAlertView];
-        
     }else if ([name isEqualToString:@"撤销仲裁"]){
         CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"是否确定撤销仲裁？" AndType:2];
         alert.resultIndex = ^(NSInteger index) {
             [self getRequestWithType:@"4" AndOrderSn:self.dataAry[row][@"order_sn"]];
         };
         [alert showAlertView];
-        
     }else if ([name isEqualToString:@"评价"]){
         EvaluateViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"eva"];
         vc.orderInfo = [NSMutableDictionary dictionaryWithDictionary:self.dataAry[row]];
+        vc.evaluateSuccessBlock = ^{
+            NSDictionary *dic = self.dataAry[row];
+            if ([[NSString stringWithFormat:@"%@",dic[@"is_baby"]] isEqualToString:@"2"]) {
+                NSMutableDictionary *mutaDic = dic.mutableCopy;
+                [mutaDic setObject:@"7" forKey:@"status"];
+                [mutaDic setObject:@"订单完成" forKey:@"tname"];
+                [self.dataAry replaceObjectAtIndex:row withObject:mutaDic];
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:row] withRowAnimation:UITableViewRowAnimationNone];
+            }
+        };
         [self.navigationController pushViewController:vc animated:1];
     }else if ([name isEqualToString:@"打赏"]){
         AwardViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"avc"];
         vc.orderInfo = [NSMutableDictionary dictionaryWithDictionary:self.dataAry[row]];
+        vc.awardSuccessBlock = ^{
+            NSDictionary *dic = self.dataAry[row];
+            if ([[NSString stringWithFormat:@"%@",dic[@"is_baby"]] isEqualToString:@"2"]) {
+                NSMutableDictionary *mutaDic = dic.mutableCopy;
+                [mutaDic setObject:@"6" forKey:@"status"];
+                [self.dataAry replaceObjectAtIndex:row withObject:mutaDic];
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:row] withRowAnimation:UITableViewRowAnimationNone];
+            }
+        };
         [self.navigationController pushViewController:vc animated:1];
     }else if ([name isEqualToString:@"开始打单"]){
         UpDataProgressViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"udp"];
         vc.orderSn = self.dataAry[row][@"order_sn"];
         vc.type = @"1";
+        vc.uploadSuccessBlock = ^(NSString *type) {
+            NSDictionary *dic = self.dataAry[row];
+            if ([[NSString stringWithFormat:@"%@",dic[@"is_baby"]] isEqualToString:@"1"]) {
+                NSMutableDictionary *mutaDic = dic.mutableCopy;
+                [mutaDic setObject:@"1" forKey:@"status"];
+                [self.dataAry replaceObjectAtIndex:row withObject:mutaDic];
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:row] withRowAnimation:UITableViewRowAnimationNone];
+            }
+        };
         [self.navigationController pushViewController:vc animated:1];
     }else if ([name isEqualToString:@"上传进度"]){
         UpDataProgressViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"udp"];
         vc.orderSn = self.dataAry[row][@"order_sn"];
         vc.type = @"2";
+        vc.uploadSuccessBlock = ^(NSString *type) {
+            NSDictionary *dic = self.dataAry[row];
+            if ([[NSString stringWithFormat:@"%@",dic[@"is_baby"]] isEqualToString:@"1"]) {
+                NSMutableDictionary *mutaDic = dic.mutableCopy;
+                [mutaDic setObject:@"5" forKey:@"status"];
+                [mutaDic setObject:@"打单完成" forKey:@"tname"];
+                [self.dataAry replaceObjectAtIndex:row withObject:mutaDic];
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:row] withRowAnimation:UITableViewRowAnimationNone];
+            }
+        };
         [self.navigationController pushViewController:vc animated:1];
     }else if ([name isEqualToString:@"去支付"]){
         PayOrderViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"po"];

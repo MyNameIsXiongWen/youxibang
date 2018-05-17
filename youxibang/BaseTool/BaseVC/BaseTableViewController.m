@@ -28,7 +28,7 @@
     }];
     [UserNameTool cleanloginData];
     [DataStore sharedDataStore].userid = nil;
-    [DataStore sharedDataStore].mobile = nil;
+//    [DataStore sharedDataStore].mobile = nil;
     [DataStore sharedDataStore].yxuser = nil;
     [DataStore sharedDataStore].yxpwd = nil;
     [DataStore sharedDataStore].token = nil;

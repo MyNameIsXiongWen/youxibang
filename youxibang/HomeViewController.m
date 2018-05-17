@@ -31,7 +31,7 @@
 #define historyCityFilepath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"historyCity.data"]
 
 static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifier";
-@interface HomeViewController ()<SDCycleScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, AMapLocationManagerDelegate>
+@interface HomeViewController ()<SDCycleScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, AMapLocationManagerDelegate, NIMLoginManagerDelegate>
 
 @property (strong, nonatomic) SDCycleScrollView *cycleScrollView;
 @property (strong, nonatomic) UITableView *adTableview;
@@ -81,6 +81,29 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     //这个通知是付款完成后跳转个人页面的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushMineView:) name:@"pushMineView" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessage:) name:@"refreshMessage" object:nil];
+    [[[NIMSDK sharedSDK] loginManager] addDelegate:self];
+}
+
+#pragma mark - 账号被踢出
+- (void)onKick:(NIMKickReason)code clientType:(NIMLoginClientType)clientType {
+    [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"您的账号在异地登录，请重新登录" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
+    [[[NIMSDK sharedSDK] loginManager] logout:^(NSError *error) {
+        
+    }];
+    [UserNameTool cleanloginData];
+    [DataStore sharedDataStore].userid = nil;
+//    [DataStore sharedDataStore].mobile = nil;
+    [DataStore sharedDataStore].yxuser = nil;
+    [DataStore sharedDataStore].yxpwd = nil;
+    [DataStore sharedDataStore].token = nil;
+    [JPUSHService setAlias:@"" completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+    } seq:1];
+    
+    UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
+    MainNavigationController * HomePageNVC = [[MainNavigationController alloc] initWithRootViewController:vc];
+    vc.PushToMainTabbar = YES;
+    [self presentViewController:HomePageNVC animated:YES completion:nil];
 }
 
 - (void)scrollTableView {

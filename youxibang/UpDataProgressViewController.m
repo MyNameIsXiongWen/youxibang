@@ -49,14 +49,12 @@
     if ([self.type isEqualToString:@"1"]){
         CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"上传上号截图后开始打单" AndType:1];
         alert.resultRemove = ^(NSString *str) {
-            
             [self blockImg];
         };
         [alert showAlertView];
     }else if ([self.type isEqualToString:@"2"]){
         CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"上传下号截图后结束打单" AndType:1];
         alert.resultRemove = ^(NSString *str) {
-            
             [self blockImg];
         };
         [alert showAlertView];
@@ -66,9 +64,7 @@
 - (void)blockImg{
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
     [dict setObject:self.orderSn forKey:@"order_sn"];
     [dict setObject:self.type forKey:@"type"];
@@ -80,17 +76,16 @@
             NSInteger code = [object[@"errcode"] integerValue];
             NSString *msg = [NSString stringWithFormat:@"%@",[object objectForKey:@"message"]] ;
             NSLog(@"输出 %@--%@",object,msg);
-            
             if (code == 1) {
-                
+                if (self.uploadSuccessBlock) {
+                    self.uploadSuccessBlock(self.type);
+                }
                 [self.navigationController popViewControllerAnimated:1];
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
             }
         }
-        
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
         [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];
@@ -111,16 +106,13 @@
         [imgAry addObject:self.img1];
         [nameAry addObject:@"startimg"];
     }
-    
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
     [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
     [dict setObject:self.orderSn forKey:@"order_sn"];
     [dict setObject:self.type forKey:@"type"];
-    
     [[NetWorkEngine shareNetWorkEngine] postImageAryInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/udnoimg.html",HttpURLString] Paremeters:dict Image:imgAry ImageName:nameAry successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -131,14 +123,15 @@
             
             if (code == 1) {
                 [SVProgressHUD showSuccessWithStatus:msg];
+                if (self.uploadSuccessBlock) {
+                    self.uploadSuccessBlock(self.type);
+                }
                 [self.navigationController popViewControllerAnimated:1];
             }else{
                 [SVProgressHUD showErrorWithStatus:msg];
             }
         }
-        
     } failoperation:^(NSError *error) {
-        
         [SVProgressHUD dismiss];
         [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     }];

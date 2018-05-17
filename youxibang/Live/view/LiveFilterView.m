@@ -30,7 +30,7 @@
 
 - (void)tapBlackView {
     if (self.dismissFilterBlock) {
-        self.dismissFilterBlock();
+        self.dismissFilterBlock(selectedIndexArray);
     }
 }
 
@@ -79,6 +79,9 @@
 }
 
 - (void)clearFilter {
+//    if (self.clearFilterBlock) {
+//        self.clearFilterBlock();
+//    }
     for (int i=0; i<selectedIndexArray.count; i++) {
         [selectedIndexArray replaceObjectAtIndex:i withObject:@(9999)];
     }

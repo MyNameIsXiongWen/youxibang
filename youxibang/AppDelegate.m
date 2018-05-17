@@ -216,10 +216,7 @@
     } else {
         // Fallback on earlier versions
     }
-    
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[UIApplication sharedApplication].applicationIconBadgeNumber + 1];
-    
-
 }
 
 // iOS 10 Support
@@ -234,8 +231,6 @@
     
     NSNotification *n = [NSNotification notificationWithName:@"refreshMessage" object:nil userInfo:nil];
     [[NSNotificationCenter defaultCenter] postNotification:n];
-
-    
 }
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 

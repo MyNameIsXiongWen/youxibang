@@ -40,12 +40,11 @@
     }];
     [UserNameTool cleanloginData];
     [DataStore sharedDataStore].userid = nil;
-    [DataStore sharedDataStore].mobile = nil;
+//    [DataStore sharedDataStore].mobile = nil;
     [DataStore sharedDataStore].yxuser = nil;
     [DataStore sharedDataStore].yxpwd = nil;
     [DataStore sharedDataStore].token = nil;
     [JPUSHService setAlias:@"" completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
-
     } seq:1];
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];

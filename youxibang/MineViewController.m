@@ -343,7 +343,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
         return 50;
     }
     else if (indexPath.section == 1) {
-        return 80;
+        return 80*ADAPTATIONRATIO;
     }
     return 40;
 }

@@ -97,6 +97,22 @@
                 if (self.currentPage == 1){
                     self.placeHoldView.hidden = NO;
                 }
+                if (self.dataAry.count > 0 && [object[@"data"] count] ==0) {
+                    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 30)];
+                    footerView.backgroundColor = UIColor.clearColor;
+                    UILabel *footerLabel = [EBUtility labfrome:footerView.bounds andText:@"然后，就没有然后了～" andColor:[UIColor colorFromHexString:@"444444"] andView:footerView];
+                    footerLabel.font = [UIFont systemFontOfSize:11.0];
+                    self.tableView.tableFooterView = footerView;
+                }
+                else {
+                    self.tableView.tableFooterView = UIView.new;
+                }
+                if ([object[@"data"] count] ==0) {
+                    self.tableView.mj_footer.hidden = YES;
+                }
+                else {
+                    self.tableView.mj_footer.hidden = NO;
+                }
             }
         }
     } failoperation:^(NSError *error) {

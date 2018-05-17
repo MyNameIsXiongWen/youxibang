@@ -7,7 +7,9 @@
 
 #import "BaseViewController.h"
 
+typedef void(^EvaluateSuccessBlock)(void);
 @interface EvaluateViewController : BaseViewController
 @property (nonatomic,assign)NSInteger type;//同打赏
-@property(nonatomic,strong)NSDictionary* orderInfo;
+@property (nonatomic,strong)NSDictionary* orderInfo;
+@property (nonatomic,copy)EvaluateSuccessBlock evaluateSuccessBlock;
 @end

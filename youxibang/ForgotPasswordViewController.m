@@ -143,7 +143,21 @@
         
         if (code == 1) {
             [SVProgressHUD showSuccessWithStatus:msg];
+            
+            [[[NIMSDK sharedSDK] loginManager] logout:^(NSError *error) {
+                
+            }];
+            [UserNameTool cleanloginData];
+            [DataStore sharedDataStore].userid = nil;
+            //    [DataStore sharedDataStore].mobile = nil;
+            [DataStore sharedDataStore].yxuser = nil;
+            [DataStore sharedDataStore].yxpwd = nil;
+            [DataStore sharedDataStore].token = nil;
+            [JPUSHService setAlias:@"" completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+            } seq:1];
+            
             LoginViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"loginPWD"];
+            vc.PushToMainTabbar = YES;
             [self.navigationController pushViewController:vc animated:1];
         }else{
             [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
