@@ -41,8 +41,11 @@
 - (void)viewWillAppear:(BOOL)animated{
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
-    if (allUnReadCount) {
+    if (allUnReadCount>0) {
         [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
+    }
+    else {
+        [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = nil;
     }
     
     //获取聊天列表中的人物信息

@@ -49,8 +49,11 @@ static NSString *const NEWS_TABLEVIEW_ID = @"news_tableview_id";
     [super viewWillAppear:animated];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
-        if (allUnReadCount) {
+        if (allUnReadCount>0) {
             [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
+        }
+        else {
+            [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = nil;
         }
     });
 }

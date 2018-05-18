@@ -88,8 +88,11 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 #pragma mark - 云信新消息通知
 - (void)onRecvMessages:(NSArray<NIMMessage *> *)messages {
     NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
-    if (allUnReadCount) {
+    if (allUnReadCount>0) {
         [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
+    }
+    else {
+        [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = nil;
     }
 }
 
@@ -581,8 +584,11 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [self.contentTableview addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
-        if (allUnReadCount) {
+        if (allUnReadCount>0) {
             [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
+        }
+        else {
+            [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = nil;
         }
     });
     
