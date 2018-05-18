@@ -303,23 +303,29 @@
                 DataStore.sharedDataStore.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
                 DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 [self getVideoUploadToken];
-                [UserNameTool reloadPersonalData:nil];
+                [UserNameTool reloadPersonalData:^{
+                    UserModel.sharedUser.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
+                    UserModel.sharedUser.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
+                    UserModel.sharedUser.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
+                    UserModel.sharedUser.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
+                    UserModel.sharedUser.token = [NSString stringWithFormat:@"%@",user[@"token"]];
+                }];
+                //长久化存储登录账号密码
+                [UserNameTool saveLoginData:dic];
                 
                 [JPUSHService setAlias:DataStore.sharedDataStore.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
                     NSLog(@"Alias   %@",iAlias);
                 } seq:1];
                 
-                //长久化存储登录账号密码
-                [UserNameTool saveLoginData:dic];
                 //talkingdata注册
-                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:[NSString stringWithFormat:@"%@",user[@"mobile"]]];
+                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.mobile]];
                 //云信登录
                 [[NIMSDK sharedSDK] registerWithAppID:NIM_APP_ID cerName:nil];
                 NIMServerSetting *setting = [[NIMServerSetting alloc] init];
                 setting.httpsEnabled = NO;
                 [[NIMSDK sharedSDK] setServerSetting:setting];
-                [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",user[@"yxuser"]]] completion:nil];
-                [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",user[@"yxuser"]] token:[NSString stringWithFormat:@"%@",user[@"yxpwd"]] completion:^(NSError *error) {
+                [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxuser]] completion:nil];
+                [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxuser] token:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxpwd] completion:^(NSError *error) {
                 }];
                 [self backWithLogin:YES];
             }else if (code == 8){//验证码首次登录，设置密码

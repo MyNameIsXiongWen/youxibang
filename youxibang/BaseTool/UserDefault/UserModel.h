@@ -43,15 +43,15 @@
 @property (copy, nonatomic) NSArray *interest;
 //@property (strong, nonatomic) NSDictionary *video;
 
-@property(nonatomic, strong) NSString *city;//城市
-@property(nonatomic, strong) NSString *latitude;//纬度
-@property(nonatomic, strong) NSString *longitude;//经度
+@property (nonatomic, strong) NSString *city;//城市
+@property (nonatomic, strong) NSString *latitude;//纬度
+@property (nonatomic, strong) NSString *longitude;//经度
 
-//@property (copy, nonatomic) NSString *userid;
-//@property (copy, nonatomic) NSString *mobile;
-//@property (copy, nonatomic) NSString *token;
-//@property(nonatomic, strong) NSString *yxuser;//云信账号
-//@property(nonatomic, strong) NSString *yxpwd;//云信密码
+@property (copy, nonatomic) NSString *userid;
+@property (copy, nonatomic) NSString *mobile;
+@property (copy, nonatomic) NSString *token;
+@property (copy, nonatomic) NSString *yxuser;//云信账号
+@property (copy, nonatomic) NSString *yxpwd;//云信密码
 
 + (UserModel *)sharedUser ;
 + (void)keyarchiveUserModelWithDict:(NSDictionary *)dict ;

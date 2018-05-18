@@ -15,6 +15,11 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+//清除历史记录数据
++ (void)cleanloginData {
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"loginInfo"];
+}
+
 + (void)updateSomeData:(NSDictionary *)dic {
     NSMutableDictionary *oldDic = [[[NSUserDefaults standardUserDefaults] objectForKey:@"loginInfo"] mutableCopy];
     [oldDic addEntriesFromDictionary:dic];
@@ -24,42 +29,6 @@
 
 + (NSMutableDictionary *)readLoginData {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:@"loginInfo"] mutableCopy];
-}
-
-+ (void)updatePersonalData:(NSDictionary *)dic {
-    NSMutableDictionary *oldDic = [[[NSUserDefaults standardUserDefaults] objectForKey:@"personalInfo"] mutableCopy];
-    if (!oldDic){
-        oldDic = [NSMutableDictionary dictionary];
-    }
-    [oldDic addEntriesFromDictionary:dic];
-    [[NSUserDefaults standardUserDefaults] setObject:oldDic forKey:@"personalInfo"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (NSMutableDictionary *)readPersonalData {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"personalInfo"] mutableCopy];
-}
-
-+ (void)loginStatus:(BOOL)login {
-    [[NSUserDefaults standardUserDefaults] setBool:login forKey:@"isLogin"];
-
-}
-
-+ (BOOL)isLogin {
-   return  [[NSUserDefaults standardUserDefaults] boolForKey:@"isLogin"];
-    
-}
-
-//清除历史记录数据
-+ (void)cleanloginData {
-//    NSArray *paths=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
-//    NSString *path=[paths objectAtIndex:0];
-//        NSLog(@"path = %@",path);
-//    NSString *filename=[path stringByAppendingPathComponent:@"loginnData.plist"];
-//    NSMutableDictionary *dic = [[NSMutableDictionary alloc] initWithCapacity:0];
-//    [dic writeToFile:filename atomically:YES];
-    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"personalInfo"];
-    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"loginInfo"];
 }
 
 + (void)reloadPersonalData:(void (^ __nullable)(void))completion {

@@ -95,13 +95,20 @@
                 DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 [self getVideoUploadToken];
                 [UserNameTool saveLoginData:dic];
+                [UserNameTool reloadPersonalData:^{
+                    UserModel.sharedUser.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
+                    UserModel.sharedUser.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
+                    UserModel.sharedUser.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
+                    UserModel.sharedUser.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
+                    UserModel.sharedUser.token = [NSString stringWithFormat:@"%@",user[@"token"]];
+                }];
                 
                 //jpush
                 [JPUSHService setAlias:DataStore.sharedDataStore.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
                     NSLog(@"Alias   %@",iAlias);
                 } seq:1];
                 
-                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:user[@"data"][@"mobile"]];
+                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:DataStore.sharedDataStore.mobile];
                 
                 //云信注册
                 [[NIMSDK sharedSDK] registerWithAppID:NIM_APP_ID cerName:nil];
@@ -110,9 +117,9 @@
                 setting.httpsEnabled = NO;
                 [[NIMSDK sharedSDK] setServerSetting:setting];
                 //云信登录
-                [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",user[@"yxuser"]]] completion:nil];
+                [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxuser]] completion:nil];
                 
-                [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",user[@"yxuser"]] token:[NSString stringWithFormat:@"%@",user[@"yxpwd"]] completion:^(NSError *error) {
+                [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxuser] token:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxpwd] completion:^(NSError *error) {
                     if (!error) {
                         NSLog(@"登录成功");
                         
@@ -120,8 +127,6 @@
                         NSLog(@"登录失败");
                         
                     }
-                }];
-                [UserNameTool reloadPersonalData:^{
                 }];
             }else{
 //                [[SYPromptBoxView sharedInstance] setPromptViewMessage:msg andDuration:2.0 PromptLocation:PromptBoxLocationBottom];

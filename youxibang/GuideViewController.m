@@ -33,7 +33,7 @@
     }
     self.photoScrollView.contentSize = CGSizeMake(SCREEN_WIDTH*self.imgArray.count, 0);
     for (int i=0; i<self.imgArray.count; i++) {
-        UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*i, -20, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*i, -StatusBarHeight, SCREEN_WIDTH, SCREEN_HEIGHT)];
         scroll.delegate = self;
         scroll.showsHorizontalScrollIndicator = NO;
         scroll.showsVerticalScrollIndicator = NO;

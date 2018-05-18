@@ -15,7 +15,11 @@
  */
 + (void)saveLoginData:(NSDictionary *)dic;
 /**
- *  更改登录信息
+ *  清除登陆信息
+ */
++ (void)cleanloginData;
+/**
+ *  更新登录信息
  */
 + (void)updateSomeData:(NSDictionary *)dic ;
 /**
@@ -24,22 +28,8 @@
 + (NSMutableDictionary *)readLoginData;
 
 /**
- *  清除用户信息
- */
-+ (void)cleanloginData;
-
-/**
- *  储存用户信息
- */
-+(void)updatePersonalData:(NSDictionary *)dic;
-
-/**
- *  读取用户信息
- */
-+ (NSMutableDictionary *)readPersonalData;
-
-/**
- *  更新用户信息
+ *  获取用户信息
  */
 + (void)reloadPersonalData:(void (^ __nullable)(void))completion; 
+
 @end
