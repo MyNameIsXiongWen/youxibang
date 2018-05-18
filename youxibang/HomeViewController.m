@@ -83,13 +83,6 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessage:) name:@"refreshMessage" object:nil];
     [[[NIMSDK sharedSDK] loginManager] addDelegate:self];
     [[[NIMSDK sharedSDK] chatManager] addDelegate:self];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
-        if (allUnReadCount) {
-            [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
-        }
-    });
 }
 
 #pragma mark - 云信新消息通知
@@ -586,6 +579,12 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     //改变状态栏颜色，隐藏原来的navi，改变状态栏颜色
     self.navigationController.navigationBar.hidden = YES;
     [self.contentTableview addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
+        if (allUnReadCount) {
+            [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
+        }
+    });
     
 }
 - (void)viewWillDisappear:(BOOL)animated {

@@ -300,6 +300,12 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     return 0.1;
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *headerView = UIView.new;
+    headerView.backgroundColor = UIColor.whiteColor;
+    return headerView;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell0"];
@@ -313,9 +319,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         [videoImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",UserModel.sharedUser.video_img]] placeholderImage:[UIImage imageNamed:@"add_video"]];
         UITapGestureRecognizer *photoTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
         UITapGestureRecognizer *videoTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickImageView:)];
-//        photoImg.userInteractionEnabled = YES;
         [photoImg addGestureRecognizer:photoTap];
-//        videoImg.userInteractionEnabled = YES;
         [videoImg addGestureRecognizer:videoTap];
         return cell;
     }
