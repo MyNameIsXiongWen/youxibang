@@ -33,7 +33,7 @@
         UILabel* lab = [self.sucView viewWithTag:1];
         lab.text = [NSString stringWithFormat:@"%@",userModel.is_realauthstr];
     }
-//    self.phone.text = [DataStore sharedDataStore].mobile;
+//    self.phone.text = UserModel.sharedUser.mobile;
 //    self.phone.userInteractionEnabled = NO;
 }
 
@@ -98,8 +98,8 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
-    [dict setObject:[DataStore sharedDataStore].mobile forKey:@"mobile"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.mobile forKey:@"mobile"];
     [dict setObject:self.name.text forKey:@"realname"];
     [dict setObject:self.idCard.text forKey:@"idcard"];
     

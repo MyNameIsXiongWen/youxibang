@@ -31,7 +31,7 @@
 #define historyCityFilepath [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"historyCity.data"]
 
 static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifier";
-@interface HomeViewController ()<SDCycleScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, AMapLocationManagerDelegate, NIMLoginManagerDelegate>
+@interface HomeViewController ()<SDCycleScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, AMapLocationManagerDelegate, NIMLoginManagerDelegate, NIMChatManagerDelegate>
 
 @property (strong, nonatomic) SDCycleScrollView *cycleScrollView;
 @property (strong, nonatomic) UITableView *adTableview;
@@ -82,20 +82,35 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushMineView:) name:@"pushMineView" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMessage:) name:@"refreshMessage" object:nil];
     [[[NIMSDK sharedSDK] loginManager] addDelegate:self];
+    [[[NIMSDK sharedSDK] chatManager] addDelegate:self];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
+        if (allUnReadCount) {
+            [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
+        }
+    });
 }
 
-#pragma mark - 账号被踢出
+#pragma mark - 云信新消息通知
+- (void)onRecvMessages:(NSArray<NIMMessage *> *)messages {
+    NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
+    if (allUnReadCount) {
+        [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
+    }
+}
+
+#pragma mark - 云信账号被踢出
 - (void)onKick:(NIMKickReason)code clientType:(NIMLoginClientType)clientType {
     [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"您的账号在异地登录，请重新登录" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
     [[[NIMSDK sharedSDK] loginManager] logout:^(NSError *error) {
         
     }];
     [UserNameTool cleanloginData];
-    [DataStore sharedDataStore].userid = nil;
-//    [DataStore sharedDataStore].mobile = nil;
-    [DataStore sharedDataStore].yxuser = nil;
-    [DataStore sharedDataStore].yxpwd = nil;
-    [DataStore sharedDataStore].token = nil;
+    UserModel.sharedUser.userid = nil;
+    UserModel.sharedUser.yxuser = nil;
+    UserModel.sharedUser.yxpwd = nil;
+    UserModel.sharedUser.token = nil;
     [JPUSHService setAlias:@"" completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
     } seq:1];
     
@@ -235,7 +250,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 //兼职，游戏宝贝，发布三个按钮的方法，发布任务必须登陆后才能进入
 - (void)pushOrder:(UIButton*)sender{
     //因为第三方登录后直接获取userinfo服务器的token会与当前不符，故在首页进行点击行为时才获取userinfo
-    if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if (![EBUtility isBlankString:UserModel.sharedUser.token]){
         [UserNameTool reloadPersonalData:^{
 
         }];
@@ -249,7 +264,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
         [self.navigationController pushViewController:vc animated:1];
     }
     else if (sender.tag == 2) {
-        if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+        if ([EBUtility isBlankString:UserModel.sharedUser.token]){
             UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
             [self.navigationController pushViewController:vc animated:1];
@@ -269,11 +284,11 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dic = NSMutableDictionary.dictionary;
-    if ([DataStore sharedDataStore].latitude) {
-        [dic setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+    if (UserModel.sharedUser.latitude) {
+        [dic setObject:UserModel.sharedUser.latitude forKey:@"lat"];
     }
-    if ([DataStore sharedDataStore].longitude) {
-        [dic setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+    if (UserModel.sharedUser.longitude) {
+        [dic setObject:UserModel.sharedUser.longitude forKey:@"lon"];
     }
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@currency/get_info",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
@@ -477,7 +492,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
             [self.locationBtn setTitle:city.name forState:0];
             [_locationDataSourceArray replaceObjectAtIndex:0 withObject:self.selectArr];
             
-            [self configDataStore:location withCity:city.name updateCity:YES];
+            [self configUserModel:location withCity:city.name updateCity:YES];
         }
     }];
 }
@@ -488,12 +503,12 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
         if (placemarks.count > 0) {
             CLPlacemark *mark = [placemarks lastObject];
             CLLocation *loc=mark.location;
-            [self configDataStore:loc withCity:address updateCity:NO];
+            [self configUserModel:loc withCity:address updateCity:NO];
         }
     }];
 }
 
-- (void)configDataStore:(CLLocation *)location withCity:(NSString *)address updateCity:(BOOL)update {
+- (void)configUserModel:(CLLocation *)location withCity:(NSString *)address updateCity:(BOOL)update {
     //获取经纬度了
     NSString *latitude = @(location.coordinate.latitude).stringValue;
     if (latitude.length>15) {
@@ -503,9 +518,9 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
     if (longitude.length>15) {
         longitude = [longitude substringToIndex:15];
     }
-    [DataStore sharedDataStore].city = address;
-    [DataStore sharedDataStore].latitude = latitude;
-    [DataStore sharedDataStore].longitude = longitude;
+    UserModel.sharedUser.city = address;
+    UserModel.sharedUser.latitude = latitude;
+    UserModel.sharedUser.longitude = longitude;
     if (update) {
         [self updateCoordinate];
     }
@@ -513,17 +528,18 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 
 - (void)updateCoordinate {
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-    if ([DataStore sharedDataStore].token) {
-        [dic setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    UserModel *userModel = UserModel.sharedUser;
+    if (userModel.token) {
+        [dic setObject:userModel.token forKey:@"token"];
     }
-    if ([DataStore sharedDataStore].city) {
-        [dic setObject:[DataStore sharedDataStore].city forKey:@"last_city"];
+    if (userModel.city) {
+        [dic setObject:userModel.city forKey:@"last_city"];
     }
-    if ([DataStore sharedDataStore].latitude) {
-        [dic setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+    if (userModel.latitude) {
+        [dic setObject:userModel.latitude forKey:@"lat"];
     }
-    if ([DataStore sharedDataStore].longitude) {
-        [dic setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+    if (userModel.longitude) {
+        [dic setObject:userModel.longitude forKey:@"lon"];
     }
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/index",HttpURLString] Paremeters:dic successOperation:^(id object) {
         if (isKindOfNSDictionary(object)){
@@ -595,7 +611,7 @@ static NSString *const INTELLIGENT_TABLEVIEW_IDENTIFIER = @"intelligent_identifi
 //搜索页面的跳转方法
 - (void)searchView:(UIButton*)sender{
     //因为第三方登录后直接获取userinfo服务器的token会与当前不符，故在首页进行点击行为时才获取userinfo
-    if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if (![EBUtility isBlankString:UserModel.sharedUser.token]){
         [UserNameTool reloadPersonalData:^{
         }];
     }

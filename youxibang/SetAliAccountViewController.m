@@ -41,7 +41,7 @@
     [SVProgressHUD show];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:@"1" forKey:@"typeid"];
     [dict setObject:self.accountTf.text forKey:@"alipay"];
     [dict setObject:self.nameTf.text forKey:@"realname"];

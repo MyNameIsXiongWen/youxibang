@@ -40,6 +40,11 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    NSInteger allUnReadCount = [[[NIMSDK sharedSDK] conversationManager] allUnreadCount];
+    if (allUnReadCount) {
+        [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld",(long)allUnReadCount];
+    }
+    
     //获取聊天列表中的人物信息
     NSMutableArray* ary = [NSMutableArray array];
     for (NIMRecentSession *i in self.recentSessions) {
@@ -72,7 +77,7 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Message/mymessage.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
         [SVProgressHUD dismiss];
@@ -111,11 +116,10 @@
         
     }];
     [UserNameTool cleanloginData];
-    [DataStore sharedDataStore].userid = nil;
-//    [DataStore sharedDataStore].mobile = nil;
-    [DataStore sharedDataStore].yxuser = nil;
-    [DataStore sharedDataStore].yxpwd = nil;
-    [DataStore sharedDataStore].token = nil;
+    UserModel.sharedUser.userid = nil;
+    UserModel.sharedUser.yxuser = nil;
+    UserModel.sharedUser.yxpwd = nil;
+    UserModel.sharedUser.token = nil;
     [JPUSHService setAlias:@"" completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
         
     } seq:1];
@@ -152,7 +156,6 @@
 
 #pragma mark - tableViewDelegate/DataSource
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-
     return 220;
 }
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{

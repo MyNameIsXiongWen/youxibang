@@ -35,7 +35,6 @@
 		18736303201031450045EF9E /* TencentOpenApi_IOS_Bundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 187362D1201031440045EF9E /* TencentOpenApi_IOS_Bundle.bundle */; };
 		18736304201031450045EF9E /* MainNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 187362D4201031450045EF9E /* MainNavigationController.m */; };
 		18736305201031450045EF9E /* MainTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 187362D6201031450045EF9E /* MainTabBarController.m */; };
-		18736306201031450045EF9E /* DataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 187362D9201031450045EF9E /* DataStore.m */; };
 		18736307201031450045EF9E /* UserNameTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 187362DB201031450045EF9E /* UserNameTool.m */; };
 		18736308201031450045EF9E /* CustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 187362DE201031450045EF9E /* CustomAlertView.m */; };
 		18736309201031450045EF9E /* ScrollTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 187362E0201031450045EF9E /* ScrollTitleView.m */; };
@@ -337,8 +336,6 @@
 		187362D4201031450045EF9E /* MainNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainNavigationController.m; sourceTree = "<group>"; };
 		187362D5201031450045EF9E /* MainTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTabBarController.h; sourceTree = "<group>"; };
 		187362D6201031450045EF9E /* MainTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTabBarController.m; sourceTree = "<group>"; };
-		187362D8201031450045EF9E /* DataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataStore.h; sourceTree = "<group>"; };
-		187362D9201031450045EF9E /* DataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataStore.m; sourceTree = "<group>"; };
 		187362DA201031450045EF9E /* UserNameTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserNameTool.h; sourceTree = "<group>"; };
 		187362DB201031450045EF9E /* UserNameTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserNameTool.m; sourceTree = "<group>"; };
 		187362DD201031450045EF9E /* CustomAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomAlertView.h; sourceTree = "<group>"; };
@@ -995,8 +992,6 @@
 		187362D7201031450045EF9E /* UserDefault */ = {
 			isa = PBXGroup;
 			children = (
-				187362D8201031450045EF9E /* DataStore.h */,
-				187362D9201031450045EF9E /* DataStore.m */,
 				187362DA201031450045EF9E /* UserNameTool.h */,
 				187362DB201031450045EF9E /* UserNameTool.m */,
 				87A285722087128900AF966B /* UserModel.h */,
@@ -2212,7 +2207,6 @@
 				87416AD3209C47BD00482C26 /* GuideViewController.m in Sources */,
 				8D6039542081CABD00336B65 /* UIViewController+Alert.m in Sources */,
 				18736309201031450045EF9E /* ScrollTitleView.m in Sources */,
-				18736306201031450045EF9E /* DataStore.m in Sources */,
 				8759367720917A3300591D33 /* NewsModel.m in Sources */,
 				18736301201031450045EF9E /* EBUtility.m in Sources */,
 				8D60395E2081CABE00336B65 /* UIView+ZLExtension.m in Sources */,

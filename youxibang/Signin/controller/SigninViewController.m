@@ -32,7 +32,7 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
     self.tableview.tableFooterView = UIView.new;
     self.tableview.tableHeaderView = [self configTableviewHeaderview];
     [self.tableview registerNib:[UINib nibWithNibName:@"SigninTableViewCell" bundle:nil] forCellReuseIdentifier:SIGNTABLEVIEW_ID];
-    if (DataStore.sharedDataStore.token) {
+    if (UserModel.sharedUser.token) {
         [self getDataInfoRequest];
     }
 }
@@ -41,7 +41,7 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = NSDictionary.dictionary;
-    dic = @{@"token":DataStore.sharedDataStore.token};
+    dic = @{@"token":UserModel.sharedUser.token};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/get_my_gold",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -97,7 +97,7 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 }
 
 - (void)intoSelector {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -108,7 +108,7 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 }
 
 - (void)signSelector:(UIButton *)sender {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -117,7 +117,7 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = NSDictionary.dictionary;
-    dic = @{@"token":DataStore.sharedDataStore.token};
+    dic = @{@"token":UserModel.sharedUser.token};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/sign_in",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -210,7 +210,7 @@ static NSString *const SIGNTABLEVIEW_ID = @"signtableview_id";
 }
 
 - (void)cellBtnSelector:(UIButton *)sender {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];

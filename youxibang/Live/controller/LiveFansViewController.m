@@ -37,7 +37,7 @@ static NSString *const FANSTABLEVIEW_ID = @"fanstableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dic = @{@"page":[NSString stringWithFormat:@"%d",self.currentPage],
-                                @"token":DataStore.sharedDataStore.token
+                                @"token":UserModel.sharedUser.token
                                  }.mutableCopy;
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/fans_list",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
@@ -127,7 +127,7 @@ static NSString *const FANSTABLEVIEW_ID = @"fanstableview_id";
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:model.user_id forKey:@"target_id"];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@member/follow",HttpURLString];
     if (sender.selected) {
         requestUrl = [NSString stringWithFormat:@"%@member/cancel_follow",HttpURLString];

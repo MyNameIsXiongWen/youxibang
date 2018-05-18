@@ -108,7 +108,7 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
-    [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+    [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
     [dict setObject:self.userId forKey:@"buserid"];
     [dict setObject:self.skillId forKey:@"id"];
     [dict setObject:self.hour forKey:@"hours"];

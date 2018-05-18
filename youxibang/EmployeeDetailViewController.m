@@ -134,7 +134,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 #pragma mark - 配置主播详情页下面的3个按钮
 - (void)configBottomView {
-    if ([self.dataInfo[@"user_id"] integerValue] == DataStore.sharedDataStore.userid.integerValue) {
+    if ([self.dataInfo[@"user_id"] integerValue] == UserModel.sharedUser.userid.integerValue) {
         return;
     }
     self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 48);
@@ -183,7 +183,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:@"2" forKey:@"type"];
     [dict setObject:targetId forKey:@"target_id"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@anchor/check_authority",HttpURLString];
@@ -233,14 +233,14 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     if (self.type != 2){//宝贝信息  雇主信息
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         NSString *method = @"";
-        if ([DataStore sharedDataStore].token){
-            [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        if (UserModel.sharedUser.token){
+            [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         }
         if (self.type == 0) {
             [dict setObject:self.employeeId forKey:@"buserid"];
             method = @"Gamebaby/userbabydetail.html";
-            if ([DataStore sharedDataStore].userid){
-                [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+            if (UserModel.sharedUser.userid){
+                [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
             }
         }
         else if (self.type == 1) {
@@ -271,8 +271,8 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     else {//主播信息
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         [dict setObject:self.employeeId forKey:@"id"];
-        if ([DataStore sharedDataStore].token) {
-            [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        if (UserModel.sharedUser.token) {
+            [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         }
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@anchor/detail",HttpURLString] Paremeters:dict successOperation:^(id object) {
             [SVProgressHUD dismiss];
@@ -285,14 +285,14 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
                     self.dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
                     self.tableView.tableHeaderView = [self configTableViewHeaderView];
                     self.charmPhotoArray = [LiveCharmPhotoModel mj_objectArrayWithKeyValuesArray:self.dataInfo[@"img_arr"]];
-                    if (DataStore.sharedDataStore.userid.integerValue == [self.dataInfo[@"user_id"] integerValue]) {
+                    if (UserModel.sharedUser.userid.integerValue == [self.dataInfo[@"user_id"] integerValue]) {
                         for (LiveCharmPhotoModel *model in self.charmPhotoArray) {
                             model.is_charge = @"0";
                         }
                     }
                     [self.tableView reloadData];
                     [self configBottomView];
-                    if ([self.dataInfo[@"user_id"] integerValue] == DataStore.sharedDataStore.userid.integerValue) {
+                    if ([self.dataInfo[@"user_id"] integerValue] == UserModel.sharedUser.userid.integerValue) {
                         isCanTalk = YES;
                         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
                     }
@@ -333,14 +333,14 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 #pragma mark - 分享
 - (void)shareBtn:(UIButton *)sender {
-    NSString *anchor_url = [NSString stringWithFormat:@"%@index#/anchorDetail?token%@&anchorId=%@&skip=phone",SHARE_WEBURL,DataStore.sharedDataStore.token,self.employeeId];
+    NSString *anchor_url = [NSString stringWithFormat:@"%@index#/anchorDetail?token%@&anchorId=%@&skip=phone",SHARE_WEBURL,UserModel.sharedUser.token,self.employeeId];
     self.shareView = [[ShareView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-140, SCREEN_WIDTH, 140) WithShareUrl:anchor_url ShareTitle:@"我是主播" WithShareDescription:@"这是我的主播魅力名片，我为自己代言，欢迎来围观"];
     [self.shareView show];
 }
 
 //bottomview按键
 - (void)conBtn:(UIButton*)sender{
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -364,7 +364,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 //主播界面 bottomview按键
 - (void)clickLiveBottomBtn:(UIButton *)sender {
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -392,7 +392,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:self.dataInfo[@"id"] forKey:@"target_id"];
     [dict setObject:@"3" forKey:@"type"];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@article/laud",HttpURLString];
     if (sender.selected) {
         requestUrl = [NSString stringWithFormat:@"%@article/cancel_laud",HttpURLString];
@@ -546,12 +546,12 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     
     BOOL display = NO;
     if (self.type == 2) {
-        if ([self.dataInfo[@"user_id"] integerValue] != DataStore.sharedDataStore.userid.integerValue) {
+        if ([self.dataInfo[@"user_id"] integerValue] != UserModel.sharedUser.userid.integerValue) {
             display = YES;
         }
     }
     else {
-        if ([self.employeeId integerValue] != DataStore.sharedDataStore.userid.integerValue) {
+        if ([self.employeeId integerValue] != UserModel.sharedUser.userid.integerValue) {
             display = YES;
         }
     }
@@ -640,7 +640,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 #pragma mark - 关注/取消关注
 - (void)payAttentionTo:(UIButton *)sender {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -655,7 +655,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     else {
         [dict setObject:self.employeeId forKey:@"target_id"];
     }
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     NSString *requestUrl = [NSString stringWithFormat:@"%@member/follow",HttpURLString];
     if (sender.selected) {
         requestUrl = [NSString stringWithFormat:@"%@member/cancel_follow",HttpURLString];
@@ -793,7 +793,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             cell.didSelectItemBlock = ^(NSInteger index) {
                 LiveCharmPhotoModel *model = weakSelf.charmPhotoArray[index];
                 if (model.is_charge.intValue == 1) {
-                    if (!DataStore.sharedDataStore.token) {
+                    if (!UserModel.sharedUser.token) {
                         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
                         [self.navigationController pushViewController:vc animated:1];
@@ -839,7 +839,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 
 //查看微信号/聊天
 - (void)lookWechatSelector:(UIButton *)sender {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -943,10 +943,10 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     }
     else if (index == 1) {
         VipWebViewController *con = [VipWebViewController new];
-        con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
+        con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],UserModel.sharedUser.token];
         con.paySuccessBlock = ^{
             if (type.integerValue == 5) {
-                if (!DataStore.sharedDataStore.token) {
+                if (!UserModel.sharedUser.token) {
                     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                     LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
                     [self.navigationController pushViewController:vc animated:1];
@@ -1036,7 +1036,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
 - (void)payRequestWithPwd:(NSString *)pwd Price:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dic = @{@"token":DataStore.sharedDataStore.token,
+    NSDictionary *dic = @{@"token":UserModel.sharedUser.token,
                            @"type":type,
                            @"pwd":pwd,
                            @"paytype":@"3",
@@ -1096,7 +1096,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
     }
     if (existVideo) {
         if (index == 0) {
-            if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+            if ([EBUtility isBlankString:UserModel.sharedUser.token]){
                 UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
                 [self.navigationController pushViewController:vc animated:1];
@@ -1105,7 +1105,7 @@ static NSString *const BASEINFORMATION_TABLEVIEW_ID = @"base_tableview_id";
             BOOL playvideo = YES;
             if (UserModel.sharedUser.vip_grade.integerValue == 0) {
                 if (!isCanPlayVideo) {
-                    if (![DataStore.sharedDataStore.userid isEqualToString:self.dataInfo[@"user_id"]]) {
+                    if (![UserModel.sharedUser.userid isEqualToString:self.dataInfo[@"user_id"]]) {
                         playvideo = NO;
                     }
                 }

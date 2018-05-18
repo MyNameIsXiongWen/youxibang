@@ -40,7 +40,7 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:self.orderId forKey:@"order_sn"];
     
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Orders/orderrefund.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -186,7 +186,7 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     if (self.type != 1){//非异常
-        [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         [dict setObject:reason forKey:@"desc"];
         [dict setObject:self.orderId forKey:@"order_sn"];
         
@@ -212,7 +212,7 @@
             [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }else{//提交异常
-        [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         [dict setObject:reason forKey:@"note"];
         [dict setObject:self.orderId forKey:@"order_sn"];
         

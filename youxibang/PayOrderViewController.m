@@ -56,7 +56,7 @@
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
     if ([self.type isEqualToString:@"OrderDetailViewController"]){//支付保证金
-        [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+        [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
         [dict setObject:self.purposemoney forKey:@"purposemoney"];
         [dict setObject:self.orderId forKey:@"id"];
         
@@ -146,7 +146,7 @@
 - (IBAction)payOrderBtnApi:(UIButton *)sender {
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+    [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
     [dict setObject:[NSString stringWithFormat:@"%@",self.dataInfo[@"orderid"]] forKey:@"id"];
     
     if ([self.type isEqualToString:@"OrderDetailViewController"]){
@@ -230,7 +230,9 @@
 }
 
 - (void)completePay:(NSNotification *)notification{
-    [UserNameTool reloadPersonalData:nil];
+    [UserNameTool reloadPersonalData:^{
+        
+    }];
     CustomAlertView* alert = [[CustomAlertView alloc]initWithTitle:@"温馨提示" Text:@"支付完成，即将跳转到个人页面。" AndType:0];
     alert.resultIndex = ^(NSInteger index) {
         NSNotification *notification = [NSNotification notificationWithName:@"pushMineView" object:nil userInfo:nil];

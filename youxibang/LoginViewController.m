@@ -134,8 +134,8 @@
     [leftBtn addTarget:self action:@selector(leftBarButtonSelector) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
     
-    if (DataStore.sharedDataStore.mobile) {
-        self.phoneNumber.text = DataStore.sharedDataStore.mobile;
+    if (UserModel.sharedUser.mobile) {
+        self.phoneNumber.text = UserModel.sharedUser.mobile;
     }
     if (self.phoneNumberString) {
         self.phoneNumber.text = self.phoneNumberString;
@@ -277,14 +277,14 @@
 - (void)lg:(NSMutableDictionary*)dic{
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    if ([DataStore sharedDataStore].city) {
-        [dic setObject:[DataStore sharedDataStore].city forKey:@"city"];
+    if (UserModel.sharedUser.city) {
+        [dic setObject:UserModel.sharedUser.city forKey:@"city"];
     }
-    if ([DataStore sharedDataStore].latitude) {
-        [dic setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+    if (UserModel.sharedUser.latitude) {
+        [dic setObject:UserModel.sharedUser.latitude forKey:@"lat"];
     }
-    if ([DataStore sharedDataStore].longitude) {
-        [dic setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+    if (UserModel.sharedUser.longitude) {
+        [dic setObject:UserModel.sharedUser.longitude forKey:@"lon"];
     }
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/login.html",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
@@ -297,35 +297,35 @@
                 NSDictionary* user = object[@"data"];
                 [self.view.window endEditing:YES];
                 //单例注入数据
-                DataStore.sharedDataStore.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
-                DataStore.sharedDataStore.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
-                DataStore.sharedDataStore.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
-                DataStore.sharedDataStore.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
-                DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
+                UserModel.sharedUser.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
+                UserModel.sharedUser.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
+                UserModel.sharedUser.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
+                UserModel.sharedUser.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
+                UserModel.sharedUser.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 [self getVideoUploadToken];
                 [UserNameTool reloadPersonalData:^{
-                    UserModel.sharedUser.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
-                    UserModel.sharedUser.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
-                    UserModel.sharedUser.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
-                    UserModel.sharedUser.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
-                    UserModel.sharedUser.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 }];
                 //长久化存储登录账号密码
                 [UserNameTool saveLoginData:dic];
                 
-                [JPUSHService setAlias:DataStore.sharedDataStore.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+                [JPUSHService setAlias:UserModel.sharedUser.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
                     NSLog(@"Alias   %@",iAlias);
+                    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/send_leave_message",HttpURLString] Paremeters:@{@"token":UserModel.sharedUser.token} successOperation:^(id response) {
+                        
+                    } failoperation:^(NSError *error) {
+                        
+                    }];
                 } seq:1];
                 
                 //talkingdata注册
-                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.mobile]];
+                [TalkingData onRegister:UserModel.sharedUser.mobile type:TDAccountTypeRegistered name:[NSString stringWithFormat:@"%@",UserModel.sharedUser.mobile]];
                 //云信登录
                 [[NIMSDK sharedSDK] registerWithAppID:NIM_APP_ID cerName:nil];
                 NIMServerSetting *setting = [[NIMServerSetting alloc] init];
                 setting.httpsEnabled = NO;
                 [[NIMSDK sharedSDK] setServerSetting:setting];
-                [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxuser]] completion:nil];
-                [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxuser] token:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxpwd] completion:^(NSError *error) {
+                [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxuser]] completion:nil];
+                [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxuser] token:[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxpwd] completion:^(NSError *error) {
                 }];
                 [self backWithLogin:YES];
             }else if (code == 8){//验证码首次登录，设置密码
@@ -397,7 +397,7 @@
 
 - (void)getVideoUploadToken {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
         if (isKindOfNSDictionary(response)) {
             NSInteger msg = [[response objectForKey:@"errcode"] integerValue];

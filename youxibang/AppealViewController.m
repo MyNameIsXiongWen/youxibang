@@ -54,7 +54,7 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:self.tv.text forKey:@"desc"];
     [dict setObject:[NSString stringWithFormat:@"%@",self.orderInfo[@"order_sn"]] forKey:@"order_sn"];
     [dict setObject:@"3" forKey:@"type"];

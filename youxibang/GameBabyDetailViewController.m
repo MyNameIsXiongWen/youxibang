@@ -86,8 +86,8 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:self.gbId forKey:@"id"];
-    if (![EBUtility isBlankString:[DataStore sharedDataStore].userid]){
-        [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+    if (![EBUtility isBlankString:UserModel.sharedUser.userid]){
+        [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
     }
     
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/babydetail.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -121,8 +121,8 @@
 - (void)downloadAward{
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:self.gbId forKey:@"id"];
-    if (![EBUtility isBlankString:[DataStore sharedDataStore].userid]){
-        [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+    if (![EBUtility isBlankString:UserModel.sharedUser.userid]){
+        [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
     }
     [dict setObject:[NSString stringWithFormat:@"%d",self.awardPage] forKey:@"p"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/awardlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -150,8 +150,8 @@
 - (void)downloadComment{
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:self.gbId forKey:@"id"];
-    if (![EBUtility isBlankString:[DataStore sharedDataStore].userid]){
-        [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+    if (![EBUtility isBlankString:UserModel.sharedUser.userid]){
+        [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
     }
     [dict setObject:[NSString stringWithFormat:@"%d",self.commentPage] forKey:@"p"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/commentlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -228,7 +228,7 @@
 }
 //拨打虚拟电话
 - (IBAction)telePhone:(id)sender {
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -238,7 +238,7 @@
 }
 //聊天
 - (IBAction)chat:(id)sender {
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -262,7 +262,7 @@
 
 //下单
 - (IBAction)getOrder:(id)sender {
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];

@@ -65,7 +65,7 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:self.orderSn forKey:@"order_sn"];
     [dict setObject:self.type forKey:@"type"];
     
@@ -110,7 +110,7 @@
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:self.orderSn forKey:@"order_sn"];
     [dict setObject:self.type forKey:@"type"];
     [[NetWorkEngine shareNetWorkEngine] postImageAryInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/udnoimg.html",HttpURLString] Paremeters:dict Image:imgAry ImageName:nameAry successOperation:^(id object) {

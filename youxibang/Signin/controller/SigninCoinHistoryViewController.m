@@ -36,7 +36,7 @@ static NSString *const COIN_TABLEVIEW_ID = @"coin_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = @{@"page":[NSString stringWithFormat:@"%d",self.currentPage],
-                          @"token":DataStore.sharedDataStore.token};
+                          @"token":UserModel.sharedUser.token};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/gold_bill",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];

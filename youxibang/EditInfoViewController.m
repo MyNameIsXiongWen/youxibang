@@ -160,7 +160,7 @@
     [SVProgressHUD show];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图）
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图）
     if ([self.title isEqualToString:@"编辑昵称"]){
         [dict setObject:@"2" forKey:@"typeid"];
         [dict setObject:self.tf.text forKey:@"nickname"];

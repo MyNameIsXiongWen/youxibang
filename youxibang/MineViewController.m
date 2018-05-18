@@ -293,7 +293,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     }
     if (existVideo) {
         if (index == 0) {
-            if (!DataStore.sharedDataStore.token) {
+            if (!UserModel.sharedUser.token) {
                 UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
                 [self.navigationController pushViewController:vc animated:1];
@@ -394,7 +394,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
     if (indexPath.section == 1){
         if ([adDataInfo[@"link_lock"] integerValue] == 1) {
             VipWebViewController *con = [VipWebViewController new];
-            con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],DataStore.sharedDataStore.token];
+            con.loadUrlString = [NSString stringWithFormat:@"%@?type=phone&token=%@",adDataInfo[@"ad_link"],UserModel.sharedUser.token];
             [self.navigationController pushViewController:con animated:YES];
         }
     }
@@ -567,7 +567,7 @@ static NSString *const TABLEVIEW_IDENTIFIER = @"tableview_identifier";
 //下载技能列表
 - (void)downloadMySkillDataCompletionHandle:(void(^)(NSArray *dataarray))handle {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/mysklist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];

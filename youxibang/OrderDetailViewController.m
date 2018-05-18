@@ -89,8 +89,8 @@
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
     if (!self.isOrder){
-        if (![EBUtility isBlankString:[DataStore sharedDataStore].userid]){
-            [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+        if (![EBUtility isBlankString:UserModel.sharedUser.userid]){
+            [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
         }
         [dict setObject:self.itemId forKey:@"itemid"];
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/partdetail.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -115,7 +115,7 @@
             [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"网络信号差，请稍后再试" andDuration:2.0 PromptLocation:PromptBoxLocationCenter];
         }];
     }else if (self.isOrder){
-        [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         [dict setObject:self.itemId forKey:@"order_sn"];
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Orders/orderdetail.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
 
@@ -147,7 +147,7 @@
     [SVProgressHUD show];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:orderSn forKey:@"order_sn"];
     [dict setObject:type forKey:@"type"];
     
@@ -360,7 +360,7 @@
 }
 //最下方startBtnView左边的按钮
 - (IBAction)leftBtn:(UIButton *)sender {
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -407,7 +407,7 @@
 
 //startBtnView右边的按钮
 - (IBAction)rightBtn:(UIButton *)sender {
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -462,7 +462,7 @@
 }
 //当下方只有一个按钮时按键方法
 - (IBAction)oneBtn:(UIButton *)sender {
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -512,7 +512,7 @@
 }
 
 - (IBAction)cellLeftBtn:(UIButton *)sender {//提交异常
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -525,7 +525,7 @@
 }
 
 - (IBAction)cellRightBtn:(UIButton *)sender {//投诉
-    if ([EBUtility isBlankString:[DataStore sharedDataStore].token]){
+    if ([EBUtility isBlankString:UserModel.sharedUser.token]){
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];

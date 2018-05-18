@@ -76,7 +76,7 @@
             [SVProgressHUD show];
             
             NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-            [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+            [dict setObject:UserModel.sharedUser.token forKey:@"token"];
             //typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图，6-允许陌生人通话，7-设置支付密码）
             
             [dict setObject:@"7" forKey:@"typeid"];

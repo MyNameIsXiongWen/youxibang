@@ -69,7 +69,7 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"p"];
     [dict setObject:@"10" forKey:@"psize"];
     

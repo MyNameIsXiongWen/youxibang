@@ -34,16 +34,18 @@
     // Dispose of any resources that can be recreated.
 }
 - (void)exitUser:(UIButton*)sender {
+    [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/logout",HttpURLString] Paremeters:@{@"token":UserModel.sharedUser.token} successOperation:^(id response) {
+    } failoperation:^(NSError *error) {
+    }];
     //云信登出账号
     [[[NIMSDK sharedSDK] loginManager] logout:^(NSError *error) {
         
     }];
     [UserNameTool cleanloginData];
-    [DataStore sharedDataStore].userid = nil;
-//    [DataStore sharedDataStore].mobile = nil;
-    [DataStore sharedDataStore].yxuser = nil;
-    [DataStore sharedDataStore].yxpwd = nil;
-    [DataStore sharedDataStore].token = nil;
+    UserModel.sharedUser.userid = nil;
+    UserModel.sharedUser.yxuser = nil;
+    UserModel.sharedUser.yxpwd = nil;
+    UserModel.sharedUser.token = nil;
     [JPUSHService setAlias:@"" completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
     } seq:1];
     UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

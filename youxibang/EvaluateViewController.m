@@ -57,7 +57,7 @@
     }
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:[NSString stringWithFormat:@"%@",self.orderInfo[@"order_sn"]] forKey:@"order_sn"];
     [dict setObject:self.tv.text forKey:@"content"];
     [dict setObject:[NSString stringWithFormat:@"%ld",self.evaluate] forKey:@"cmrand"];

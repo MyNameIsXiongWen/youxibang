@@ -26,6 +26,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD show];
     NSDictionary *tokenDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"AliPlayerToken"];
     if (!tokenDictionary) {
         [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"播放器授权过期，请重新登录" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
@@ -250,7 +252,7 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
         if (isKindOfNSDictionary(response)) {
             NSInteger msg = [[response objectForKey:@"errcode"] integerValue];

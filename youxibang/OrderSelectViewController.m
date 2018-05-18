@@ -63,7 +63,7 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
-    [dict setObject:[DataStore sharedDataStore].userid forKey:@"userid"];
+    [dict setObject:UserModel.sharedUser.userid forKey:@"userid"];
     [dict setObject:self.orderId forKey:@"id"];
     
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/selectbabylist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {

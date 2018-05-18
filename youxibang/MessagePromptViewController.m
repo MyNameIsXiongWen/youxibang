@@ -73,7 +73,7 @@
 - (IBAction)strangePhone:(UISwitch *)sender {
 
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图，6-允许陌生人通话）
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图，6-允许陌生人通话）
 
     [dict setObject:@"6" forKey:@"typeid"];
     [dict setObject:[NSString stringWithFormat:@"%d",sender.on] forKey:@"onoff"];
@@ -87,7 +87,9 @@
             
             if (code == 1) {
 
-                [UserNameTool reloadPersonalData:nil];
+                [UserNameTool reloadPersonalData:^{
+                    
+                }];
             }else{
 
             }

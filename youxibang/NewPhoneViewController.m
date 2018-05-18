@@ -97,7 +97,7 @@
     [dict setObject:self.code.text forKey:@"smscode"];
     [dict setObject:self.oldPhone.text forKey:@"mobile"];
     [dict setObject:self.password.text forKey:@"password"];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/editmobile.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
         [SVProgressHUD dismiss];

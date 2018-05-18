@@ -66,7 +66,7 @@
         
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         
-        [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         [dict setObject:self.skillId forKey:@"itemid"];
         [dict setObject:grade.text forKey:@"duanwei"];
         [dict setObject:des.text forKey:@"selfdesc"];
@@ -132,7 +132,7 @@
         NSString* url = [self audioPCMtoMP3];
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         
-        [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         [dict setObject:self.skillId forKey:@"pid"];
         [dict setObject:[grade.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] forKey:@"duanwei"];
         [dict setObject:price.text forKey:@"price"];

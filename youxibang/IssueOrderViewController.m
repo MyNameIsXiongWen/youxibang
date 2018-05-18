@@ -94,21 +94,21 @@
     [SVProgressHUD show];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:title.text forKey:@"title"];
     [dict setObject:self.gameId forKey:@"pid"];
     [dict setObject:self.date forKey:@"stime"];
     [dict setObject:self.hour forKey:@"num"];
     [dict setObject:price.text forKey:@"price"];
     [dict setObject:cell1.tv.text forKey:@"note"];
-    if ([self.locationAddress isEqualToString:[DataStore sharedDataStore].city]) {
-        [dict setObject:[DataStore sharedDataStore].city forKey:@"city"];
+    if ([self.locationAddress isEqualToString:UserModel.sharedUser.city]) {
+        [dict setObject:UserModel.sharedUser.city forKey:@"city"];
     }
-    if ([DataStore sharedDataStore].latitude) {
-        [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+    if (UserModel.sharedUser.latitude) {
+        [dict setObject:UserModel.sharedUser.latitude forKey:@"lat"];
     }
-    if ([DataStore sharedDataStore].longitude) {
-        [dict setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+    if (UserModel.sharedUser.longitude) {
+        [dict setObject:UserModel.sharedUser.longitude forKey:@"lon"];
     }
 
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/publishpart.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -187,7 +187,7 @@
         return cell;
     }else if (indexPath.row == 5){//定位cell
         LocationTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"cell%ld",indexPath.row]];
-        cell.locationLabel.text = [DataStore sharedDataStore].city?:@"全国";
+        cell.locationLabel.text = UserModel.sharedUser.city?:@"全国";
         [cell.locationSwitch addTarget:self action:@selector(switchLocation:) forControlEvents:UIControlEventValueChanged];
         self.locationAddress = cell.locationLabel.text;
         return cell;
@@ -216,7 +216,7 @@
 - (void)switchLocation:(UISwitch *)sender {
     LocationTableViewCell *cell = (LocationTableViewCell *)sender.superview.superview;
     if (sender.isOn) {
-        cell.locationLabel.text = [DataStore sharedDataStore].city?:@"全国";
+        cell.locationLabel.text = UserModel.sharedUser.city?:@"全国";
     }
     else {
         cell.locationLabel.text = @"全国";

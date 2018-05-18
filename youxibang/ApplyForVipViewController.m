@@ -81,7 +81,7 @@
     [SVProgressHUD show];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:ary[0].text forKey:@"realname"];
     [dict setObject:ary[1].text forKey:@"idcard"];
     [dict setObject:ary[2].text forKey:@"school"];

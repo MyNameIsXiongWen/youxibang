@@ -171,8 +171,8 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dic = @{@"article_id":self.newsModel.article_id}.mutableCopy;
-    if (DataStore.sharedDataStore.token) {
-        [dic setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    if (UserModel.sharedUser.token) {
+        [dic setObject:UserModel.sharedUser.token forKey:@"token"];
     }
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@article/get_details",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
@@ -212,8 +212,8 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 - (void)getNewsDetailReviewListRequest {
     NSMutableDictionary *dic = @{@"article_id":self.newsModel.article_id,
                                  @"page":[NSString stringWithFormat:@"%d",self.currentPage]}.mutableCopy;
-    if (DataStore.sharedDataStore.token) {
-        [dic setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    if (UserModel.sharedUser.token) {
+        [dic setObject:UserModel.sharedUser.token forKey:@"token"];
     }
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@article/comment_list",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
@@ -278,7 +278,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 }
 
 - (void)reviewArticleRequestWithContent:(NSString *)content {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -287,7 +287,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = @{@"article_id":self.newsModel.article_id,
-                          @"token":[DataStore sharedDataStore].token,
+                          @"token":UserModel.sharedUser.token,
                           @"details":content};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@article/publish_comment",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
@@ -302,7 +302,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
                 model.article_id = self.newsModel.article_id;
                 model.head_pic = UserModel.sharedUser.photo;
                 model.nickname = UserModel.sharedUser.nickname;
-                model.user_id = DataStore.sharedDataStore.userid;
+                model.user_id = UserModel.sharedUser.userid;
                 model.is_laud = @"0";
                 model.laud_count = @"0";
                 model.time = @"刚刚";
@@ -420,7 +420,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     NewsReviewModel *model = self.reviewArray[indexPath.row];
-    if ([model.user_id isEqualToString:DataStore.sharedDataStore.userid]) {
+    if ([model.user_id isEqualToString:UserModel.sharedUser.userid]) {
         return YES;
     }
     else {
@@ -468,7 +468,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 }
 
 - (void)likerequest:(UIButton *)sender TargetId:(NSString *)targetid Type:(NSString *)type CompletionHandle:(void(^)(BOOL islaud))handle {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -476,7 +476,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dic = @{@"token":DataStore.sharedDataStore.token,
+    NSDictionary *dic = @{@"token":UserModel.sharedUser.token,
                           @"type":type,
                           @"target_id":targetid};
     NSString *requestUrl = [NSString stringWithFormat:@"%@article/laud",HttpURLString];
@@ -504,7 +504,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
 }
 
 - (void)deleteReviewRequest:(NSString *)commentId CompleteHandle:(void(^)(void))complete {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -512,7 +512,7 @@ static NSString *const REVIEW_TABLEVIEW_ID = @"review_tableview_id";
     }
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dic = @{@"token":DataStore.sharedDataStore.token,
+    NSDictionary *dic = @{@"token":UserModel.sharedUser.token,
                           @"comment_id":commentId,
                           @"article_id":self.newsModel.article_id};
     NSString *requestUrl = [NSString stringWithFormat:@"%@article/del_comment",HttpURLString];

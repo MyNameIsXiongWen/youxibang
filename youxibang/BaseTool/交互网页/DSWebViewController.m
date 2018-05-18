@@ -64,11 +64,9 @@
     JSContext *context = [webView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
     context[@"getUserId"] = ^(){
        
-//        return [[DataStore sharedDataStore].UId integerValue];
     };
     NSString *urlString =[[request URL] absoluteString];
     
-    //NSLog(@"ppurlString:%@",urlString);
     if ([urlString hasPrefix:@"tel"]){
         return NO;
     }
@@ -80,8 +78,6 @@
     if ([urlString hasPrefix:DSMsgToast]) {
         NSString* str = [[urlString substringFromIndex:20] stringByRemovingPercentEncoding];
         
-//        [SVProgressHUD popActivity];
-//        [SVProgressHUD setInfoImage:nil];
         [SVProgressHUD setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0.8]];
         [SVProgressHUD setForegroundColor:[UIColor whiteColor]];
         [SVProgressHUD showInfoWithStatus:str];
@@ -94,24 +90,15 @@
         UIAlertController* alert =  [UIAlertController alertControllerWithTitle:@"温馨提示" message:str preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* s = [UIAlertAction actionWithTitle:@"确认" style:0 handler:^(UIAlertAction * _Nonnull action){
             
-//            JSContext *context = [_webView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
-//
-//            JSValue * function = [context objectForKeyedSubscript:@"AppClick"];
-//            [function callWithArguments:nil];
             [self.navigationController popViewControllerAnimated:1];
         }];
-//        UIAlertAction* c = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
         [alert addAction:s];
-//        [alert addAction:c];
         [self presentViewController:alert animated:YES completion:nil];
         return NO;
     }
 
 
     if ([urlString hasPrefix:DSOpenLogin]) {
-//        UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//        LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
-//        [self.navigationController pushViewController:vc animated:YES];
         return NO;
     }
     if ([urlString hasPrefix:DSOpenIndex]) {

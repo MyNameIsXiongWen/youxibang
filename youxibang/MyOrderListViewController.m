@@ -87,7 +87,7 @@
 //下载数据
 - (void)downloadData {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:[NSString stringWithFormat:@"%ld",(long)self.type] forKey:@"type"];
     [dict setObject:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"p"];
     [dict setObject:@"10" forKey:@"psize"];
@@ -145,7 +145,7 @@
     [SVProgressHUD show];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:orderSn forKey:@"order_sn"];
     [dict setObject:type forKey:@"type"];
 

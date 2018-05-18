@@ -43,7 +43,7 @@
 }
 
 - (void)getDataInfoRequest {
-    if (!DataStore.sharedDataStore.token) {
+    if (!UserModel.sharedUser.token) {
         UIStoryboard* sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LoginViewController* vc = [sb instantiateViewControllerWithIdentifier:@"loginPWD"];
         [self.navigationController pushViewController:vc animated:1];
@@ -52,7 +52,7 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSDictionary *dic = NSDictionary.dictionary;
-    dic = @{@"token":DataStore.sharedDataStore.token};
+    dic = @{@"token":UserModel.sharedUser.token};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/get_invitecode_info",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];

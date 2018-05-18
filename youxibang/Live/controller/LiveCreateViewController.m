@@ -157,7 +157,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 - (void)getLiveInformation {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSMutableDictionary *dic = @{@"token":[DataStore sharedDataStore].token}.mutableCopy;
+    NSMutableDictionary *dic = @{@"token":UserModel.sharedUser.token}.mutableCopy;
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@anchor/get_anchor_info",HttpURLString] Paremeters:dic successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -231,7 +231,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
         [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"请填写经纪公司" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
         return;
     }
-    NSMutableDictionary *dic = @{@"token":[DataStore sharedDataStore].token,
+    NSMutableDictionary *dic = @{@"token":UserModel.sharedUser.token,
                                  @"city":areaString,
                                  @"platform":platformString,
                                  @"room_number":room_numberString,
@@ -787,7 +787,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
 - (void)uploadImage:(NSArray *)imgArray {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dic = @{@"token":[DataStore sharedDataStore].token,
+    NSDictionary *dic = @{@"token":UserModel.sharedUser.token,
                           @"path":@"bgimg"};
     WEAKSELF
     [[NetWorkEngine shareNetWorkEngine] onlyPostImageAryInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@index/upload_image",HttpURLString] Paremeters:dic Image:imgArray ImageName:imgArray successOperation:^(id response) {
@@ -826,7 +826,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     if (tempArray.count > 0) {
         [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
         [SVProgressHUD show];
-        NSMutableDictionary *dic = @{@"token":[DataStore sharedDataStore].token,
+        NSMutableDictionary *dic = @{@"token":UserModel.sharedUser.token,
                                      @"fee":fee,
                                      @"is_charge":isCharge,
                                      @"img_arr":[tempArray componentsJoinedByString:@"|"],
@@ -856,7 +856,7 @@ static NSString *const LIVECREATA_TABLEVIEW_ID = @"livecreate_tableview_id";
     if (model.type == 2) {
         [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
         [SVProgressHUD show];
-        NSDictionary *dic = @{@"token":[DataStore sharedDataStore].token,@"id":model.id};
+        NSDictionary *dic = @{@"token":UserModel.sharedUser.token,@"id":model.id};
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@anchor/del_img",HttpURLString] Paremeters:dic successOperation:^(id object) {
             [SVProgressHUD dismiss];
             [SVProgressHUD setDefaultMaskType:1];

@@ -644,7 +644,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 - (void)payRequestWithPwd:(NSString *)pwd Price:(NSString *)money Type:(NSString *)type TargetId:(NSString *)targetId Index:(NSInteger)index {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dic = @{@"token":DataStore.sharedDataStore.token,
+    NSDictionary *dic = @{@"token":UserModel.sharedUser.token,
                           @"type":type,
                           @"pwd":pwd,
                           @"paytype":@"3",

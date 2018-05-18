@@ -27,9 +27,12 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self registerThirdSDKWithOptions:launchOptions];
     //从userdefault中获取信息自动登录
-    NSDictionary *user =  [UserNameTool readLoginData];
-    if (user.count) {
-        [self lg:user];
+//    NSDictionary *user =  [UserNameTool readLoginData];
+//    if (user.count) {
+//        [self lg:user];
+//    }
+    if (UserModel.sharedUser.token) {
+        [self loginThirdSDK];
     }
 
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
@@ -73,6 +76,37 @@
                  apsForProduction:YES];
 }
 
+- (void)loginThirdSDK {
+    [self getVideoUploadToken];
+    [UserNameTool reloadPersonalData:^{
+    }];
+    
+    [JPUSHService setAlias:UserModel.sharedUser.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+        NSLog(@"Alias   %@",iAlias);
+    } seq:1];
+    
+    [TalkingData onRegister:UserModel.sharedUser.mobile type:TDAccountTypeRegistered name:UserModel.sharedUser.mobile];
+    
+    //云信注册
+    [[NIMSDK sharedSDK] registerWithAppID:NIM_APP_ID cerName:nil];
+    //云信的自动https支持
+    NIMServerSetting *setting = [[NIMServerSetting alloc] init];
+    setting.httpsEnabled = NO;
+    [[NIMSDK sharedSDK] setServerSetting:setting];
+    //云信登录
+    [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxuser]] completion:nil];
+    
+    [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxuser] token:[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxpwd] completion:^(NSError *error) {
+        if (!error) {
+            NSLog(@"登录成功");
+            
+        }else{
+            NSLog(@"登录失败");
+            
+        }
+    }];
+}
+
 //自动登录方法
 - (void)lg:(NSDictionary*)dic{
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
@@ -87,28 +121,21 @@
             NSLog(@"登录输出 %@--%@",object,msg);
             if (code == 1) {
                 NSDictionary* user = object[@"data"];
-
-                DataStore.sharedDataStore.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
-                DataStore.sharedDataStore.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
-                DataStore.sharedDataStore.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
-                DataStore.sharedDataStore.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
-                DataStore.sharedDataStore.token = [NSString stringWithFormat:@"%@",user[@"token"]];
+                UserModel.sharedUser.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
+                UserModel.sharedUser.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
+                UserModel.sharedUser.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
+                UserModel.sharedUser.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
+                UserModel.sharedUser.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 [self getVideoUploadToken];
-                [UserNameTool saveLoginData:dic];
                 [UserNameTool reloadPersonalData:^{
-                    UserModel.sharedUser.yxpwd = [NSString stringWithFormat:@"%@",user[@"yxpwd"]];
-                    UserModel.sharedUser.yxuser = [NSString stringWithFormat:@"%@",user[@"yxuser"]];
-                    UserModel.sharedUser.mobile = [NSString stringWithFormat:@"%@",user[@"mobile"]];
-                    UserModel.sharedUser.userid = [NSString stringWithFormat:@"%@",user[@"userid"]];
-                    UserModel.sharedUser.token = [NSString stringWithFormat:@"%@",user[@"token"]];
                 }];
                 
                 //jpush
-                [JPUSHService setAlias:DataStore.sharedDataStore.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+                [JPUSHService setAlias:UserModel.sharedUser.userid completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
                     NSLog(@"Alias   %@",iAlias);
                 } seq:1];
                 
-                [TalkingData onRegister:DataStore.sharedDataStore.mobile type:TDAccountTypeRegistered name:DataStore.sharedDataStore.mobile];
+                [TalkingData onRegister:UserModel.sharedUser.mobile type:TDAccountTypeRegistered name:UserModel.sharedUser.mobile];
                 
                 //云信注册
                 [[NIMSDK sharedSDK] registerWithAppID:NIM_APP_ID cerName:nil];
@@ -117,9 +144,9 @@
                 setting.httpsEnabled = NO;
                 [[NIMSDK sharedSDK] setServerSetting:setting];
                 //云信登录
-                [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxuser]] completion:nil];
+                [[NIMSDK sharedSDK].userManager fetchUserInfos:@[[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxuser]] completion:nil];
                 
-                [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxuser] token:[NSString stringWithFormat:@"%@",DataStore.sharedDataStore.yxpwd] completion:^(NSError *error) {
+                [[NIMSDK sharedSDK].loginManager login:[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxuser] token:[NSString stringWithFormat:@"%@",UserModel.sharedUser.yxpwd] completion:^(NSError *error) {
                     if (!error) {
                         NSLog(@"登录成功");
                         
@@ -319,7 +346,7 @@
 
 - (void)getVideoUploadToken {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:DataStore.sharedDataStore.token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
         if (isKindOfNSDictionary(response)) {
             NSInteger msg = [[response objectForKey:@"errcode"] integerValue];

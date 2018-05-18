@@ -135,7 +135,7 @@
         [SVProgressHUD show];
         
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         [dict setObject:account forKey:@"account"];
         [dict setObject:otype forKey:@"paytype"];
         
@@ -177,7 +177,7 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:self.tf.text forKey:@"account"];
     [dict setObject:pw forKey:@"paypwd"];
     

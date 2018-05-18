@@ -216,7 +216,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 - (void)uploadImage:(NSArray *)imgArray ExecuteHandle:(BOOL)execute completeHandler:(void (^)(NSString *imagePath))handler {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dic = @{@"token":[DataStore sharedDataStore].token,
+    NSDictionary *dic = @{@"token":UserModel.sharedUser.token,
                           @"path":@"bgimg"};
     WEAKSELF
     [[NetWorkEngine shareNetWorkEngine] onlyPostImageAryInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@index/upload_image",HttpURLString] Paremeters:dic Image:imgArray ImageName:imgArray successOperation:^(id response) {
@@ -245,7 +245,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 
 //上传背景图片
 - (void)uploadBackgroundImage:(NSMutableArray *)urlArray {
-    NSDictionary *dic = @{@"token":[DataStore sharedDataStore].token,
+    NSDictionary *dic = @{@"token":UserModel.sharedUser.token,
                           @"img_arr":[urlArray componentsJoinedByString:@"|"]};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/update_bimg",HttpURLString] Paremeters:dic successOperation:^(id response) {
         if ([response[@"errcode"] intValue] == 1) {
@@ -347,7 +347,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
         interest = [temp componentsJoinedByString:@","];
         NSArray* title = @[@"昵称",@"ID",@"生日",@"性别",@"签名",@"兴趣爱好"];
         NSArray* img = @[@"ico_nc",@"ico_id",@"ico_sr",@"ico_xb",@"ico_qm",@"ico_ah"];
-        NSArray* detail = @[UserModel.sharedUser.nickname?:@"",DataStore.sharedDataStore.userid?:@"",UserModel.sharedUser.birthday?:@"",UserModel.sharedUser.sexstr?:@"",UserModel.sharedUser.mysign?:@"",interest];
+        NSArray* detail = @[UserModel.sharedUser.nickname?:@"",UserModel.sharedUser.userid?:@"",UserModel.sharedUser.birthday?:@"",UserModel.sharedUser.sexstr?:@"",UserModel.sharedUser.mysign?:@"",interest];
         MineTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:PERSONAL_TABLEVIEW_IDENTIFIER];
         cell.leftLabel.text = title[indexPath.row];
         cell.rightLabel.text = detail[indexPath.row];
@@ -546,7 +546,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 - (void)postVideoWithPath:(NSString *)videopath Name:(NSString *)videoName {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
-    NSDictionary *dict = @{@"token":[DataStore sharedDataStore].token};
+    NSDictionary *dict = @{@"token":UserModel.sharedUser.token};
     [[NetWorkEngine shareNetWorkEngine] postVideoFromServerWithUrlStr:[NSString stringWithFormat:@"%@index/upload_video",HttpURLString] Paremeters:dict VideoPath:videopath VideoName:videoName successOperation:^(id response) {
         if (isKindOfNSDictionary(response)) {
             NSInteger msg = [[response objectForKey:@"errcode"] integerValue];
@@ -564,7 +564,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 }
 //上传视频地址
 - (void)uploadVideoWithPath:(NSString *)videopath VideoImg:(NSString *)videoImg {
-    NSDictionary *dict = @{@"token":[DataStore sharedDataStore].token,
+    NSDictionary *dict = @{@"token":UserModel.sharedUser.token,
                            @"video":videopath,
                            @"video_img":videoImg};
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@member/update_video",HttpURLString] Paremeters:dict successOperation:^(id response) {
@@ -587,7 +587,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
 
 - (void)getVideoUploadToken:(BOOL)uploadToken UploadVideo:(BOOL)uploadVideo VideoPath:(NSString *)videoPath ImagePath:(NSString *)imagePath VideoInfo:(VodSVideoInfo *)info {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@video/get_token",HttpURLString] Paremeters:dict successOperation:^(id response) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -661,7 +661,7 @@ static NSString *const PERSONAL_TABLEVIEW_IDENTIFIER = @"personal_tableview_iden
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     [SVProgressHUD show];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图）
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];//typeid=$类型 （1-头像，2-昵称，3-签名，4-兴趣爱好，5-背景图）
     [dict setObject:@"1" forKey:@"typeid"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/edituserinfo.html",HttpURLString] Paremeters:dict Image:img ImageName:@"photo" successOperation:^(id response) {
         [SVProgressHUD dismiss];

@@ -32,8 +32,15 @@
 }
 
 + (void)reloadPersonalData:(void (^ __nullable)(void))completion {
+    //因为userinfo里面没有这些参数，usermodel赋值后这些参数会被置空，所以先备份一下，usermodel赋值之后再把这些参数赋值
+    NSString *userid = UserModel.sharedUser.userid;
+    NSString *mobile = UserModel.sharedUser.mobile;
+    NSString *yxuser = UserModel.sharedUser.yxuser;
+    NSString *yxpwd = UserModel.sharedUser.yxpwd;
+    NSString *token = UserModel.sharedUser.token;
+    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:token forKey:@"token"];
     [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Member/userinfo.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
         [SVProgressHUD dismiss];
         [SVProgressHUD setDefaultMaskType:1];
@@ -44,6 +51,11 @@
             if (code == 1) {
                 NSMutableDictionary* dataInfo = [NSMutableDictionary dictionaryWithDictionary:object[@"data"]];
                 [UserModel keyarchiveUserModelWithDict:dataInfo];
+                UserModel.sharedUser.yxpwd = yxpwd;
+                UserModel.sharedUser.yxuser = yxuser;
+                UserModel.sharedUser.mobile = mobile;
+                UserModel.sharedUser.userid = userid;
+                UserModel.sharedUser.token = token;
                 if (completion){
                     completion();
                 }

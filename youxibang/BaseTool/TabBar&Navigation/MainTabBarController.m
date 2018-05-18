@@ -79,7 +79,7 @@
 //}
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
     if (viewController.tabBarItem.tag == 2 || viewController.tabBarItem.tag == 3) {
-        if (![EBUtility isBlankString:[DataStore sharedDataStore].token]){
+        if (![EBUtility isBlankString:UserModel.sharedUser.token]){
                return YES;
             }else{
                 [self skipLoginPage];

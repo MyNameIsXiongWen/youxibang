@@ -137,11 +137,11 @@
         if (self.groupId) {
             [dict setObject:self.groupId forKey:@"group_id"];
         }
-        if ([DataStore sharedDataStore].latitude) {
-            [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+        if (UserModel.sharedUser.latitude) {
+            [dict setObject:UserModel.sharedUser.latitude forKey:@"lat"];
         }
-        if ([DataStore sharedDataStore].longitude) {
-            [dict setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+        if (UserModel.sharedUser.longitude) {
+            [dict setObject:UserModel.sharedUser.longitude forKey:@"lon"];
         }
         
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Gamebaby/babyslist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {
@@ -190,11 +190,11 @@
         [dict setObject:[NSString stringWithFormat:@"%d",self.pricerange] forKey:@"pricerange"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.currentPage] forKey:@"p"];
         [dict setObject:@"10" forKey:@"psize"];
-        if ([DataStore sharedDataStore].latitude) {
-            [dict setObject:[DataStore sharedDataStore].latitude forKey:@"lat"];
+        if (UserModel.sharedUser.latitude) {
+            [dict setObject:UserModel.sharedUser.latitude forKey:@"lat"];
         }
-        if ([DataStore sharedDataStore].longitude) {
-            [dict setObject:[DataStore sharedDataStore].longitude forKey:@"lon"];
+        if (UserModel.sharedUser.longitude) {
+            [dict setObject:UserModel.sharedUser.longitude forKey:@"lon"];
         }
         
         [[NetWorkEngine shareNetWorkEngine] postInfoFromServerWithUrlStr:[NSString stringWithFormat:@"%@Parttime/partlist.html",HttpURLString] Paremeters:dict successOperation:^(id object) {

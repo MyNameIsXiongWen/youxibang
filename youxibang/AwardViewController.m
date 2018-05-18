@@ -141,7 +141,7 @@
 //提交
 - (IBAction)commitInfo:(UIButton *)sender {
     if (self.type == 2) {
-        NSMutableDictionary *dict = @{@"token":DataStore.sharedDataStore.token,
+        NSMutableDictionary *dict = @{@"token":UserModel.sharedUser.token,
                                       @"type":@"4",
                                       @"target_id":self.orderInfo[@"id"],
                                       }.mutableCopy;
@@ -208,7 +208,7 @@
             [[SYPromptBoxView sharedInstance] setPromptViewMessage:@"金额不能小于0" andDuration:2.0 PromptLocation:PromptBoxLocationBottom];
             return;
         }
-        [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+        [dict setObject:UserModel.sharedUser.token forKey:@"token"];
         [dict setObject:[NSString stringWithFormat:@"%@",self.orderInfo[@"order_sn"]] forKey:@"order_sn"];
         [dict setObject:account forKey:@"account"];
         

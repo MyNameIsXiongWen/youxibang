@@ -22,7 +22,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"找回支付密码";
-    self.userPhone.text = DataStore.sharedDataStore.mobile;
+    self.userPhone.text = UserModel.sharedUser.mobile;
     self.userPhone.userInteractionEnabled = NO;
     self.code.delegate = self;
 }
@@ -94,7 +94,7 @@
     [SVProgressHUD show];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[DataStore sharedDataStore].token forKey:@"token"];
+    [dict setObject:UserModel.sharedUser.token forKey:@"token"];
     [dict setObject:self.userPhone.text forKey:@"mobile"];
     [dict setObject:self.code.text forKey:@"smscode"];
     

@@ -24,7 +24,7 @@
 #import "BaseViewController.h"
 #import "NetWorkEngine.h"
 #import "SVProgressHUD.h"
-#import "DataStore.h"
+//#import "DataStore.h"
 #import "UserNameTool.h"
 #import "MJRefresh.h"
 #import "BaseTableViewController.h"

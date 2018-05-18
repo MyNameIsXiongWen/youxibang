@@ -44,7 +44,7 @@
 
 - (void)alipayWithTargetId:(NSString *)targetId Account:(NSString *)account PayType:(NSString *)paytype {
     payType = paytype;
-    NSMutableDictionary *dict = @{@"token":DataStore.sharedDataStore.token,
+    NSMutableDictionary *dict = @{@"token":UserModel.sharedUser.token,
                                   @"type":@"1",
                                   @"target_id":targetId,
                                   @"account":account,
